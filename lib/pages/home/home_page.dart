@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
                   style: primaryTextStyle.copyWith(fontSize: 18),
                 ),
                 TextSpan(
-                  text: '${user?.nama}',
+                  text: '${user?.fullname}',
                   style: primaryTextStyle.copyWith(
                       fontWeight: FontWeight.bold, fontSize: 18),
                 ),
@@ -173,10 +173,10 @@ class _HomePageState extends State<HomePage> {
               )
             ],
           ),
-          CourseTile(
-              title: 'Belajar Dasar-dasar UI/UX',
-              subtitle: 'Video 2 - 10 menit',
-              progressPercentage: 56)
+          // CourseTile(
+          //     title: 'Belajar Dasar-dasar UI/UX',
+          //     subtitle: 'Video 2 - 10 menit',
+          //     progressPercentage: 56)
         ],
       );
     }
@@ -204,17 +204,32 @@ class _HomePageState extends State<HomePage> {
               )
             ],
           ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                Row(
-                    children: courseProvider.courses
-                        .map((course) => CardCourse(course))
-                        .toList())
-              ],
-            ),
-          ),
+          FutureBuilder(
+              future: courseProvider.getCourses('all'),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: courseProvider.courses
+                          .take(10) // Hanya ambil 10 data
+                          .map((course) => CardCourse(course))
+                          .toList(),
+                    ),
+                  );
+                } else {
+                  return Center(child: CircularProgressIndicator());
+                }
+              }),
+          // SingleChildScrollView(
+          //   scrollDirection: Axis.horizontal,
+          //   child: Row(
+          //     children: courseProvider.courses
+          //         .take(10) // Hanya ambil 10 data
+          //         .map((course) => CardCourse(course))
+          //         .toList(),
+          //   ),
+          // )
         ],
       );
     }

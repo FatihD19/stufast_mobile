@@ -19,8 +19,9 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   getInit() async {
-    await Provider.of<CourseProvider>(context, listen: false).getCourses();
-    Navigator.pushNamed(context, '/login-page');
+    await Provider.of<CourseProvider>(context, listen: false).getCourses('all');
+    Provider.of<CourseProvider>(context, listen: false).loadTags();
+    Navigator.pushNamed(context, '/landing-page');
   }
 
   @override

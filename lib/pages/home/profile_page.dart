@@ -33,28 +33,29 @@ class ProfilePage extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    image: NetworkImage(
-                        'https://dev.stufast.id/upload/users/${user?.profilePicture}'),
+                    image: NetworkImage('${user?.profilePicture}'),
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
               title: Text(
-                '${user?.nama}',
+                '${user?.fullname}',
                 style: primaryTextStyle.copyWith(fontWeight: bold),
               ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Software engineer',
+                    '${user?.job_name}',
                     style: secondaryTextStyle,
                   ),
                   Text('${user?.address}', style: secondaryTextStyle),
                 ],
               ),
               trailing: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, '/edit-profile');
+                },
                 icon: Image.asset(
                   'assets/icon_edit.png',
                   width: 24,

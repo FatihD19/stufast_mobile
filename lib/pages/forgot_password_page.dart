@@ -24,7 +24,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   bool _rememberMe = false;
 
   TextEditingController _emailController = TextEditingController(text: '');
+
   TextEditingController _otpController = TextEditingController(text: '');
+
   TextEditingController _passwordController = TextEditingController(text: '');
   TextEditingController _confirmPasswordController =
       TextEditingController(text: '');
@@ -49,8 +51,49 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       try {
         String message = await reset.sendEmail(email: _emailController.text);
         _showSnackBar(message);
+        setState(() {
+          //email ada ?
+          stepReset++;
+          print(stepReset);
+        });
       } catch (e) {
         _showSnackBar("Failed to send reset email");
+      }
+    }
+
+    verifyOtp() async {
+      try {
+        String message = await reset.verifyOTP(
+            email: _emailController.text, otp: _otpController.text);
+        _showSnackBar(message);
+        setState(() {
+          //email ada ?
+          stepReset++;
+          print(stepReset);
+        });
+      } catch (e) {
+        _showSnackBar("Failed to verifiy otp");
+      }
+    }
+
+    newPassword() async {
+      try {
+        String message = await reset.newPassword(
+            email: _emailController.text,
+            otp: _otpController.text,
+            password: _passwordController.text,
+            confirmpassword: _confirmPasswordController.text);
+        _showSnackBar(message);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SuccsessPage(
+                      titleMess: 'Berhasil Diperbarui!',
+                      mess:
+                          'Kata sandi kamu berhasil diperbarui. Silakan masuk ke akun kamu',
+                    )));
+      } catch (e) {
+        _showSnackBar("Failed to verifiy reset password");
       }
     }
 
@@ -94,15 +137,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 width: double.infinity,
                 height: 54,
                 child: PrimaryButton(
-                    text: 'Selanjutnya',
-                    onPressed: () {
-                      sendResetEmail();
-                      setState(() {
-                        //email ada ?
-                        stepReset++;
-                        print(stepReset);
-                      });
-                    })),
+                    text: 'Selanjutnya', onPressed: sendResetEmail)),
           ],
         ),
       );
@@ -139,22 +174,17 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 style: secondaryTextStyle.copyWith(fontWeight: bold),
               ),
             ),
-            UsernameTextField(hintText: 'Masukkan kode OTP'),
+            UsernameTextField(
+              hintText: 'Masukkan kode OTP',
+              controller: _otpController,
+            ),
             SizedBox(
               height: 24,
             ),
             Container(
                 width: double.infinity,
                 height: 54,
-                child: PrimaryButton(
-                    text: 'Konfirmasi',
-                    onPressed: () {
-                      setState(() {
-                        //email ada ?
-                        stepReset++;
-                        print(stepReset);
-                      });
-                    })),
+                child: PrimaryButton(text: 'Konfirmasi', onPressed: verifyOtp)),
           ],
         ),
       );
@@ -250,18 +280,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           Container(
               width: double.infinity,
               height: 54,
-              child: PrimaryButton(
-                  text: 'Simpan',
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SuccsessPage(
-                                  titleMess: 'Berhasil Diperbarui!',
-                                  mess:
-                                      'Kata sandi kamu berhasil diperbarui. Silakan masuk ke akun kamu',
-                                )));
-                  })),
+              child: PrimaryButton(text: 'Simpan', onPressed: newPassword)),
         ],
       );
     }

@@ -1,6 +1,8 @@
 // ignore_for_file: use_build_context_synchronously, prefer_const_constructors
 
+import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:stufast_mobile/pages/succsess_page.dart';
 import 'package:stufast_mobile/providers/auth_provider.dart';
@@ -23,6 +25,10 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _rememberMe = false;
 
   TextEditingController emailController = TextEditingController(text: '');
+  TextEditingController fullNameController = TextEditingController(text: '');
+  TextEditingController addressController = TextEditingController(text: '');
+  TextEditingController phoneNumberController = TextEditingController(text: '');
+  DateTime? selectedDate;
   TextEditingController passwordController = TextEditingController(text: '');
   TextEditingController confirmPasswordController =
       TextEditingController(text: '');
@@ -39,8 +45,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
       if (await authProvider.register(
           email: emailController.text,
+          nama: fullNameController.text,
+          address: addressController.text,
+          dateBirth: selectedDate.toString(),
+          phoneNumber: phoneNumberController.text,
           password: passwordController.text,
-          confirmpassword: confirmPasswordController.text)) {
+          confirmPassword: confirmPasswordController.text)) {
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -81,6 +91,108 @@ class _RegisterPageState extends State<RegisterPage> {
             controller: emailController,
           ),
           SizedBox(height: 24),
+        ],
+      );
+    }
+
+    Widget formFullName() {
+      return Column(
+        children: [
+          Container(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(bottom: 8),
+            child: Text(
+              'Full Name',
+              style: secondaryTextStyle.copyWith(fontWeight: bold),
+            ),
+          ),
+          UsernameTextField(
+            hintText: 'Masukan Nama',
+            controller: fullNameController,
+          ),
+          SizedBox(height: 24),
+        ],
+      );
+    }
+
+    Widget formAddress() {
+      return Column(
+        children: [
+          Container(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(bottom: 8),
+            child: Text(
+              'Address',
+              style: secondaryTextStyle.copyWith(fontWeight: bold),
+            ),
+          ),
+          UsernameTextField(
+            hintText: 'Masukan Address kamu',
+            controller: addressController,
+          ),
+          SizedBox(height: 24),
+        ],
+      );
+    }
+
+    Widget formPhone() {
+      return Column(
+        children: [
+          Container(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(bottom: 8),
+            child: Text(
+              'Phone',
+              style: secondaryTextStyle.copyWith(fontWeight: bold),
+            ),
+          ),
+          UsernameTextField(
+            hintText: 'Masukan Phone kamu',
+            controller: phoneNumberController,
+          ),
+          SizedBox(height: 24),
+        ],
+      );
+    }
+
+    Widget formTglLahir() {
+      return Column(
+        children: [
+          Container(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(bottom: 8),
+            child: Text(
+              'Tanggal Lahir',
+              style: secondaryTextStyle.copyWith(fontWeight: bold),
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: Color(0xFFFAFAFA), // Warna latar belakang FAFAFA
+              border: Border.all(
+                  color: Color(0xFFD2D2D2),
+                  width: 1), // Border dengan stroke D2D2D2
+              borderRadius: BorderRadius.circular(8), // Border radius 8
+            ),
+            child: DateTimeField(
+                decoration: InputDecoration(
+                  hintText: 'masukan tanggal lahir',
+                  hintStyle: secondaryTextStyle.copyWith(
+                      fontWeight: FontWeight.bold, fontSize: 14),
+                  contentPadding: EdgeInsets.all(12),
+                  border: InputBorder.none,
+                  suffixIcon: Icon(Icons.calendar_today),
+                ),
+                mode: DateTimeFieldPickerMode.date,
+                dateFormat: DateFormat('yyyy-MM-dd'),
+                selectedDate: selectedDate,
+                onDateSelected: (DateTime value) {
+                  setState(() {
+                    selectedDate = value;
+                  });
+                }),
+          ),
+          SizedBox(height: 16),
         ],
       );
     }
@@ -276,9 +388,13 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         body: Container(
           padding: EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
+          child: ListView(
             children: [
+              formFullName(),
               formEmail(),
+              formAddress(),
+              formPhone(),
+              formTglLahir(),
               formPassword(),
               SizedBox(height: 24),
               termCond(),

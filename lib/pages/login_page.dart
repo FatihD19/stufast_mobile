@@ -1,5 +1,8 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stufast_mobile/providers/auth_provider.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/loading_button.dart';
@@ -26,6 +29,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     AuthProvider? authProvider = Provider.of<AuthProvider>(context);
+    Future<SharedPreferences> coreUser = SharedPreferences.getInstance();
 
     handleSignIn() async {
       setState(() {
@@ -36,6 +40,9 @@ class _LoginPageState extends State<LoginPage> {
         email: emailController.text,
         password: passwordController.text,
       )) {
+        final SharedPreferences prefs = await coreUser;
+        prefs.setString('token', '${authProvider.user?.token}');
+        await authProvider.getProfileUser('${authProvider.user?.token}');
         Navigator.pushNamed(context, '/home');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

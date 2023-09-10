@@ -28,16 +28,19 @@ class CustomChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Chip(
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: _getChipColor(label)),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      label: Text(
-        label,
-        style: primaryTextStyle.copyWith(
-            fontWeight: bold, color: _getChipColor(label)),
+    return Transform(
+      transform: new Matrix4.identity()..scale(0.9),
+      child: Chip(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: _getChipColor(label)),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        label: Text(
+          label,
+          style: primaryTextStyle.copyWith(
+              fontWeight: bold, color: _getChipColor(label), fontSize: 12),
+        ),
       ),
     );
   }

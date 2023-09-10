@@ -11,14 +11,23 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> register({
-    String? email,
-    String? password,
-    String? confirmpassword,
-  }) async {
+  Future<bool> register(
+      {String? email,
+      String? nama,
+      String? dateBirth,
+      String? address,
+      String? phoneNumber,
+      String? password,
+      String? confirmPassword}) async {
     try {
       UserModel user = await AuthService().register(
-          email: email, password: password, confirmPassword: confirmpassword);
+          email: email,
+          nama: nama,
+          dateBirth: dateBirth,
+          address: address,
+          phoneNumber: phoneNumber,
+          password: password,
+          confirmPassword: confirmPassword);
 
       _user = user;
       return true;
@@ -38,6 +47,33 @@ class AuthProvider with ChangeNotifier {
         password: password,
       );
       _user = user;
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<void> getProfileUser(String token) async {
+    try {
+      UserModel user = await AuthService().getProfile(token);
+      _user = user;
+      notifyListeners();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<bool> editProfile({
+    String? id,
+    String? nama,
+    String? dateBirth,
+    String? address,
+    String? phoneNumber,
+  }) async {
+    try {
+      await AuthService().editProfil(id, nama, dateBirth, address, phoneNumber);
+
       return true;
     } catch (e) {
       print(e);
