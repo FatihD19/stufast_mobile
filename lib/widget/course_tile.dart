@@ -13,13 +13,15 @@ class CourseTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String? progressText =
-        '${userCourse.mengerjakan_video}'; // Assuming the format is "0 / 3"
+        '${userCourse.mengerjakan_video ?? '2 / 3'}'; // Assuming the format is "0 / 3"
     List<String> parts = progressText.split(' / ');
     int currentProgress = int.tryParse(parts[0]) ?? 0;
     int totalProgress = int.tryParse(parts[1]) ?? 1; // Avoid division by zero
 
     double progressPercentage = (currentProgress / totalProgress)
         .clamp(0.0, 1.0); // Ensure progress is between 0 and 1
+
+    int persen = (progressPercentage * 100).toInt();
 
     Color progressBarColor =
         progressPercentage == 1.0 ? primaryColor : Color(0XffFEC202);
@@ -32,6 +34,8 @@ class CourseTile extends StatelessWidget {
               builder: (context) => DetailCoursePage(
                     idUserCourse: '${userCourse.courseId}',
                     progressCourse: progressPercentage,
+                    persen: persen,
+                    totalDuration: userCourse.total_video_duration,
                   )),
         );
       },
@@ -64,7 +68,7 @@ class CourseTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${userCourse.mengerjakan_video}',
+                  '${userCourse.video?.length} video\n${userCourse.total_video_duration}',
                   style: secondaryTextStyle,
                 ),
                 SizedBox(height: 8),

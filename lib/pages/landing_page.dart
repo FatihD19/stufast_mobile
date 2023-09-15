@@ -55,8 +55,7 @@ class LandingPage extends StatelessWidget {
 
     Widget content() {
       return Container(
-        width: 428,
-        height: 297,
+        height: 296,
         decoration: BoxDecoration(color: Colors.white),
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 15),
@@ -100,8 +99,9 @@ class LandingPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: primaryColor,
+      bottomNavigationBar: content(),
       body: Column(
-        children: [landingUi(), content()],
+        children: [landingUi()],
       ),
     );
   }

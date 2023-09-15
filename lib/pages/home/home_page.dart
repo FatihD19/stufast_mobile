@@ -53,7 +53,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               IconButton(
                 onPressed: () {
-                  // Tambahkan fungsi ketika icon chart ditekan
+                  Navigator.pushNamed(context, '/chart-page');
                 },
                 icon: Image.asset('assets/icon_chart.png'),
               ),
@@ -213,7 +213,9 @@ class _HomePageState extends State<HomePage> {
                     child: Row(
                       children: courseProvider.courses
                           .take(10) // Hanya ambil 10 data
-                          .map((course) => CardCourse(course))
+                          .map((course) => CardCourse(
+                                course: course,
+                              ))
                           .toList(),
                     ),
                   );

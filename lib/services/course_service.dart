@@ -48,7 +48,8 @@ class CourseService {
     }
   }
 
-  Future<List<CourseModel>> searchCourseByTag(String query) async {
+  Future<List<CourseModel>> searchCourseByTag(
+      {String? query, String? category}) async {
     var url = Uri.parse('$baseUrl/course/all');
     var response = await http.get(url);
 
@@ -61,9 +62,11 @@ class CourseService {
       for (var item in data) {
         CourseModel course = CourseModel.fromJson(item);
 
-        // Check if course has the desired tag_id
-        if (course.tag != null &&
-            course.tag!.any((tag) => tag.tagId == query)) {
+        // Check if course has the desired tag_id and category if provided
+        if ((query == null ||
+                course.tag != null &&
+                    course.tag!.any((tag) => tag.tagId == query)) &&
+            (category == null || course.category == category)) {
           courses.add(course);
         }
       }
@@ -74,8 +77,8 @@ class CourseService {
     }
   }
 
-  Future<List<TagModel>> getTags() async {
-    var url = Uri.parse('$baseUrl/tag');
+  Future<List<TagModel>> getTags(String id) async {
+    var url = Uri.parse('$baseUrl/tag/filter/$id');
     var response = await http.get(url);
     print('TAG COURSE ' + response.body);
     if (response.statusCode == 200) {

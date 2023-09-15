@@ -1,24 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:stufast_mobile/models/bundling_model.dart';
 import 'package:stufast_mobile/models/course_model.dart';
+import 'package:stufast_mobile/pages/DetailPage/detail_bundle_user.dart';
 import 'package:stufast_mobile/pages/DetailPage/detail_course_page.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/category_chip.dart';
 
-class CardCourse extends StatelessWidget {
-  final CourseModel course;
-  CardCourse(this.course);
+class CardCourse extends StatefulWidget {
+  CourseModel? course;
+  bool isBundle;
+  BundlingModel? bundle;
+  CardCourse({this.course, this.isBundle = false, this.bundle});
 
   @override
+  State<CardCourse> createState() => _CardCourseState();
+}
+
+class _CardCourseState extends State<CardCourse> {
+  @override
   Widget build(BuildContext context) {
+    String? progressText = widget.isBundle
+        ? '${widget.bundle?.progress}'
+        : '${widget.course?.mengerjakan_video ?? '1 / 2'}'; // Assuming the format is "0 / 3"
+    List<String> parts = progressText.split(' / ');
+    int currentProgress = int.tryParse(parts[0]) ?? 0;
+    int totalProgress = int.tryParse(parts[1]) ?? 1;
+    int courseLeft = totalProgress - currentProgress; // Avoid division by zero
+
+    double progressPercentage = (currentProgress / totalProgress)
+        .clamp(0.0, 1.0); // Ensure progress is between 0 and 1
+    int persen = (progressPercentage * 100).toInt();
+    Color progressBarColor =
+        progressPercentage == 1.0 ? primaryColor : Color(0XffFEC202);
     return InkWell(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => DetailCoursePage(
-                    idUserCourse: '${course.courseId}',
-                  )),
+              builder: (context) => widget.isBundle
+                  ? DetailBundle(
+                      idBundle: '${widget.bundle?.bundlingId}',
+                      progressCourse: progressPercentage,
+                      persen: persen,
+                    )
+                  : DetailCoursePage(
+                      idUserCourse: '${widget.course?.courseId}',
+                      totalDuration: widget.course?.total_video_duration,
+                      progressCourse: progressPercentage,
+                      persen: persen,
+                    )),
         );
       },
       child: Card(
@@ -34,79 +66,131 @@ class CardCourse extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             color: Color(0xffF3F3F3),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
             children: [
-              FadeInImage(
-                placeholder:
-                    AssetImage('assets/image_course.png'), // Gambar placeholder
-                image: NetworkImage('${course.thumbnail}'),
-                width: 185,
-                height: 96,
-                fit: BoxFit.cover,
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 8),
-                    Text('${course.title}',
-                        overflow: TextOverflow.ellipsis,
-                        style: primaryTextStyle.copyWith(fontWeight: bold)),
-                    SizedBox(height: 4),
-                    // Chip(
-                    //   backgroundColor: Colors.white,
-                    //   shape: RoundedRectangleBorder(
-                    //     side: BorderSide(color: Colors.blue),
-                    //     borderRadius: BorderRadius.circular(10),
-                    //   ),
-                    //   label: Text('Basic'),
-                    // ),
-                    CustomChip(
-                      label: '${course.category}',
-                    ),
-                    SizedBox(height: 2),
-                    Column(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  FadeInImage(
+                    placeholder: AssetImage(
+                        'assets/image_course.png'), // Gambar placeholder
+                    image: NetworkImage(widget.isBundle
+                        ? '${widget.bundle?.thumbnail}'
+                        : '${widget.course?.thumbnail}'),
+                    width: 185,
+                    height: 96,
+                    fit: BoxFit.cover,
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: course.tag!
-                          .map((tag) => Text(
-                                '- ${tag.name}',
-                                style:
-                                    secondaryTextStyle.copyWith(fontSize: 12),
-                              ))
-                          .toList(),
-                      // children: [
-                      //   Text('${course.tag}', style: secondaryTextStyle),
-                      // ],
-                    ),
-                    Row(
                       children: [
-                        RichText(
-                          text: TextSpan(
-                            text: NumberFormat.simpleCurrency(locale: 'id')
-                                .format(int.parse('${course.oldPrice}'))
-                                .replaceAll(',00', ''),
-                            style: secondaryTextStyle.copyWith(
-                              fontSize: 11,
-                              decoration: TextDecoration.lineThrough,
+                        SizedBox(height: 8),
+                        Text(
+                            widget.isBundle
+                                ? '${widget.bundle?.title}'
+                                : '${widget.course?.title}',
+                            overflow: TextOverflow.ellipsis,
+                            style: primaryTextStyle.copyWith(fontWeight: bold)),
+                        SizedBox(height: 4),
+                        CustomChip(
+                          label: widget.isBundle
+                              ? '${widget.bundle?.category_name}'
+                              : '${widget.course?.category}',
+                        ),
+                        SizedBox(height: 2),
+                        widget.isBundle
+                            ? SizedBox()
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: widget.course!.tag!
+                                    .map((tag) => Text(
+                                          '- ${tag.name}',
+                                          style: secondaryTextStyle.copyWith(
+                                              fontSize: 12),
+                                        ))
+                                    .toList(),
+                              ),
+                        Row(
+                          children: [
+                            RichText(
+                              text: TextSpan(
+                                text: NumberFormat.simpleCurrency(locale: 'id')
+                                    .format(int.parse(widget.isBundle
+                                        ? '${widget.bundle?.oldPrice}'
+                                        : '${widget.course?.oldPrice}'))
+                                    .replaceAll(',00', ''),
+                                style: secondaryTextStyle.copyWith(
+                                  fontSize: 11,
+                                  decoration: TextDecoration.lineThrough,
+                                ),
+                              ),
                             ),
+                            SizedBox(width: 3),
+                            Text(
+                              NumberFormat.simpleCurrency(locale: 'id')
+                                  .format(int.parse(widget.isBundle
+                                      ? '${widget.bundle?.newPrice}'
+                                      : '${widget.course?.newPrice}'))
+                                  .replaceAll(',00', ''),
+                              style: thirdTextStyle.copyWith(
+                                  fontSize: 12.45, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              widget.isBundle
+                  ? Positioned(
+                      top: 8, // Sesuaikan posisi vertikal sesuai kebutuhan
+                      left: 8, // Sesuaikan posisi horizontal sesuai kebutuhan
+                      child: Chip(
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(color: primaryColor),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        label: Text(
+                          'Bundling',
+                          style: TextStyle(
+                            color: primaryColor,
+                            fontSize: 12,
                           ),
                         ),
-                        SizedBox(width: 3),
-                        Text(
-                          NumberFormat.simpleCurrency(locale: 'id')
-                              .format(int.parse('${course.newPrice}'))
-                              .replaceAll(',00', ''),
-                          style: thirdTextStyle.copyWith(
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ],
+                        backgroundColor: Colors
+                            .white, // Sesuaikan warna background sesuai kebutuhan
+                      ),
                     )
-                  ],
-                ),
-              ),
+                  : SizedBox(),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CardCourseShimmer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[300]!,
+        highlightColor: Colors.grey[100]!,
+        child: Container(
+          width: 185,
+          height: 255,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Color(0xffF3F3F3),
           ),
         ),
       ),

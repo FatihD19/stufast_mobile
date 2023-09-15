@@ -23,14 +23,14 @@ class _BundlingTileState extends State<BundlingTile> {
   Widget build(BuildContext context) {
     String? progressText =
         '${widget.userBundle.progress}'; // Assuming the format is "0 / 3"
-    List<String> parts = progressText!.split(' / ');
+    List<String> parts = progressText.split(' / ');
     int currentProgress = int.tryParse(parts[0]) ?? 0;
     int totalProgress = int.tryParse(parts[1]) ?? 1;
     int courseLeft = totalProgress - currentProgress; // Avoid division by zero
 
     double progressPercentage = (currentProgress / totalProgress)
         .clamp(0.0, 1.0); // Ensure progress is between 0 and 1
-
+    int persen = (progressPercentage * 100).toInt();
     Color progressBarColor =
         progressPercentage == 1.0 ? primaryColor : Color(0XffFEC202);
 
@@ -49,7 +49,12 @@ class _BundlingTileState extends State<BundlingTile> {
                   isExpanded = !isExpanded; // Toggle the expanded state
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => DetailBundle()),
+                    MaterialPageRoute(
+                        builder: (context) => DetailBundle(
+                              idBundle: '${widget.userBundle.bundlingId}',
+                              progressCourse: progressPercentage,
+                              persen: persen,
+                            )),
                   );
                 });
               },

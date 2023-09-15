@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:stufast_mobile/models/course_model.dart';
+import 'package:stufast_mobile/pages/DetailPage/detail_video.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/description_widget.dart';
 import 'package:stufast_mobile/widget/primary_button.dart';
@@ -12,7 +13,13 @@ import '../../providers/user_course_provider.dart';
 class DetailCoursePage extends StatefulWidget {
   String idUserCourse;
   dynamic progressCourse;
-  DetailCoursePage({required this.idUserCourse, this.progressCourse});
+  String? totalDuration;
+  int? persen;
+  DetailCoursePage(
+      {required this.idUserCourse,
+      this.progressCourse,
+      this.persen,
+      this.totalDuration});
 
   @override
   State<DetailCoursePage> createState() => _DetailCoursePageState();
@@ -64,7 +71,7 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
                         backgroundColor: Colors.grey[300],
                       )),
                   Center(
-                    child: Text('${(widget.progressCourse * 100).toInt()}',
+                    child: Text('${widget.persen}',
                         style: primaryTextStyle.copyWith(fontWeight: bold)),
                   ),
                 ],
@@ -82,10 +89,19 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
     }
 
     Widget videoTile() {
-      return Column(
-          children: detail!.video!
-              .map((video) => VideoTile(video.title, video.duration))
-              .toList());
+      final videoList = detail?.video;
+      return ListView.builder(
+        shrinkWrap: true,
+        physics: ScrollPhysics(),
+        itemCount: videoList?.length,
+        itemBuilder: (context, index) {
+          final video = videoList?[index];
+          final opacity = detail?.owned == true || index == 0 ? 1.0 : 0.5;
+          // return VideoTile(video?.title, video?.duration, detail?.owned,
+          //     opacity, detail!, video?.video, video!);
+          return VideoTile(opacity, detail!, video!);
+        },
+      );
     }
 
     Widget content() {
@@ -104,32 +120,34 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
                         fontWeight: bold, fontSize: 17),
                   ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    RichText(
-                      text: TextSpan(
-                        text: NumberFormat.simpleCurrency(locale: 'id')
-                            .format(int.parse('${detail?.oldPrice}'))
-                            .replaceAll(',00', ''),
-                        style: secondaryTextStyle.copyWith(
-                          fontSize: 15,
-                          decoration: TextDecoration.lineThrough,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 3),
-                    Text(
-                      NumberFormat.simpleCurrency(locale: 'id')
-                          .format(int.parse('${detail?.newPrice}'))
-                          .replaceAll(',00', ''),
-                      style: thirdTextStyle.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                      ),
-                    ),
-                  ],
-                )
+                detail?.owned == true
+                    ? SizedBox()
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              text: NumberFormat.simpleCurrency(locale: 'id')
+                                  .format(int.parse('${detail?.oldPrice}'))
+                                  .replaceAll(',00', ''),
+                              style: secondaryTextStyle.copyWith(
+                                fontSize: 15,
+                                decoration: TextDecoration.lineThrough,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 3),
+                          Text(
+                            NumberFormat.simpleCurrency(locale: 'id')
+                                .format(int.parse('${detail?.newPrice}'))
+                                .replaceAll(',00', ''),
+                            style: thirdTextStyle.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
+                      )
               ],
             ),
             Row(
@@ -156,7 +174,7 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
                     Image.asset('assets/icon_list.png'),
                     SizedBox(width: 8),
                     Text(
-                      '2 Video - 17 menit',
+                      '${widget.totalDuration}',
                       style: secondaryTextStyle,
                     ),
                   ],
@@ -236,7 +254,7 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
         ),
         backgroundColor: Colors.white,
         centerTitle: false,
-        actions: [progressBar(0.62)],
+        actions: [loading == false ? progressBar(0.62) : SizedBox()],
       ),
       body: SafeArea(
           child: Center(

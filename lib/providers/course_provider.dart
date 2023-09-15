@@ -14,6 +14,10 @@ class CourseProvider with ChangeNotifier {
 
   List<TagModel> get tags => _tags;
 
+  List<TagModel> _tagsIT = [];
+
+  List<TagModel> get tagsIT => _tagsIT;
+
   set courses(List<CourseModel> courses) {
     _courses = courses;
     notifyListeners();
@@ -39,10 +43,10 @@ class CourseProvider with ChangeNotifier {
     }
   }
 
-  Future<void> searchbyCourses(String query) async {
+  Future<void> searchbyCourses([String? query, String? category]) async {
     try {
-      List<CourseModel> courses =
-          await CourseService().searchCourseByTag(query);
+      List<CourseModel> courses = await CourseService()
+          .searchCourseByTag(query: query, category: category);
       // _coursesFilter = courses;
       _courses = courses;
     } catch (e) {
@@ -52,8 +56,10 @@ class CourseProvider with ChangeNotifier {
 
   Future<void> loadTags() async {
     try {
-      List<TagModel> tags = await CourseService().getTags();
+      List<TagModel> tags = await CourseService().getTags('1');
+      List<TagModel> tagsIT = await CourseService().getTags('2');
       _tags = tags;
+      _tagsIT = tagsIT;
       notifyListeners();
     } catch (e) {
       print(e);

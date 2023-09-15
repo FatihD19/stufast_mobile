@@ -2,11 +2,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:stufast_mobile/models/course_model.dart';
 import 'package:stufast_mobile/models/tag_model.dart';
+import 'package:stufast_mobile/providers/bundle_provider.dart';
 import 'package:stufast_mobile/providers/course_provider.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/course_card.dart';
+import 'package:stufast_mobile/widget/primary_button.dart';
 
 class CoursePage extends StatefulWidget {
   const CoursePage({super.key});
@@ -19,11 +22,16 @@ class _CoursePageState extends State<CoursePage> {
   TextEditingController _searchController = TextEditingController();
   bool isLoading = false;
   String selectedTag = 'all';
+  String selectedJenis = 'Single Course';
   bool filterActive = false;
+  bool showBundle = false;
+
+  bool filterByLevel = false;
 
   @override
   Widget build(BuildContext context) {
     CourseProvider courseProvider = Provider.of<CourseProvider>(context);
+    BundleProvider bundleProvider = Provider.of<BundleProvider>(context);
 
     Widget searchBar() {
       return Row(
@@ -127,6 +135,7 @@ class _CoursePageState extends State<CoursePage> {
                         isLoading = true;
                         selectedTag = tag.tagId!;
                         filterActive = false;
+                        filterByLevel = false;
                         _searchController.text = '';
                       });
                       // await courseProvider.searchbyCourses(selectedTag);
@@ -163,23 +172,252 @@ class _CoursePageState extends State<CoursePage> {
       );
     }
 
+    void _showDropdown(BuildContext context) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: DropdownButton<String>(
+              value: selectedJenis,
+              items: <String>['Single Course', 'Bundling'].map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedJenis = newValue!;
+                  selectedJenis == 'Bundling'
+                      ? showBundle = true
+                      : showBundle = false;
+                });
+                Navigator.of(context).pop(); // Tutup dialog saat item dipilih
+              },
+            ),
+          );
+        },
+      );
+    }
+
+    void _showBottomSheet(BuildContext context, bool isLevel) {
+      showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            height: 237,
+            padding: EdgeInsets.fromLTRB(24, 24, 24, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(isLevel ? 'Level' : 'Jenis Course',
+                    style: primaryTextStyle.copyWith(
+                        fontWeight: bold, fontSize: 18)),
+                SizedBox(height: 24),
+                isLevel
+                    ? Container(
+                        child: Column(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  selectedTag = 'Basic';
+                                  filterByLevel = true;
+                                  Navigator.pop(context);
+                                });
+
+                                // Tutup bottom sheet setelah dipilih
+                              },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Basic',
+                                      style: selectedTag == 'Basic'
+                                          ? thirdTextStyle.copyWith(
+                                              fontSize: 18)
+                                          : secondaryTextStyle.copyWith(
+                                              fontSize: 18)),
+                                  Divider(
+                                    height: 20,
+                                    thickness: 1,
+                                    indent: 3,
+                                    endIndent: 3,
+                                    color: selectedTag == 'Basic'
+                                        ? primaryColor
+                                        : secondaryColor,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  selectedTag = 'Intermediate';
+                                  filterByLevel = true;
+                                  Navigator.pop(context);
+                                });
+
+                                // Tutup bottom sheet setelah dipilih
+                              },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Intermediate',
+                                      style: selectedTag == 'Intermediate'
+                                          ? thirdTextStyle.copyWith(
+                                              fontSize: 18)
+                                          : secondaryTextStyle.copyWith(
+                                              fontSize: 18)),
+                                  Divider(
+                                    height: 20,
+                                    thickness: 1,
+                                    indent: 3,
+                                    endIndent: 3,
+                                    color: selectedTag == 'Intermediate'
+                                        ? primaryColor
+                                        : secondaryColor,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  selectedTag = 'Advanced';
+                                  filterByLevel = true;
+                                  Navigator.pop(context);
+                                });
+
+                                // Tutup bottom sheet setelah dipilih
+                              },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Advanced',
+                                      style: selectedTag == 'Advanced'
+                                          ? thirdTextStyle.copyWith(
+                                              fontSize: 18)
+                                          : secondaryTextStyle.copyWith(
+                                              fontSize: 18)),
+                                  Divider(
+                                    height: 20,
+                                    thickness: 1,
+                                    indent: 3,
+                                    endIndent: 3,
+                                    color: selectedTag == 'Advanced'
+                                        ? primaryColor
+                                        : secondaryColor,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Container(
+                        child: Column(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  selectedJenis = 'Single Course';
+                                  showBundle = false;
+                                  Navigator.pop(context);
+                                });
+
+                                // Tutup bottom sheet setelah dipilih
+                              },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Single Course',
+                                      style: selectedJenis == 'Single Course'
+                                          ? thirdTextStyle.copyWith(
+                                              fontSize: 18)
+                                          : secondaryTextStyle.copyWith(
+                                              fontSize: 18)),
+                                  Divider(
+                                    height: 20,
+                                    thickness: 1,
+                                    indent: 3,
+                                    endIndent: 3,
+                                    color: selectedJenis == 'Single Course'
+                                        ? primaryColor
+                                        : secondaryColor,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  selectedJenis = 'Bundling';
+                                  showBundle = true;
+                                  Navigator.pop(context);
+                                });
+
+                                // Tutup bottom sheet setelah dipilih
+                              },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Bundling',
+                                      style: selectedJenis == 'Bundling'
+                                          ? thirdTextStyle.copyWith(
+                                              fontSize: 18)
+                                          : secondaryTextStyle.copyWith(
+                                              fontSize: 18)),
+                                  Divider(
+                                    height: 20,
+                                    thickness: 1,
+                                    indent: 3,
+                                    endIndent: 3,
+                                    color: selectedJenis == 'Bundling'
+                                        ? primaryColor
+                                        : secondaryColor,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+              ],
+            ),
+          );
+        },
+      );
+    }
+
+// Panggil fungsi _showBottomSheet saat Anda ingin menampilkan bottom sheet, misalnya pada sebuah tombol.
+
     Widget dropdownFilter() {
       return Row(
         children: [
-          Row(
-            children: [
-              Image.asset('assets/icon_filter.png'),
-              Text('Single Course',
-                  style: primaryTextStyle.copyWith(fontWeight: bold))
-            ],
+          InkWell(
+            onTap: () {
+              _showBottomSheet(context, false);
+            },
+            child: Row(
+              children: [
+                Image.asset('assets/icon_filter.png'),
+                Text('Single Course',
+                    style: primaryTextStyle.copyWith(fontWeight: bold))
+              ],
+            ),
           ),
           SizedBox(width: 16),
-          Row(
-            children: [
-              Image.asset('assets/icon_filter.png'),
-              Text('Semua Level',
-                  style: primaryTextStyle.copyWith(fontWeight: bold))
-            ],
+          InkWell(
+            onTap: () {
+              _showBottomSheet(context, true);
+            },
+            child: Row(
+              children: [
+                Image.asset('assets/icon_filter.png'),
+                Text('Semua Level',
+                    style: primaryTextStyle.copyWith(fontWeight: bold))
+              ],
+            ),
           )
         ],
       );
@@ -221,30 +459,62 @@ class _CoursePageState extends State<CoursePage> {
     // }
     Widget gridCourse() {
       return FutureBuilder(
-          future: selectedTag == 'all'
-              ? courseProvider.getCourses('all')
-              : filterActive
-                  ? courseProvider.searchCourses(_searchController.text)
-                  : courseProvider.searchbyCourses(selectedTag),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return GridView(
-                physics: ClampingScrollPhysics(),
-                shrinkWrap: true,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // Satu kolom
-                  mainAxisSpacing: 16, // Jarak vertikal antara item
-                  childAspectRatio: 0.67,
-                ),
-                children: courseProvider.courses
-                    // Hanya ambil 10 data
-                    .map((course) => CardCourse(course))
-                    .toList(),
-              );
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          });
+        future: showBundle
+            ? bundleProvider.getBundles()
+            : (selectedTag == 'all'
+                ? courseProvider.getCourses('all')
+                : filterActive
+                    ? courseProvider.searchCourses(_searchController.text)
+                    : filterByLevel
+                        ? courseProvider.searchbyCourses(null, selectedTag)
+                        : courseProvider.searchbyCourses(selectedTag, null)),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return GridView(
+              physics: ClampingScrollPhysics(),
+              shrinkWrap: true,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 13,
+                childAspectRatio: 0.64,
+              ),
+              children: showBundle
+                  ? (bundleProvider.bundle
+                      .map((bundle) => CardCourse(
+                            bundle: bundle,
+                            isBundle: true,
+                          ))
+                      .toList())
+                  : (courseProvider.courses
+                      .map((course) => CardCourse(
+                            course: course,
+                          ))
+                      .toList()),
+            );
+          } else {
+            return GridView.builder(
+              physics: ClampingScrollPhysics(),
+              shrinkWrap: true,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 13,
+                childAspectRatio: 0.64,
+              ),
+              itemCount: 6, // Number of shimmer items you want to show
+              itemBuilder: (context, index) {
+                return Shimmer.fromColors(
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
+                  child:
+                      CardCourseShimmer(), // Create a CardCourseShimmer widget for shimmer effect
+                );
+              },
+            );
+          }
+        },
+      );
     }
 
     // Widget listCourse() {
@@ -318,7 +588,7 @@ class _CoursePageState extends State<CoursePage> {
                     child: ListView(
                       shrinkWrap: true,
                       children: [
-                        tagItCourse(courseProvider.tags),
+                        tagItCourse(courseProvider.tagsIT),
                         SizedBox(height: 18),
                         dropdownFilter(),
                         SizedBox(height: 16),
@@ -327,8 +597,17 @@ class _CoursePageState extends State<CoursePage> {
                     ),
                   ),
                   // Isi konten tab Engineering
-                  Center(
-                    child: Text('Tab Engineering Content'),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: ListView(
+                      children: [
+                        tagItCourse(courseProvider.tags),
+                        SizedBox(height: 18),
+                        dropdownFilter(),
+                        SizedBox(height: 16),
+                        gridCourse()
+                      ],
+                    ),
                   ),
                 ],
               ),

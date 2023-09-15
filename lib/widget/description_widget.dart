@@ -27,7 +27,7 @@ class _TruncatedTextState extends State<TruncatedText> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         textWidget,
-        if (widget.text.split('\r\n').length > widget.maxLines)
+        if (widget.text.length > widget.maxLines)
           Align(
             alignment: Alignment.centerRight,
             child: TextButton(
@@ -76,7 +76,7 @@ class _ExpandableTextState extends State<ExpandableText> {
           Text(
             line,
             overflow: TextOverflow.ellipsis,
-            maxLines: isExpanded ? null : 1,
+            maxLines: isExpanded ? null : 6,
           ),
         if (lines.length > widget.maxLines)
           Align(
@@ -94,40 +94,6 @@ class _ExpandableTextState extends State<ExpandableText> {
             ),
           ),
       ],
-    );
-  }
-}
-
-class DescriptionList extends StatelessWidget {
-  final String description;
-
-  DescriptionList({required this.description});
-
-  @override
-  Widget build(BuildContext context) {
-    // Split the description by '\r\n' to get individual lines.
-    final lines = description.split('\r\n');
-
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: lines.length,
-      itemBuilder: (context, index) {
-        // For lines starting with a number, add a bullet point.
-        if (lines[index].trimLeft().startsWith(RegExp(r'^\d+\.'))) {
-          return ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(
-              lines[index].trimLeft(),
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          );
-        } else {
-          return ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(lines[index].trimLeft()),
-          );
-        }
-      },
     );
   }
 }

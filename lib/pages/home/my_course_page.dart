@@ -17,13 +17,18 @@ class MyCoursePage extends StatefulWidget {
 }
 
 class _MyCoursePageState extends State<MyCoursePage> {
+  void initState() {
+    // TODO: implement initState
+    Provider.of<UserCourseProvider>(context, listen: false).getUserCourses();
+    super.initState();
+  }
+
   String selectedTag = 'Semua';
   @override
   Widget build(BuildContext context) {
     UserCourseProvider userCourseProvider =
         Provider.of<UserCourseProvider>(context);
-    UserBundleProvider userBundleProvider =
-        Provider.of<UserBundleProvider>(context);
+    BundleProvider userBundleProvider = Provider.of<BundleProvider>(context);
 
     Widget tagView(String tag) {
       return InkWell(
@@ -65,22 +70,34 @@ class _MyCoursePageState extends State<MyCoursePage> {
       );
     }
 
+    // Widget userCourseTile() {
+    //   return FutureBuilder(
+    //       future: userCourseProvider.getUserCourses(),
+    //       builder: (context, snapshot) {
+    //         if (snapshot.connectionState == ConnectionState.done) {
+    //           return ListView(
+    //             physics: ClampingScrollPhysics(),
+    //             shrinkWrap: true,
+    //             children: userCourseProvider.userCourses
+    //                 .map((userCourse) => CourseTile(userCourse))
+    //                 .toList(),
+    //           );
+    //         } else {
+    //           return Center(child: CircularProgressIndicator());
+    //         }
+    //       });
+    // }
+
     Widget userCourseTile() {
-      return FutureBuilder(
-          future: userCourseProvider.getUserCourses(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return ListView(
-                physics: ClampingScrollPhysics(),
-                shrinkWrap: true,
-                children: userCourseProvider.userCourses
-                    .map((userCourse) => CourseTile(userCourse))
-                    .toList(),
-              );
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          });
+      return userCourseProvider.loading
+          ? CircularProgressIndicator()
+          : ListView(
+              physics: ClampingScrollPhysics(),
+              shrinkWrap: true,
+              children: userCourseProvider.userCourses
+                  .map((userCourse) => CourseTile(userCourse))
+                  .toList(),
+            );
     }
 
     Widget userBundleTile() {
@@ -94,9 +111,7 @@ class _MyCoursePageState extends State<MyCoursePage> {
                 children: userBundleProvider.userBundle
                     .map((userBundle) => InkWell(
                         onTap: () {
-                          setState(() {
-                           
-                          });
+                          setState(() {});
                         },
                         child: BundlingTile(userBundle)))
                     .toList(),

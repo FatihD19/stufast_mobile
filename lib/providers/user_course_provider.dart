@@ -7,6 +7,8 @@ class UserCourseProvider with ChangeNotifier {
   List<CourseModel> _userCourses = [];
   List<CourseModel> get userCourses => _userCourses;
 
+  bool loading = true;
+
   set userCourses(List<CourseModel> userCourses) {
     _userCourses = userCourses;
     notifyListeners();
@@ -24,6 +26,8 @@ class UserCourseProvider with ChangeNotifier {
     try {
       List<CourseModel> userCourses = await UserCourseService().getUserCourse();
       _userCourses = userCourses;
+      loading = false;
+      notifyListeners();
     } catch (e) {
       print(e);
     }
