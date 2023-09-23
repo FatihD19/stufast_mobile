@@ -1,8 +1,8 @@
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stufast_mobile/models/bundling_model.dart';
 import 'package:stufast_mobile/models/course_model.dart';
-import 'dart:convert';
 
 import 'package:stufast_mobile/models/user_model.dart';
 

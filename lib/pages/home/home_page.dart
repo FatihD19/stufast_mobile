@@ -3,12 +3,18 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:stufast_mobile/models/chart_model.dart';
 import 'package:stufast_mobile/models/user_model.dart';
 import 'package:stufast_mobile/providers/auth_provider.dart';
+import 'package:stufast_mobile/providers/chart_provider.dart';
 import 'package:stufast_mobile/providers/course_provider.dart';
+import 'package:stufast_mobile/providers/user_course_provider.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/course_card.dart';
 import 'package:stufast_mobile/widget/course_tile.dart';
+import 'package:stufast_mobile/widget/webinar_card.dart';
+
+import '../../providers/webinar_provider.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -16,6 +22,33 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool? loading;
+  int? jumlahCart;
+  @override
+  void initState() {
+    // TODO: implement initState
+    getInit();
+    super.initState();
+  }
+
+  getInit() async {
+    setState(() {
+      loading = true;
+    });
+    await Provider.of<WebinarProvider>(context, listen: false)
+        .getWebinar(false);
+
+    await Provider.of<UserCourseProvider>(context, listen: false)
+        .getUserCourses();
+    setState(() async {
+      await Provider.of<ChartProvider>(context, listen: false).getChart();
+      jumlahCart = context.watch<ChartProvider>().chart?.item?.length;
+    });
+    setState(() {
+      loading = false;
+    });
+  }
+
   List images = [
     'assets/banner-slide.png',
     'assets/banner-slide.png',
@@ -29,6 +62,41 @@ class _HomePageState extends State<HomePage> {
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
     UserModel? user = authProvider.user;
     CourseProvider courseProvider = Provider.of<CourseProvider>(context);
+    ChartProvider chartProvider = Provider.of<ChartProvider>(context);
+    ChartModel? cart = chartProvider.chart;
+
+    Widget cartItem() {
+      return Stack(
+        alignment: Alignment.center,
+        children: [
+          IconButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/chart-page');
+            },
+            icon: Image.asset('assets/icon_chart.png'),
+          ),
+          Positioned(
+            right: 0,
+            bottom: 0,
+            child: Container(
+              padding: EdgeInsets.all(4), // Sesuaikan dengan kebutuhan Anda
+              decoration: BoxDecoration(
+                color: Colors.red, // Warna latar belakang angka
+                borderRadius: BorderRadius.circular(20), // Bentuk angka
+              ),
+              child: Text(
+                '${context.watch<ChartProvider>().chart?.item?.length}', // Angka yang ingin ditampilkan
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Colors.white, // Warna teks angka
+                  fontWeight: FontWeight.bold, // Gaya teks angka
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
 
     Widget header() {
       return Row(
@@ -38,7 +106,7 @@ class _HomePageState extends State<HomePage> {
             TextSpan(
               children: [
                 TextSpan(
-                  text: 'Selamat Pagi,',
+                  text: 'Welcome, ',
                   style: primaryTextStyle.copyWith(fontSize: 18),
                 ),
                 TextSpan(
@@ -51,12 +119,7 @@ class _HomePageState extends State<HomePage> {
           ),
           Row(
             children: [
-              IconButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/chart-page');
-                },
-                icon: Image.asset('assets/icon_chart.png'),
-              ),
+              cartItem(),
               IconButton(
                 onPressed: () {
                   // Tambahkan fungsi ketika icon notification ditekan
@@ -150,6 +213,19 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
+    Widget userCourseTile() {
+      return ListView(
+        physics: ClampingScrollPhysics(),
+        shrinkWrap: true,
+        children: context
+            .watch<UserCourseProvider>()
+            .userCourses
+            .take(1)
+            .map((userCourse) => CourseTile(userCourse))
+            .toList(),
+      );
+    }
+
     Widget continueCourse() {
       return Column(
         children: [
@@ -162,7 +238,7 @@ class _HomePageState extends State<HomePage> {
               ),
               TextButton(
                 onPressed: () {
-                  // Fungsi yang akan dijalankan saat tombol ditekan
+                  Navigator.pushNamed(context, '/user-course');
                 },
                 child: Text(
                   'view all',
@@ -173,10 +249,7 @@ class _HomePageState extends State<HomePage> {
               )
             ],
           ),
-          // CourseTile(
-          //     title: 'Belajar Dasar-dasar UI/UX',
-          //     subtitle: 'Video 2 - 10 menit',
-          //     progressPercentage: 56)
+          userCourseTile()
         ],
       );
     }
@@ -236,6 +309,43 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
+    Widget webinar() {
+      return Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Webinar',
+                style: primaryTextStyle.copyWith(fontWeight: bold),
+              ),
+              TextButton(
+                onPressed: () {
+                  // Navigator.pushNamed(context, '/course-page');
+                },
+                child: Text(
+                  'view all',
+                  style: secondaryTextStyle.copyWith(
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              )
+            ],
+          ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: context
+                  .watch<WebinarProvider>()
+                  .webinar
+                  .map((webinar) => WebinarCard(webinar, false))
+                  .toList(),
+            ),
+          )
+        ],
+      );
+    }
+
     return Container(
       padding: EdgeInsets.all(24),
       child: ListView(
@@ -244,7 +354,8 @@ class _HomePageState extends State<HomePage> {
           searchInput(),
           carousel(),
           continueCourse(),
-          popularCourse()
+          popularCourse(),
+          webinar()
         ],
       ),
     );

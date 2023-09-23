@@ -5,6 +5,7 @@ import 'package:stufast_mobile/pages/course_page.dart';
 import 'package:stufast_mobile/pages/edit_profile.dart';
 import 'package:stufast_mobile/pages/forgot_password_page.dart';
 import 'package:stufast_mobile/pages/home/main_page.dart';
+import 'package:stufast_mobile/pages/home/my_course_page.dart';
 import 'package:stufast_mobile/pages/landing_page.dart';
 import 'package:stufast_mobile/pages/login_page.dart';
 import 'package:stufast_mobile/pages/register_page.dart';
@@ -14,6 +15,8 @@ import 'package:stufast_mobile/providers/bundle_provider.dart';
 import 'package:stufast_mobile/providers/chart_provider.dart';
 import 'package:stufast_mobile/providers/course_provider.dart';
 import 'package:stufast_mobile/providers/user_course_provider.dart';
+import 'package:stufast_mobile/providers/webinar_provider.dart';
+import 'package:stufast_mobile/theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,8 +35,14 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => UserCourseProvider()),
         ChangeNotifierProvider(create: (context) => BundleProvider()),
         ChangeNotifierProvider(create: (context) => ChartProvider()),
+        ChangeNotifierProvider(create: (context) => WebinarProvider()),
       ],
       child: MaterialApp(
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSwatch().copyWith(
+            secondary: primaryColor,
+          ),
+        ),
         debugShowCheckedModeBanner: false,
         routes: {
           '/': (context) => SplashPage(),
@@ -43,6 +52,7 @@ class MyApp extends StatelessWidget {
           '/forgotpass-page': (context) => ForgotPasswordPage(),
           '/home': (context) => MainPage(),
           '/course-page': (context) => CoursePage(),
+          '/user-course': (context) => MyCoursePage(),
           '/edit-profile': (context) => EditProfile(),
           '/chart-page': (context) => AddToChartPage(),
         },

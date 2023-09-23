@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stufast_mobile/models/user_model.dart';
 import 'package:stufast_mobile/providers/auth_provider.dart';
 import 'package:stufast_mobile/theme.dart';
@@ -241,7 +242,12 @@ class ProfilePage extends StatelessWidget {
               height: 54,
               child: PrimaryButton(
                 text: 'Keluar',
-                onPressed: () {},
+                onPressed: () async {
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  prefs.remove('token');
+                  Navigator.pushNamed(context, '/login-page');
+                },
               )),
         ],
       ),

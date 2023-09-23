@@ -6,7 +6,7 @@ import 'package:stufast_mobile/services/user_course_service.dart';
 class BundleProvider with ChangeNotifier {
   List<BundlingModel> _userBundle = [];
   List<BundlingModel> get userBundle => _userBundle;
-
+  bool loading = true;
   set userBundle(List<BundlingModel> userBundle) {
     _userBundle = userBundle;
     notifyListeners();
@@ -42,6 +42,7 @@ class BundleProvider with ChangeNotifier {
       List<BundlingModel> userBundle =
           await UserCourseService().getUserBundle();
       _userBundle = userBundle;
+      loading = false;
     } catch (e) {
       print(e);
     }

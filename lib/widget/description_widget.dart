@@ -47,17 +47,17 @@ class _TruncatedTextState extends State<TruncatedText> {
   }
 }
 
-class ExpandableText extends StatefulWidget {
+class DescriptionText extends StatefulWidget {
   final String text;
   final int maxLines;
 
-  ExpandableText({required this.text, this.maxLines = 3});
+  DescriptionText({required this.text, this.maxLines = 3});
 
   @override
-  _ExpandableTextState createState() => _ExpandableTextState();
+  _DescriptionTextState createState() => _DescriptionTextState();
 }
 
-class _ExpandableTextState extends State<ExpandableText> {
+class _DescriptionTextState extends State<DescriptionText> {
   bool isExpanded = false;
 
   @override

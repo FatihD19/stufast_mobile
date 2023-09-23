@@ -4,6 +4,7 @@ import 'package:stufast_mobile/models/chart_model.dart';
 import 'package:stufast_mobile/providers/chart_provider.dart';
 import 'package:stufast_mobile/providers/user_course_provider.dart';
 import 'package:stufast_mobile/widget/chart_tile.dart';
+import 'package:stufast_mobile/widget/price_text_widget.dart';
 import 'package:stufast_mobile/widget/primary_button.dart';
 
 import '../../theme.dart';
@@ -16,28 +17,189 @@ class AddToChartPage extends StatefulWidget {
 }
 
 class _AddToChartPageState extends State<AddToChartPage> {
+  bool loading = true;
+  List selectedIds = [];
   void initState() {
     // TODO: implement initState
-    Provider.of<ChartProvider>(context, listen: false).getChart();
+    getInit();
     super.initState();
   }
 
+  getInit() async {
+    setState(() {
+      loading = true;
+    });
+    await Provider.of<ChartProvider>(context, listen: false).getChart();
+
+    setState(() {
+      loading = false;
+    });
+  }
+
+  Color getColorForItemType(String itemType) {
+    switch (itemType) {
+      case 'course':
+        return Color(0xffA9CAFD);
+      case 'bundling':
+        return Color(0xFFF5C64C);
+      case 'webinar':
+        return Color(0xFFF2ACF3);
+      default:
+        return Colors
+            .transparent; // Warna default jika tidak sesuai dengan nilai yang diharapkan.
+    }
+  }
+
   bool isChecked = false;
+
   @override
   Widget build(BuildContext context) {
     ChartProvider chartProvider = Provider.of<ChartProvider>(context);
 
+    // Widget chartTile() {
+    //   return Column(
+    //       children: chartProvider.chart!.item!
+    //           .map((item) => ChartItemTile(item))
+    //           .toList());
+    // }
     Widget chartTile() {
-      return Column(
-          children: chartProvider.chart
-              .map((chart) => ChartItemTile(chart))
-              .toList());
+      return Container(
+        padding: EdgeInsets.fromLTRB(16, 16, 16, 96),
+        height: MediaQuery.of(context).size.height - 190,
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: chartProvider.chart?.item?.length,
+          itemBuilder: (context, index) {
+            ItemChartModel item = chartProvider.chart!.item![index];
+
+            return Card(
+              clipBehavior: Clip.antiAlias,
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Color(0xffF3F3F3),
+                ),
+                child: Row(
+                  children: [
+                    Checkbox(
+                      value: selectedIds.contains(item.cartId),
+                      onChanged: (bool? isChecked) {
+                        setState(() {
+                          if (isChecked != null && isChecked) {
+                            selectedIds.add(item.cartId);
+                          } else {
+                            selectedIds.remove(item.cartId);
+                          }
+                        });
+                      },
+                    ),
+                    Image.network(
+                      '${item.thumbnail}',
+                      fit: BoxFit.cover,
+                      width: 63,
+                      height: 61,
+                    ),
+                    SizedBox(width: 24),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${item.title}',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                            style: primaryTextStyle.copyWith(fontWeight: bold),
+                          ),
+                          Text(
+                              item.type == 'webinar'
+                                  ? '${item.webinarTag}'
+                                  : item.type == 'bundling'
+                                      ? '${item.totalItem} course'
+                                      : '${item.totalItem} video',
+                              style: secondaryTextStyle),
+                          SizedBox(height: 4),
+                          Container(
+                            padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(3),
+                              color: getColorForItemType('${item.type}'),
+                            ),
+                            child: Text(
+                              '${item.type}',
+                              style: buttonTextStyle.copyWith(
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          NewPrice(item.newPrice),
+                          OldPrice(item.oldPrice),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 90),
+                      child: IconButton(
+                        onPressed: () async {
+                          if (await context
+                              .read<ChartProvider>()
+                              .deleteToChart('${item.cartId}')) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: Colors.green,
+                                content: Text(
+                                  'berhasil hapus',
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            );
+                            Navigator.pushNamed(context, '/chart-page');
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: Colors.red,
+                                content: Text(
+                                  'Gagal!',
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        icon: Icon(Icons.cancel_outlined),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+            // ListTile(
+            //   title: Text('${item.title}'),
+            //   leading: Checkbox(
+            //     value: selectedIds.contains(item.cartId),
+            //     onChanged: (bool? isChecked) {
+            //       setState(() {
+            //         if (isChecked != null && isChecked) {
+            //           selectedIds.add(item.cartId);
+            //         } else {
+            //           selectedIds.remove(item.cartId);
+            //         }
+            //       });
+            //     },
+            //   ),
+            // );
+          },
+        ),
+      );
     }
 
     Widget checkOut() {
       return Container(
-        height: 178,
-        padding: EdgeInsets.symmetric(horizontal: 24),
+        color: Color(0xffFAFAFA),
+        padding: EdgeInsets.all(16),
         child: Column(
           children: [
             Row(
@@ -66,17 +228,16 @@ class _AddToChartPageState extends State<AddToChartPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Total (2) item',
+                Text('Total (len) item',
                     style: secondaryTextStyle.copyWith(fontWeight: bold)),
-                Text('Rp. 2.000.000',
-                    style: thirdTextStyle.copyWith(fontWeight: bold))
+                NewPrice('${chartProvider.chart?.subTotal}')
               ],
             ),
             SizedBox(height: 24),
             Container(
                 width: double.infinity,
                 height: 54,
-                child: PrimaryButton(text: 'Masuk', onPressed: () {})),
+                child: PrimaryButton(text: 'Checkout', onPressed: () {})),
           ],
         ),
       );
@@ -94,19 +255,30 @@ class _AddToChartPageState extends State<AddToChartPage> {
           icon: Icon(Icons.arrow_back),
           color: Colors.black,
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushNamed(context, '/home');
           },
         ),
         backgroundColor: Colors.white,
         centerTitle: false,
       ),
-      body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 24),
-        child: ListView(
-          children: [chartTile()],
-        ),
-      ),
-      bottomNavigationBar: checkOut(),
+      body: loading == true
+          ? Center(child: CircularProgressIndicator())
+          : Stack(
+              children: [
+                ListView(
+                  children: [
+                    chartTile(), // Widget chartTile
+                  ],
+                ),
+                Positioned(
+                  bottom: 0, // Menempatkan checkout di bagian bawah
+                  left: 0, // Atur posisi horizontal ke kiri
+                  right: 0, // Atur posisi horizontal ke kanan
+                  child: checkOut(),
+                ),
+              ],
+            ),
+      // bottomNavigationBar: loading ? SizedBox() : checkOut(),
     );
   }
 }

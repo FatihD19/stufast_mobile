@@ -1,8 +1,10 @@
+import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:stufast_mobile/models/course_model.dart';
 import 'package:stufast_mobile/pages/DetailPage/detail_video.dart';
+import 'package:stufast_mobile/providers/chart_provider.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/description_widget.dart';
 import 'package:stufast_mobile/widget/primary_button.dart';
@@ -41,6 +43,30 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
     setState(() {
       loading = false;
     });
+  }
+
+  handleAddChart() async {
+    if (await context.read<ChartProvider>().addToChart(widget.idUserCourse)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.green,
+          content: Text(
+            'berhasil tambah ke chart',
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text(
+            'Gagal!',
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -191,7 +217,16 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
             //   maxLines: 3,
             // ),
             // DescriptionList(description: '${detail?.description}'),
-            ExpandableText(text: '${detail?.description}'),
+            // DescriptionText(text: '${detail?.description}'),
+            ExpandableText(
+              '${detail.description?.replaceAll('\r', ' ')}',
+              style: secondaryTextStyle,
+              maxLines: 7,
+              expandText: 'show more',
+              collapseText: 'show less',
+              linkColor: primaryColor,
+              textAlign: TextAlign.justify,
+            ),
             Text('${detail.video?.length} video',
                 style: primaryTextStyle.copyWith(fontWeight: bold)),
             videoTile(),
@@ -210,7 +245,7 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
                         width: double.infinity,
                         height: 54,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: handleAddChart,
                           style: ElevatedButton.styleFrom(
                             primary: Colors.white, // Latar belakang putih
                             onPrimary: Color(

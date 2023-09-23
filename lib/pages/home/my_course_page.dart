@@ -17,9 +17,12 @@ class MyCoursePage extends StatefulWidget {
 }
 
 class _MyCoursePageState extends State<MyCoursePage> {
+  @override
   void initState() {
     // TODO: implement initState
     Provider.of<UserCourseProvider>(context, listen: false).getUserCourses();
+    // Provider.of<BundleProvider>(context, listen: false).getUserBundle();
+
     super.initState();
   }
 
@@ -100,25 +103,33 @@ class _MyCoursePageState extends State<MyCoursePage> {
             );
     }
 
+    // Widget userBundleTile() {
+    //   return ListView(
+    //     physics: ClampingScrollPhysics(),
+    //     shrinkWrap: true,
+    //     children: userBundleProvider.bundle
+    //         .map((userBundle) => BundlingTile(userBundle))
+    //         .toList(),
+    //   );
+    // }
+
     Widget userBundleTile() {
       return FutureBuilder(
           future: userBundleProvider.getUserBundle(),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return ListView(
-                physics: ClampingScrollPhysics(),
-                shrinkWrap: true,
-                children: userBundleProvider.userBundle
-                    .map((userBundle) => InkWell(
-                        onTap: () {
-                          setState(() {});
-                        },
-                        child: BundlingTile(userBundle)))
-                    .toList(),
-              );
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
+            return userBundleProvider.loading
+                ? CircularProgressIndicator()
+                : ListView(
+                    physics: ClampingScrollPhysics(),
+                    shrinkWrap: true,
+                    children: userBundleProvider.userBundle
+                        .map((userBundle) => InkWell(
+                            onTap: () {
+                              setState(() {});
+                            },
+                            child: BundlingTile(userBundle)))
+                        .toList(),
+                  );
           });
     }
 

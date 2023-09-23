@@ -66,15 +66,12 @@ class _LoginPageState extends State<LoginPage> {
         children: [
           Container(
             alignment: Alignment.centerLeft,
-            padding: EdgeInsets.only(bottom: 8),
-            child: Text(
-              'Email',
-              style: secondaryTextStyle.copyWith(fontWeight: bold),
+            margin: EdgeInsets.only(top: 8),
+            child: UsernameTextField(
+              type: 'Email',
+              hintText: 'Masukan Email kamu',
+              controller: emailController,
             ),
-          ),
-          UsernameTextField(
-            hintText: 'Masukan Email kamu',
-            controller: emailController,
           ),
           SizedBox(height: 24),
         ],

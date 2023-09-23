@@ -80,15 +80,12 @@ class _RegisterPageState extends State<RegisterPage> {
         children: [
           Container(
             alignment: Alignment.centerLeft,
-            padding: EdgeInsets.only(bottom: 8),
-            child: Text(
-              'Email',
-              style: secondaryTextStyle.copyWith(fontWeight: bold),
+            margin: EdgeInsets.only(top: 8),
+            child: UsernameTextField(
+              type: 'Email',
+              hintText: 'Masukan Email kamu',
+              controller: emailController,
             ),
-          ),
-          UsernameTextField(
-            hintText: 'Masukan Email kamu',
-            controller: emailController,
           ),
           SizedBox(height: 24),
         ],
@@ -100,15 +97,12 @@ class _RegisterPageState extends State<RegisterPage> {
         children: [
           Container(
             alignment: Alignment.centerLeft,
-            padding: EdgeInsets.only(bottom: 8),
-            child: Text(
-              'Full Name',
-              style: secondaryTextStyle.copyWith(fontWeight: bold),
+            margin: EdgeInsets.only(top: 8),
+            child: UsernameTextField(
+              type: 'Full Name',
+              hintText: 'Masukan Nama',
+              controller: fullNameController,
             ),
-          ),
-          UsernameTextField(
-            hintText: 'Masukan Nama',
-            controller: fullNameController,
           ),
           SizedBox(height: 24),
         ],
@@ -120,15 +114,12 @@ class _RegisterPageState extends State<RegisterPage> {
         children: [
           Container(
             alignment: Alignment.centerLeft,
-            padding: EdgeInsets.only(bottom: 8),
-            child: Text(
-              'Address',
-              style: secondaryTextStyle.copyWith(fontWeight: bold),
+            margin: EdgeInsets.only(top: 8),
+            child: UsernameTextField(
+              type: 'Address',
+              hintText: 'Masukan Address kamu',
+              controller: addressController,
             ),
-          ),
-          UsernameTextField(
-            hintText: 'Masukan Address kamu',
-            controller: addressController,
           ),
           SizedBox(height: 24),
         ],
@@ -140,15 +131,12 @@ class _RegisterPageState extends State<RegisterPage> {
         children: [
           Container(
             alignment: Alignment.centerLeft,
-            padding: EdgeInsets.only(bottom: 8),
-            child: Text(
-              'Phone',
-              style: secondaryTextStyle.copyWith(fontWeight: bold),
+            margin: EdgeInsets.only(top: 8),
+            child: UsernameTextField(
+              type: 'Phone',
+              hintText: 'Masukan Phone kamu',
+              controller: phoneNumberController,
             ),
-          ),
-          UsernameTextField(
-            hintText: 'Masukan Phone kamu',
-            controller: phoneNumberController,
           ),
           SizedBox(height: 24),
         ],

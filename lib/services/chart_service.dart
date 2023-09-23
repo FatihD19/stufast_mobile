@@ -6,8 +6,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ChartService {
-  Future<List<ChartModel>> getChart() async {
-    var url = Uri.parse(AuthService.baseUrl + '/cart');
+  Future<ChartModel> getChart() async {
+    var url = Uri.parse(AuthService.baseUrl + '/cart/all');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -20,15 +20,51 @@ class ChartService {
     print('LIST CHART' + response.body);
 
     if (response.statusCode == 200) {
-      List data = jsonDecode(response.body)['item'];
-      List<ChartModel> chart = [];
-
-      for (var item in data) {
-        chart.add(ChartModel.fromJson(item));
-      }
+      var data = jsonDecode(response.body);
+      ChartModel chart = ChartModel.fromJson(data);
       return chart;
     } else {
       throw Exception('Gagal get chart');
+    }
+  }
+
+  Future<String> addChart(String id) async {
+    var url = Uri.parse(AuthService.baseUrl + '/cart/create/course/$id');
+    final prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    var response = await http.post(url, headers: headers);
+    // print(response.body);
+    if (response.statusCode == 201) {
+      var data = jsonDecode(response.body);
+      print(data);
+      return data['message'];
+    } else {
+      throw Exception('Gagal get chart');
+    }
+  }
+
+  Future<String> deleteChart(String id) async {
+    var url = Uri.parse(AuthService.baseUrl + '/cart/delete/$id');
+    final prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    var response = await http.delete(url, headers: headers);
+    print(response.body);
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      print(data);
+      return data['status'].toString();
+    } else {
+      throw Exception('Gagal delete chart');
     }
   }
 }

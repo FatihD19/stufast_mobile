@@ -3,17 +3,21 @@ import 'package:stufast_mobile/models/course_model.dart';
 import 'package:stufast_mobile/pages/DetailPage/detail_course_page.dart';
 import 'package:stufast_mobile/theme.dart';
 
-class CourseTile extends StatelessWidget {
+class CourseTile extends StatefulWidget {
   final CourseModel userCourse;
   final bool showProgress; // Make it optional with a default value of true
 
-  CourseTile(this.userCourse,
-      {this.showProgress = true}); // Provide a default value
+  CourseTile(this.userCourse, {this.showProgress = true});
+  @override
+  State<CourseTile> createState() => _CourseTileState();
+}
 
+class _CourseTileState extends State<CourseTile> {
+  // Provide a default value
   @override
   Widget build(BuildContext context) {
     String? progressText =
-        '${userCourse.mengerjakan_video ?? '2 / 3'}'; // Assuming the format is "0 / 3"
+        '${widget.userCourse.mengerjakan_video ?? '2 / 3'}'; // Assuming the format is "0 / 3"
     List<String> parts = progressText.split(' / ');
     int currentProgress = int.tryParse(parts[0]) ?? 0;
     int totalProgress = int.tryParse(parts[1]) ?? 1; // Avoid division by zero
@@ -32,10 +36,10 @@ class CourseTile extends StatelessWidget {
           context,
           MaterialPageRoute(
               builder: (context) => DetailCoursePage(
-                    idUserCourse: '${userCourse.courseId}',
+                    idUserCourse: '${widget.userCourse.courseId}',
                     progressCourse: progressPercentage,
                     persen: persen,
-                    totalDuration: userCourse.total_video_duration,
+                    totalDuration: widget.userCourse.total_video_duration,
                   )),
         );
       },
@@ -54,12 +58,12 @@ class CourseTile extends StatelessWidget {
           ),
           child: ListTile(
             leading: Image.network(
-              '${userCourse.thumbnail}',
+              '${widget.userCourse.thumbnail}',
               width: 95,
               height: 95,
             ),
             title: Text(
-              '${userCourse.title}',
+              '${widget.userCourse.title}',
               style: primaryTextStyle.copyWith(fontWeight: bold),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -68,11 +72,11 @@ class CourseTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${userCourse.video?.length} video\n${userCourse.total_video_duration}',
+                  '${widget.userCourse.video?.length} video\n${widget.userCourse.total_video_duration}',
                   style: secondaryTextStyle,
                 ),
                 SizedBox(height: 8),
-                if (showProgress) // Use a condition to show/hide the Row
+                if (widget.showProgress) // Use a condition to show/hide the Row
                   Row(
                     children: [
                       Expanded(

@@ -570,9 +570,9 @@ class _CoursePageState extends State<CoursePage> {
                   ),
                 ), // Warna garis tepi bawah saat aktif
                 tabs: [
-                  Tab(
-                    text: 'IT',
-                  ),
+                  // Tab(
+                  //   text: 'IT',
+                  // ),
                   Tab(
                     text: 'Enginering',
                   ),
@@ -618,24 +618,36 @@ class _CoursePageState extends State<CoursePage> {
     }
 
     return Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(90),
-          child: Container(
-            margin: EdgeInsets.only(top: 24),
-            child: AppBar(
-                elevation: 0,
-                leading: IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  color: Colors.black,
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                backgroundColor: Colors.white,
-                centerTitle: false,
-                title: searchBar()),
-          ),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(90),
+        child: Container(
+          margin: EdgeInsets.only(top: 24),
+          child: AppBar(
+              elevation: 0,
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back),
+                color: Colors.black,
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              backgroundColor: Colors.white,
+              centerTitle: false,
+              title: searchBar()),
         ),
-        body: tabCourse());
+      ),
+      body: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: ListView(
+          children: [
+            tagItCourse(courseProvider.tags),
+            SizedBox(height: 18),
+            dropdownFilter(),
+            SizedBox(height: 16),
+            gridCourse()
+          ],
+        ),
+      ),
+    );
   }
 }

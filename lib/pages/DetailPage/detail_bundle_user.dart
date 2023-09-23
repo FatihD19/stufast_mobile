@@ -1,3 +1,4 @@
+import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -57,8 +58,8 @@ class _DetailBundleState extends State<DetailBundle> {
     //       double.parse('${courseBundling.oldPrice}') -
     //       double.parse('${courseBundling.newPrice}');
     // });
-    double flashSaleBundle = double.parse('${detail?.oldPrice}') -
-        double.parse('${detail?.newPrice}');
+    double flashSaleBundle = (double.tryParse('${detail?.oldPrice}') ?? 0.0) -
+        (double.tryParse('${detail?.newPrice}') ?? 0.0);
 
 // Format total harga ke dalam mata uang Indonesia
     // String formattedTotalHarga = NumberFormat.simpleCurrency(locale: 'id')
@@ -235,23 +236,25 @@ class _DetailBundleState extends State<DetailBundle> {
               'Deskripsi',
               style: primaryTextStyle.copyWith(fontWeight: bold),
             ),
-            TruncatedText(
-              text: '${detail?.description}',
+            ExpandableText(
+              '${detail?.description}',
+              style: secondaryTextStyle,
+              maxLines: 7,
+              expandText: 'show more',
+              collapseText: 'show less',
+              linkColor: primaryColor,
+              textAlign: TextAlign.justify,
             ),
-            // DescriptionList(description: '${detail??.description}'),
-            // ExpandableText(text: '${detail??.description}'),
+            SizedBox(height: 8),
             Text('Course List',
                 style: primaryTextStyle.copyWith(fontWeight: bold)),
-
             Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: detail!.courseBundling!
                     .map((course) => CourseTile(course,
                         showProgress: detail.owned == true ? true : false))
                     .toList()),
-
             SizedBox(height: 24),
-
             detail.owned == false ? pricing() : SizedBox(),
             SizedBox(height: 14),
             detail.owned == true

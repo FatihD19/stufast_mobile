@@ -1,8 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:stufast_mobile/pages/home/home_page.dart';
 import 'package:stufast_mobile/pages/home/my_course_page.dart';
 import 'package:stufast_mobile/pages/home/profile_page.dart';
-import 'package:stufast_mobile/pages/home/webinar_page.dart';
+import 'package:stufast_mobile/pages/home/my_webinar_page.dart';
 import 'package:stufast_mobile/theme.dart';
 
 class MainPage extends StatefulWidget {
@@ -14,6 +16,29 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int currentIndex = 0;
+  Future<bool> showExitPopup() async {
+    return await showDialog(
+          //show confirm dialogue
+          //the return value will be from "Yes" or "No" options
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Exit App'),
+            content: Text('Do you want to exit an App?'),
+            actions: [
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                //return false when click on "NO"
+                child: Text('No'),
+              ),
+              ElevatedButton(
+                onPressed: () => exit(0),
+                child: Text('Yes'),
+              ),
+            ],
+          ),
+        ) ??
+        false; //if showDialouge had returned null, then return false
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +78,7 @@ class _MainPageState extends State<MainPage> {
                       width: 81,
                       height: 69,
                       color:
-                          currentIndex == 0 ? buttonTextColor : secondaryColor,
+                          currentIndex == 0 ? buttonTextColor : Colors.white70,
                     ),
                   ),
                   label: '',
@@ -65,7 +90,7 @@ class _MainPageState extends State<MainPage> {
                       width: 81,
                       height: 69,
                       color:
-                          currentIndex == 1 ? buttonTextColor : secondaryColor,
+                          currentIndex == 1 ? buttonTextColor : Colors.white70,
                     ),
                   ),
                   label: '',
@@ -77,7 +102,7 @@ class _MainPageState extends State<MainPage> {
                       width: 81,
                       height: 69,
                       color:
-                          currentIndex == 2 ? buttonTextColor : secondaryColor,
+                          currentIndex == 2 ? buttonTextColor : Colors.white70,
                     ),
                   ),
                   label: '',
@@ -89,7 +114,7 @@ class _MainPageState extends State<MainPage> {
                       width: 81,
                       height: 69,
                       color:
-                          currentIndex == 3 ? buttonTextColor : secondaryColor,
+                          currentIndex == 3 ? buttonTextColor : Colors.white70,
                     ),
                   ),
                   label: '',
@@ -118,9 +143,12 @@ class _MainPageState extends State<MainPage> {
       }
     }
 
-    return Scaffold(
-      bottomNavigationBar: customButtonNav(),
-      body: body(),
+    return WillPopScope(
+      onWillPop: showExitPopup,
+      child: Scaffold(
+        bottomNavigationBar: customButtonNav(),
+        body: body(),
+      ),
     );
   }
 }
