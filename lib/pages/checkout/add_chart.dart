@@ -243,42 +243,48 @@ class _AddToChartPageState extends State<AddToChartPage> {
       );
     }
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: Text(
-          'Chart',
-          style: primaryTextStyle.copyWith(fontWeight: semiBold),
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushReplacementNamed(context, '/home');
+        return true;
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          title: Text(
+            'Chart',
+            style: primaryTextStyle.copyWith(fontWeight: semiBold),
+          ),
+          elevation: 0, // Menghilangkan shadow
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            color: Colors.black,
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/home');
+            },
+          ),
+          backgroundColor: Colors.white,
+          centerTitle: false,
         ),
-        elevation: 0, // Menghilangkan shadow
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          color: Colors.black,
-          onPressed: () {
-            Navigator.pushNamed(context, '/home');
-          },
-        ),
-        backgroundColor: Colors.white,
-        centerTitle: false,
+        body: loading == true
+            ? Center(child: CircularProgressIndicator())
+            : Stack(
+                children: [
+                  ListView(
+                    children: [
+                      chartTile(), // Widget chartTile
+                    ],
+                  ),
+                  Positioned(
+                    bottom: 0, // Menempatkan checkout di bagian bawah
+                    left: 0, // Atur posisi horizontal ke kiri
+                    right: 0, // Atur posisi horizontal ke kanan
+                    child: checkOut(),
+                  ),
+                ],
+              ),
+        // bottomNavigationBar: loading ? SizedBox() : checkOut(),
       ),
-      body: loading == true
-          ? Center(child: CircularProgressIndicator())
-          : Stack(
-              children: [
-                ListView(
-                  children: [
-                    chartTile(), // Widget chartTile
-                  ],
-                ),
-                Positioned(
-                  bottom: 0, // Menempatkan checkout di bagian bawah
-                  left: 0, // Atur posisi horizontal ke kiri
-                  right: 0, // Atur posisi horizontal ke kanan
-                  child: checkOut(),
-                ),
-              ],
-            ),
-      // bottomNavigationBar: loading ? SizedBox() : checkOut(),
     );
   }
 }

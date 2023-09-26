@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -71,6 +72,7 @@ class AuthService {
     String? dateBirth,
     String? address,
     String? phoneNumber,
+    File? profilePicture,
   ) async {
     var url = Uri.parse('$baseUrl/users/update/$id');
     final prefs = await SharedPreferences.getInstance();
@@ -79,18 +81,35 @@ class AuthService {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
     };
-    var body = jsonEncode({
-      'fullname': nama,
-      'phone_number': phoneNumber,
-      'address': address,
-      'date_birth': dateBirth,
-    });
-    var response = await http.post(url, headers: headers, body: body);
+    // var body = jsonEncode({
+    //   'fullname': nama,
+    //   'phone_number': phoneNumber,
+    //   'address': address,
+    //   'date_birth': dateBirth,
+    // });
+    // var response = await http.post(url, headers: headers, body: body);
 
-    print(response.body);
+    // print(response.body);
+    var request = http.MultipartRequest('POST', url)
+      ..headers.addAll(headers)
+      ..fields['fullname'] = nama!
+      ..fields['phone_number'] = phoneNumber!
+      ..fields['address'] = address!
+      ..fields['date_birth'] = dateBirth!;
+
+    // Cek apakah profile_picture tidak null, jika tidak, tambahkan gambar ke permintaan
+    if (profilePicture != null) {
+      var pic = await http.MultipartFile.fromPath(
+          'profile_picture', profilePicture.path);
+      request.files.add(pic);
+    }
+
+    // Kirim permintaan dengan file gambar jika ada
+    var response = await request.send();
 
     if (response.statusCode == 201) {
-      final data = jsonDecode(response.body);
+      final responseData = await response.stream.bytesToString();
+      final data = jsonDecode(responseData);
       String status = data['status'].toString();
       return status;
     } else {

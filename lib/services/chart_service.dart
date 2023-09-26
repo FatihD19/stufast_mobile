@@ -28,8 +28,8 @@ class ChartService {
     }
   }
 
-  Future<String> addChart(String id) async {
-    var url = Uri.parse(AuthService.baseUrl + '/cart/create/course/$id');
+  Future<String> addChart(String type, String id) async {
+    var url = Uri.parse(AuthService.baseUrl + '/cart/create/$type/$id');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {

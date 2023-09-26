@@ -24,10 +24,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool? loading;
   int? jumlahCart;
+
   @override
   void initState() {
     // TODO: implement initState
     getInit();
+    Provider.of<WebinarProvider>(context, listen: false).getWebinar(false);
     super.initState();
   }
 
@@ -35,15 +37,14 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       loading = true;
     });
-    await Provider.of<WebinarProvider>(context, listen: false)
-        .getWebinar(false);
+    await Provider.of<ChartProvider>(context, listen: false).getChart();
+    setState(() async {
+      jumlahCart = context.watch<ChartProvider>().chart?.item?.length;
+    });
 
     await Provider.of<UserCourseProvider>(context, listen: false)
         .getUserCourses();
-    setState(() async {
-      await Provider.of<ChartProvider>(context, listen: false).getChart();
-      jumlahCart = context.watch<ChartProvider>().chart?.item?.length;
-    });
+
     setState(() {
       loading = false;
     });
@@ -85,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                 borderRadius: BorderRadius.circular(20), // Bentuk angka
               ),
               child: Text(
-                '${context.watch<ChartProvider>().chart?.item?.length}', // Angka yang ingin ditampilkan
+                '${chartProvider.chart?.item?.length}', // Angka yang ingin ditampilkan
                 style: TextStyle(
                   fontSize: 11,
                   color: Colors.white, // Warna teks angka
@@ -348,7 +349,12 @@ class _HomePageState extends State<HomePage> {
 
     return Container(
       padding: EdgeInsets.all(24),
-      child: ListView(
+      child:
+          // loading == true
+          //     ? Center(child: CircularProgressIndicator())
+          //     :
+          ListView(
+        shrinkWrap: true,
         children: [
           header(),
           searchInput(),

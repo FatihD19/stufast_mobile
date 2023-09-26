@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stufast_mobile/models/user_model.dart';
+import 'package:stufast_mobile/pages/login_page.dart';
 import 'package:stufast_mobile/providers/auth_provider.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/primary_button.dart';
@@ -243,10 +244,38 @@ class ProfilePage extends StatelessWidget {
               child: PrimaryButton(
                 text: 'Keluar',
                 onPressed: () async {
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  prefs.remove('token');
-                  Navigator.pushNamed(context, '/login-page');
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Konfirmasi Logout'),
+                        content: Text('Anda yakin ingin keluar?'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Tutup dialog
+                            },
+                            child: Text('Batal'),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              // Hapus token atau lakukan tindakan logout lainnya
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              prefs.remove('token');
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LoginPage()),
+                                (Route<dynamic> route) => false,
+                              );
+                            },
+                            child: Text('Ya, Keluar'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
               )),
         ],

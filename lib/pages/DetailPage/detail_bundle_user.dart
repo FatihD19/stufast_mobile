@@ -9,6 +9,7 @@ import 'package:stufast_mobile/widget/course_tile.dart';
 import 'package:stufast_mobile/widget/description_widget.dart';
 import 'package:stufast_mobile/widget/primary_button.dart';
 
+import '../../providers/chart_provider.dart';
 import '../../providers/user_course_provider.dart';
 
 class DetailBundle extends StatefulWidget {
@@ -44,6 +45,32 @@ class _DetailBundleState extends State<DetailBundle> {
     setState(() {
       loading = false;
     });
+  }
+
+  handleAddChart() async {
+    if (await context
+        .read<ChartProvider>()
+        .addToChart('bundling', widget.idBundle)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.green,
+          content: Text(
+            'berhasil tambah ke cart',
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text(
+            'Gagal!',
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -271,7 +298,7 @@ class _DetailBundleState extends State<DetailBundle> {
                         width: double.infinity,
                         height: 54,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: handleAddChart,
                           style: ElevatedButton.styleFrom(
                             primary: Colors.white, // Latar belakang putih
                             onPrimary: Color(

@@ -46,7 +46,9 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
   }
 
   handleAddChart() async {
-    if (await context.read<ChartProvider>().addToChart(widget.idUserCourse)) {
+    if (await context
+        .read<ChartProvider>()
+        .addToChart('course', widget.idUserCourse)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.green,

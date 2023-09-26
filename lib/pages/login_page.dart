@@ -210,45 +210,51 @@ class _LoginPageState extends State<LoginPage> {
       );
     }
 
-    return Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          title: Text(
-            'Masuk',
-            style: primaryTextStyle.copyWith(fontWeight: semiBold),
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushReplacementNamed(context, '/landing-page');
+        return true; // Kembalikan true agar tombol "back" tidak keluar dari aplikasi.
+      },
+      child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            title: Text(
+              'Masuk',
+              style: primaryTextStyle.copyWith(fontWeight: semiBold),
+            ),
+            elevation: 0, // Menghilangkan shadow
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              color: Colors.black,
+              onPressed: () {
+                Navigator.pushNamed(context, 'landing-page');
+              },
+            ),
+            backgroundColor: Colors.white,
+            centerTitle: false,
           ),
-          elevation: 0, // Menghilangkan shadow
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            color: Colors.black,
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          backgroundColor: Colors.white,
-          centerTitle: false,
-        ),
-        body: Container(
-          padding: EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            children: [
-              formEmail(),
-              formPassword(),
-              remember_forgot(),
-              SizedBox(height: 32),
-              isLoading
-                  ? LoadingButton()
-                  : Container(
-                      width: double.infinity,
-                      height: 54,
-                      child: PrimaryButton(
-                          text: 'Masuk', onPressed: handleSignIn)),
-              SizedBox(height: 35),
-              lineToregis(),
-              SizedBox(height: 35),
-              registerButton()
-            ],
-          ),
-        ));
+          body: Container(
+            padding: EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              children: [
+                formEmail(),
+                formPassword(),
+                remember_forgot(),
+                SizedBox(height: 32),
+                isLoading
+                    ? LoadingButton()
+                    : Container(
+                        width: double.infinity,
+                        height: 54,
+                        child: PrimaryButton(
+                            text: 'Masuk', onPressed: handleSignIn)),
+                SizedBox(height: 35),
+                lineToregis(),
+                SizedBox(height: 35),
+                registerButton()
+              ],
+            ),
+          )),
+    );
   }
 }

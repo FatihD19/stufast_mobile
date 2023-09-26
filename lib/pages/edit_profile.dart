@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:date_field/date_field.dart';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -24,11 +27,25 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController dateController = TextEditingController(text: '');
   DateTime? selectedDate;
   bool isLoading = false;
+  File? _profilePicture;
 
   @override
   Widget build(BuildContext context) {
     AuthProvider? authProvider = Provider.of<AuthProvider>(context);
     UserModel? user = authProvider.user;
+
+    // void _pickProfilePicture() async {
+    //   FilePickerResult? result = await FilePicker.platform.pickFiles(
+    //     type: FileType.image,
+    //     allowMultiple: false,
+    //   );
+
+    //   if (result != null && result.files.isNotEmpty) {
+    //     setState(() {
+    //       _profilePicture = File(result.files.first.path!);
+    //     });
+    //   }
+    // }
 
     handleEditProfile() async {
       setState(() {
@@ -39,7 +56,8 @@ class _EditProfileState extends State<EditProfile> {
           nama: fullNameController.text,
           address: addressController.text,
           phoneNumber: phoneNumberController.text,
-          dateBirth: selectedDate.toString())) {
+          dateBirth: selectedDate.toString(),
+          profilePicture: _profilePicture)) {
         final prefs = await SharedPreferences.getInstance();
         var token = prefs.getString('token');
         await authProvider.getProfileUser(token!);

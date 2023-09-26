@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:stufast_mobile/models/user_model.dart';
 import 'package:stufast_mobile/services/auth_service.dart';
@@ -70,9 +72,11 @@ class AuthProvider with ChangeNotifier {
     String? dateBirth,
     String? address,
     String? phoneNumber,
+    File? profilePicture,
   }) async {
     try {
-      await AuthService().editProfil(id, nama, dateBirth, address, phoneNumber);
+      await AuthService().editProfil(
+          id, nama, dateBirth, address, phoneNumber, profilePicture);
 
       return true;
     } catch (e) {

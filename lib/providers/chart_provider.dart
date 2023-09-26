@@ -20,9 +20,9 @@ class ChartProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> addToChart(String id) async {
+  Future<bool> addToChart(String type, String id) async {
     try {
-      await ChartService().addChart(id);
+      await ChartService().addChart(type, id);
       return true;
     } catch (e) {
       print('provider error $e');
