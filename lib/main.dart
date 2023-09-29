@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stufast_mobile/pages/checkout/add_chart.dart';
+import 'package:stufast_mobile/pages/Faq-Support/faq_page.dart';
+import 'package:stufast_mobile/pages/checkout/add_chart_page.dart';
+import 'package:stufast_mobile/pages/checkout/checkout_page.dart';
 import 'package:stufast_mobile/pages/course_page.dart';
 import 'package:stufast_mobile/pages/edit_profile.dart';
 import 'package:stufast_mobile/pages/forgot_password_page.dart';
@@ -13,7 +15,9 @@ import 'package:stufast_mobile/pages/splash_page.dart';
 import 'package:stufast_mobile/providers/auth_provider.dart';
 import 'package:stufast_mobile/providers/bundle_provider.dart';
 import 'package:stufast_mobile/providers/chart_provider.dart';
+import 'package:stufast_mobile/providers/checkout_provider.dart';
 import 'package:stufast_mobile/providers/course_provider.dart';
+import 'package:stufast_mobile/providers/faq_provider.dart';
 import 'package:stufast_mobile/providers/user_course_provider.dart';
 import 'package:stufast_mobile/providers/webinar_provider.dart';
 import 'package:stufast_mobile/theme.dart';
@@ -36,6 +40,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => BundleProvider()),
         ChangeNotifierProvider(create: (context) => ChartProvider()),
         ChangeNotifierProvider(create: (context) => WebinarProvider()),
+        ChangeNotifierProvider(create: (context) => CheckoutProvider()),
+        ChangeNotifierProvider(create: (context) => FaqProvider()),
       ],
       child: MaterialApp(
         theme: ThemeData(
@@ -55,6 +61,7 @@ class MyApp extends StatelessWidget {
           '/user-course': (context) => MyCoursePage(),
           '/edit-profile': (context) => EditProfile(),
           '/chart-page': (context) => AddToChartPage(),
+          '/faq-page': (context) => FaqPage(),
         },
       ),
     );

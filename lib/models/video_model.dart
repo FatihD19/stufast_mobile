@@ -7,7 +7,7 @@ class VideoModel {
   String? order;
   DateTime? createdAt;
   DateTime? updatedAt;
-  dynamic resume;
+  Resume? resume;
   dynamic tanggalTayang;
   String? isViewed;
   dynamic score;
@@ -42,8 +42,10 @@ class VideoModel {
         updatedAt: json["updated_at"] == null
             ? null
             : DateTime.parse(json["updated_at"]),
-        resume: json["resume"],
-        tanggalTayang: json["tanggal_tayang"],
+        resume: json["resume"] == null ? null : Resume.fromJson(json["resume"]),
+        tanggalTayang: json["tanggal_tayang"] == null
+            ? null
+            : DateTime.parse(json["tanggal_tayang"]),
         isViewed: json["is_viewed"],
         score: json["score"],
         duration: json["duration"],
@@ -58,10 +60,55 @@ class VideoModel {
         "order": order,
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
-        "resume": resume,
-        "tanggal_tayang": tanggalTayang,
+        "resume": resume?.toJson(),
+        "tanggal_tayang":
+            "${tanggalTayang!.year.toString().padLeft(4, '0')}-${tanggalTayang!.month.toString().padLeft(2, '0')}-${tanggalTayang!.day.toString().padLeft(2, '0')}",
         "is_viewed": isViewed,
         "score": score,
         "duration": duration,
+      };
+}
+
+class Resume {
+  String? resumeId;
+  String? videoId;
+  String? userId;
+  String? resume;
+  dynamic task;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+
+  Resume({
+    this.resumeId,
+    this.videoId,
+    this.userId,
+    this.resume,
+    this.task,
+    this.createdAt,
+    this.updatedAt,
+  });
+
+  factory Resume.fromJson(Map<String, dynamic> json) => Resume(
+        resumeId: json["resume_id"],
+        videoId: json["video_id"],
+        userId: json["user_id"],
+        resume: json["resume"],
+        task: json["task"],
+        createdAt: json["created_at"] == null
+            ? null
+            : DateTime.parse(json["created_at"]),
+        updatedAt: json["updated_at"] == null
+            ? null
+            : DateTime.parse(json["updated_at"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "resume_id": resumeId,
+        "video_id": videoId,
+        "user_id": userId,
+        "resume": resume,
+        "task": task,
+        "created_at": createdAt?.toIso8601String(),
+        "updated_at": updatedAt?.toIso8601String(),
       };
 }

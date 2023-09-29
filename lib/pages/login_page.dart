@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     AuthProvider? authProvider = Provider.of<AuthProvider>(context);
-    Future<SharedPreferences> coreUser = SharedPreferences.getInstance();
+    // Future<SharedPreferences> coreUser = SharedPreferences.getInstance();
 
     handleSignIn() async {
       setState(() {
@@ -40,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
         email: emailController.text,
         password: passwordController.text,
       )) {
-        final SharedPreferences prefs = await coreUser;
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('token', '${authProvider.user?.token}');
         await authProvider.getProfileUser('${authProvider.user?.token}');
         Navigator.pushNamed(context, '/home');

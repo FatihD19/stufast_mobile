@@ -8,8 +8,9 @@ class VideoTile extends StatefulWidget {
   double opacity; // Opacity for this tile
   final CourseModel detailVideo;
   VideoModel video;
+  bool? isLocked;
 
-  VideoTile(this.opacity, this.detailVideo, this.video);
+  VideoTile(this.opacity, this.detailVideo, this.video, {this.isLocked});
 
   @override
   State<VideoTile> createState() => _VideoTileState();
@@ -43,7 +44,7 @@ class _VideoTileState extends State<VideoTile> {
               trailing: Text('${widget.video.duration} menit',
                   style: secondaryTextStyle),
               children: [
-                widget.video.video == null
+                widget.video.video == null || widget.isLocked == true
                     ? SizedBox()
                     : Container(
                         margin: EdgeInsets.all(16),

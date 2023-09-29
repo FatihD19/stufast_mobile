@@ -31,9 +31,15 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
           final video = videoList?[index];
           final opacity =
               widget.detailCourse.owned == true || index == 0 ? 1.0 : 0.5;
+          final isLocked = index > 0 && videoList?[(index) - 1].resume == null;
           // return VideoTile(video?.title, video?.duration, detail?.owned,
           //     opacity, detail!, video?.video, video!);
-          return VideoTile(opacity, widget.detailCourse, video!);
+          return VideoTile(
+            opacity,
+            widget.detailCourse,
+            video!,
+            isLocked: isLocked,
+          );
         },
       );
     }

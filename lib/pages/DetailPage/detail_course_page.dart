@@ -124,10 +124,15 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
         itemCount: videoList?.length,
         itemBuilder: (context, index) {
           final video = videoList?[index];
-          final opacity = detail?.owned == true || index == 0 ? 1.0 : 0.5;
-          // return VideoTile(video?.title, video?.duration, detail?.owned,
-          //     opacity, detail!, video?.video, video!);
-          return VideoTile(opacity, detail!, video!);
+          final isLocked = index > 0 && videoList?[(index) - 1].resume == null;
+
+          // Tambahkan isLocked ke VideoTile
+          return VideoTile(
+            detail?.owned == true || index == 0 ? 1.0 : 0.5,
+            detail!,
+            video!,
+            isLocked: isLocked,
+          );
         },
       );
     }

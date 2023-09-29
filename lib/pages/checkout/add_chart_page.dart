@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stufast_mobile/models/chart_model.dart';
+import 'package:stufast_mobile/pages/checkout/checkout_page.dart';
 import 'package:stufast_mobile/providers/chart_provider.dart';
+import 'package:stufast_mobile/providers/checkout_provider.dart';
 import 'package:stufast_mobile/providers/user_course_provider.dart';
 import 'package:stufast_mobile/widget/chart_tile.dart';
 import 'package:stufast_mobile/widget/price_text_widget.dart';
@@ -19,6 +21,7 @@ class AddToChartPage extends StatefulWidget {
 class _AddToChartPageState extends State<AddToChartPage> {
   bool loading = true;
   List selectedIds = [];
+  int totalPrice = 0;
   void initState() {
     // TODO: implement initState
     getInit();
@@ -30,10 +33,16 @@ class _AddToChartPageState extends State<AddToChartPage> {
       loading = true;
     });
     await Provider.of<ChartProvider>(context, listen: false).getChart();
+    await Provider.of<CheckoutProvider>(context, listen: false)
+        .checkoutCourse(selectedIds);
 
     setState(() {
       loading = false;
     });
+  }
+
+  int? calculatePriceCart() {
+    return context.watch<CheckoutProvider>().checkout!.subTotal;
   }
 
   Color getColorForItemType(String itemType) {
@@ -92,8 +101,10 @@ class _AddToChartPageState extends State<AddToChartPage> {
                         setState(() {
                           if (isChecked != null && isChecked) {
                             selectedIds.add(item.cartId);
+                            totalPrice += int.parse('${item.newPrice}');
                           } else {
                             selectedIds.remove(item.cartId);
+                            totalPrice -= int.parse('${item.newPrice}');
                           }
                         });
                       },
@@ -230,14 +241,23 @@ class _AddToChartPageState extends State<AddToChartPage> {
               children: [
                 Text('Total (len) item',
                     style: secondaryTextStyle.copyWith(fontWeight: bold)),
-                NewPrice('${chartProvider.chart?.subTotal}')
+                // NewPrice('${chartProvider.chart?.subTotal}')
+                NewPrice('${totalPrice}')
               ],
             ),
             SizedBox(height: 24),
             Container(
                 width: double.infinity,
                 height: 54,
-                child: PrimaryButton(text: 'Checkout', onPressed: () {})),
+                child: PrimaryButton(
+                    text: 'Checkout',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CheckOutPage(selectedIds)),
+                      );
+                    })),
           ],
         ),
       );
@@ -272,6 +292,7 @@ class _AddToChartPageState extends State<AddToChartPage> {
                 children: [
                   ListView(
                     children: [
+                      Row(children: selectedIds.map((e) => Text(e)).toList()),
                       chartTile(), // Widget chartTile
                     ],
                   ),

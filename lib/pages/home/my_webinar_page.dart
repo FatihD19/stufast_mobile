@@ -18,6 +18,7 @@ class _WebinarPageState extends State<WebinarPage> {
   void initState() {
     // TODO: implement initState
     getInit();
+    Provider.of<WebinarProvider>(context, listen: false).getWebinar(true);
     super.initState();
   }
 

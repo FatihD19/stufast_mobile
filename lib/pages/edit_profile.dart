@@ -1,13 +1,15 @@
 import 'dart:io';
 
 import 'package:date_field/date_field.dart';
-
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stufast_mobile/models/user_model.dart';
 import 'package:stufast_mobile/providers/auth_provider.dart';
+import 'package:stufast_mobile/services/auth_service.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/primary_button.dart';
 import 'package:stufast_mobile/widget/username_textfield.dart';
@@ -28,24 +30,30 @@ class _EditProfileState extends State<EditProfile> {
   DateTime? selectedDate;
   bool isLoading = false;
   File? _profilePicture;
-
+  AuthService authService = AuthService();
   @override
   Widget build(BuildContext context) {
     AuthProvider? authProvider = Provider.of<AuthProvider>(context);
     UserModel? user = authProvider.user;
 
-    // void _pickProfilePicture() async {
-    //   FilePickerResult? result = await FilePicker.platform.pickFiles(
-    //     type: FileType.image,
-    //     allowMultiple: false,
-    //   );
-
-    //   if (result != null && result.files.isNotEmpty) {
-    //     setState(() {
-    //       _profilePicture = File(result.files.first.path!);
-    //     });
-    //   }
-    // }
+    _pickProfilePicture() async {
+      // FilePickerResult? result = await FilePicker.platform.pickFiles(
+      //   type: FileType.image,
+      //   allowMultiple: true,
+      // );
+      // if (result != null && result.files.isNotEmpty) {
+      //   setState(() {
+      //     _profilePicture = File(result.files.first.path!);
+      //   });
+      // }
+      final pickedFile =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        setState(() {
+          _profilePicture = File(pickedFile.path);
+        });
+      }
+    }
 
     handleEditProfile() async {
       setState(() {
@@ -169,6 +177,21 @@ class _EditProfileState extends State<EditProfile> {
           child: PrimaryButton(text: 'Simpan', onPressed: handleEditProfile));
     }
 
+    Widget uploadImgButton() {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 24),
+        child: ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
+            onPressed: _pickProfilePicture,
+            child: Row(
+              children: [
+                Icon(Icons.upload_file),
+                Text('Upload Foto profile', style: buttonTextStyle)
+              ],
+            )),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -188,7 +211,13 @@ class _EditProfileState extends State<EditProfile> {
       ),
       body: Container(
         child: ListView(
-          children: [profilPic(), form(), SizedBox(height: 24), saveButton()],
+          children: [
+            profilPic(),
+            form(),
+            SizedBox(height: 24),
+            uploadImgButton(),
+            saveButton()
+          ],
         ),
       ),
     );

@@ -26,6 +26,7 @@ class WebinarProvider with ChangeNotifier {
       List<WebinarModel> webinar = await WebinarService().getWebinar(owned);
       loading = false;
       owned == true ? _userWebinar = webinar : _webinar = webinar;
+      notifyListeners();
     } catch (e) {
       print(e);
     }

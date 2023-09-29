@@ -206,11 +206,16 @@ class ProfilePage extends StatelessWidget {
                     style: secondaryTextStyle,
                   ),
                 ),
-                ListTile(
-                  leading: Image.asset('assets/icon_faq.png'),
-                  title: Text(
-                    'FAQ',
-                    style: secondaryTextStyle,
+                InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/faq-page');
+                  },
+                  child: ListTile(
+                    leading: Image.asset('assets/icon_faq.png'),
+                    title: Text(
+                      'FAQ',
+                      style: secondaryTextStyle,
+                    ),
                   ),
                 ),
                 ListTile(

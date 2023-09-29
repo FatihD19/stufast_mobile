@@ -30,6 +30,10 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
     getInit();
     Provider.of<WebinarProvider>(context, listen: false).getWebinar(false);
+    Provider.of<UserCourseProvider>(context, listen: false).getUserCourses();
+    jumlahCart =
+        Provider.of<ChartProvider>(context, listen: false).chart?.item?.length;
+
     super.initState();
   }
 
@@ -41,9 +45,6 @@ class _HomePageState extends State<HomePage> {
     setState(() async {
       jumlahCart = context.watch<ChartProvider>().chart?.item?.length;
     });
-
-    await Provider.of<UserCourseProvider>(context, listen: false)
-        .getUserCourses();
 
     setState(() {
       loading = false;
@@ -65,6 +66,8 @@ class _HomePageState extends State<HomePage> {
     CourseProvider courseProvider = Provider.of<CourseProvider>(context);
     ChartProvider chartProvider = Provider.of<ChartProvider>(context);
     ChartModel? cart = chartProvider.chart;
+    UserCourseProvider userCourseProvider =
+        Provider.of<UserCourseProvider>(context);
 
     Widget cartItem() {
       return Stack(
@@ -86,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                 borderRadius: BorderRadius.circular(20), // Bentuk angka
               ),
               child: Text(
-                '${chartProvider.chart?.item?.length}', // Angka yang ingin ditampilkan
+                '${chartProvider.chart?.item?.length ?? 0}', // Angka yang ingin ditampilkan
                 style: TextStyle(
                   fontSize: 11,
                   color: Colors.white, // Warna teks angka
@@ -215,17 +218,34 @@ class _HomePageState extends State<HomePage> {
     }
 
     Widget userCourseTile() {
-      return ListView(
-        physics: ClampingScrollPhysics(),
-        shrinkWrap: true,
-        children: context
-            .watch<UserCourseProvider>()
-            .userCourses
-            .take(1)
-            .map((userCourse) => CourseTile(userCourse))
-            .toList(),
-      );
+      return userCourseProvider.loading
+          ? CircularProgressIndicator()
+          : ListView(
+              physics: ClampingScrollPhysics(),
+              shrinkWrap: true,
+              children: userCourseProvider.userCourses
+                  .take(1)
+                  .map((userCourse) => CourseTile(userCourse))
+                  .toList(),
+            );
     }
+
+    // Widget userCourseTile() {
+    //   return FutureBuilder(
+    //       future: userCourseProvider.getUserCourses(),
+    //       builder: (context, snapshot) {
+    //         return userCourseProvider.loading
+    //             ? CircularProgressIndicator()
+    //             : ListView(
+    //                 physics: ClampingScrollPhysics(),
+    //                 shrinkWrap: true,
+    //                 children: userCourseProvider.userCourses
+    //                     .take(1)
+    //                     .map((userCourse) => CourseTile(userCourse))
+    //                     .toList(),
+    //               );
+    //       });
+    // }
 
     Widget continueCourse() {
       return Column(
@@ -333,16 +353,18 @@ class _HomePageState extends State<HomePage> {
               )
             ],
           ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: context
-                  .watch<WebinarProvider>()
-                  .webinar
-                  .map((webinar) => WebinarCard(webinar, false))
-                  .toList(),
-            ),
-          )
+          context.watch<WebinarProvider>().loading == true
+              ? CircularProgressIndicator()
+              : SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: context
+                        .watch<WebinarProvider>()
+                        .webinar
+                        .map((webinar) => WebinarCard(webinar, false))
+                        .toList(),
+                  ),
+                )
         ],
       );
     }

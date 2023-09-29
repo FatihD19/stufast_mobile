@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -98,21 +99,33 @@ class AuthService {
       ..fields['date_birth'] = dateBirth!;
 
     // Cek apakah profile_picture tidak null, jika tidak, tambahkan gambar ke permintaan
+    // if (profilePicture != null) {
+    //   var pic = await http.MultipartFile.fromPath(
+    //       'profile_picture', profilePicture.path);
+    //   request.files.add(pic);
+    //   print(pic.filename);
+    // }
     if (profilePicture != null) {
-      var pic = await http.MultipartFile.fromPath(
-          'profile_picture', profilePicture.path);
-      request.files.add(pic);
+      // Jika profile_picture tidak kosong, tambahkan gambar ke dalam request
+      request.files.add(await http.MultipartFile.fromPath(
+        'profile_picture',
+        profilePicture.path,
+      ));
     }
 
     // Kirim permintaan dengan file gambar jika ada
     var response = await request.send();
+    var responseData = await response.stream.toBytes();
+    var responseString = utf8.decode(responseData);
 
+    print(responseString);
     if (response.statusCode == 201) {
       final responseData = await response.stream.bytesToString();
       final data = jsonDecode(responseData);
       String status = data['status'].toString();
       return status;
     } else {
+      print(response);
       throw Exception('Gagal Edit Profile');
     }
   }
