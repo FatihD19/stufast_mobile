@@ -218,11 +218,16 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ),
                 ),
-                ListTile(
-                  leading: Image.asset('assets/icon_mail.png'),
-                  title: Text(
-                    'Hubungi Kami',
-                    style: secondaryTextStyle,
+                InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/contact-page');
+                  },
+                  child: ListTile(
+                    leading: Image.asset('assets/icon_mail.png'),
+                    title: Text(
+                      'Hubungi Kami',
+                      style: secondaryTextStyle,
+                    ),
                   ),
                 ),
               ],

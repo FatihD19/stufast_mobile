@@ -22,6 +22,7 @@ class _AddToChartPageState extends State<AddToChartPage> {
   bool loading = true;
   List selectedIds = [];
   int totalPrice = 0;
+  bool selectAll = false;
   void initState() {
     // TODO: implement initState
     getInit();
@@ -33,8 +34,8 @@ class _AddToChartPageState extends State<AddToChartPage> {
       loading = true;
     });
     await Provider.of<ChartProvider>(context, listen: false).getChart();
-    await Provider.of<CheckoutProvider>(context, listen: false)
-        .checkoutCourse(selectedIds);
+    // await Provider.of<CheckoutProvider>(context, listen: false)
+    //     .checkoutCourse(selectedIds);
 
     setState(() {
       loading = false;
@@ -106,6 +107,18 @@ class _AddToChartPageState extends State<AddToChartPage> {
                             selectedIds.remove(item.cartId);
                             totalPrice -= int.parse('${item.newPrice}');
                           }
+                          // Periksa apakah semua item dipilih atau tidak
+                          selectAll = chartProvider.chart!.item!.every(
+                              (item) => selectedIds.contains(item.cartId));
+                          if (selectAll) {
+                            totalPrice = chartProvider.chart!.item!.fold<int>(
+                                0,
+                                (total, item) =>
+                                    total + int.parse('${item.newPrice}'));
+                          }
+                          //else {
+                          //   totalPrice = 0;
+                          // }
                         });
                       },
                     ),
@@ -219,11 +232,36 @@ class _AddToChartPageState extends State<AddToChartPage> {
                 Text('Select All',
                     style: secondaryTextStyle.copyWith(fontWeight: bold)),
                 Checkbox(
-                  checkColor: primaryColor,
-                  value: isChecked,
-                  onChanged: (bool? value) {
+                  value: selectAll,
+                  onChanged: (bool? isChecked) {
                     setState(() {
-                      isChecked = value!;
+                      selectAll = isChecked ?? false;
+                      if (selectAll) {
+                        // Jika "Select All" dicheck, tandai semua item dan hitung total harga
+                        selectedIds.clear();
+                        // Set total harga ke nol
+                        totalPrice = 0;
+                        // Pilih semua item cart
+                        selectedIds.addAll(chartProvider.chart!.item!
+                            .map((item) => item.cartId));
+                        // Totalkan harga semua item yang dipilih
+                        totalPrice = chartProvider.chart!.item!.fold<int>(
+                            0,
+                            (total, item) =>
+                                total + int.parse('${item.newPrice}'));
+                        // for (ItemChartModel item
+                        //     in chartProvider.chart!.item!) {
+                        //   totalPrice += int.parse('${item.newPrice}');
+                        // }
+                      } else {
+                        selectedIds.clear();
+                        for (ItemChartModel item
+                            in chartProvider.chart!.item!) {
+                          totalPrice -= int.parse('${item.newPrice}');
+                        }
+                        // Jika "Select All" di-uncheck, batalkan pemilihan semua item
+                        totalPrice = 0; // Setel total harga ke 0
+                      }
                     });
                   },
                 ),

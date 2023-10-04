@@ -10,7 +10,12 @@ class VideoTile extends StatefulWidget {
   VideoModel video;
   bool? isLocked;
 
-  VideoTile(this.opacity, this.detailVideo, this.video, {this.isLocked});
+  dynamic progressCourse;
+  String? totalDuration;
+  int? persen;
+
+  VideoTile(this.opacity, this.detailVideo, this.video,
+      {this.isLocked, this.progressCourse, this.persen, this.totalDuration});
 
   @override
   State<VideoTile> createState() => _VideoTileState();
@@ -56,7 +61,12 @@ class _VideoTileState extends State<VideoTile> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => VideoDetailPage(
-                                        widget.detailVideo, widget.video)));
+                                          widget.detailVideo,
+                                          widget.video,
+                                          progressCourse: widget.progressCourse,
+                                          persen: widget.persen,
+                                          totalDuration: widget.totalDuration,
+                                        )));
                           },
                           style: ElevatedButton.styleFrom(
                             primary: Colors.white, // Latar belakang putih

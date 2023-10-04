@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:stufast_mobile/pages/checkout/payment_page.dart';
 
 import '../../providers/checkout_provider.dart';
 import '../../theme.dart';
 import '../../widget/price_text_widget.dart';
+import '../../widget/primary_button.dart';
 
 class CheckOutPage extends StatefulWidget {
   List selectedItem;
@@ -15,6 +18,7 @@ class CheckOutPage extends StatefulWidget {
 
 class _CheckOutPageState extends State<CheckOutPage> {
   bool loading = true;
+  String? selectPayment;
   @override
   void initState() {
     // TODO: implement initState
@@ -59,38 +63,193 @@ class _CheckOutPageState extends State<CheckOutPage> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
-        child: ListTile(
-          leading: Image.network(
-            '${thumbnail}',
-            fit: BoxFit.cover,
-            width: 63,
-            height: 61,
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+          child: ListTile(
+            leading: Image.network(
+              '${thumbnail}',
+              fit: BoxFit.cover,
+              width: 63,
+              height: 61,
+            ),
+            title: Text(
+              '${title}',
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              style: primaryTextStyle.copyWith(fontWeight: bold),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(3),
+                    color: getColorForItemType('${type}'),
+                  ),
+                  child: Text(
+                    '${type}',
+                    style:
+                        buttonTextStyle.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Row(
+                  children: [
+                    NewPrice(newPrice),
+                    SizedBox(width: 8),
+                    OldPrice(oldPrice),
+                  ],
+                )
+              ],
+            ),
           ),
-          title: Text(
-            '${title}',
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-            style: primaryTextStyle.copyWith(fontWeight: bold),
-          ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
+        ),
+      );
+    }
+
+    Widget checkoutList() {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Pesanan anda',
+              style: primaryTextStyle.copyWith(fontWeight: bold)),
+          loading
+              ? Center(child: CircularProgressIndicator())
+              : Column(
+                  children: checkOutProvider.checkout!.item!
+                      .map((checkout) => checkoutTile(
+                          '${checkout.thumbnail}',
+                          '${checkout.title}',
+                          '${checkout.type}',
+                          '${checkout.newPrice}',
+                          '${checkout.oldPrice}'))
+                      .toList()),
+        ],
+      );
+    }
+
+    Widget paymentTile(String img, title, id) {
+      return Container(
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Image.asset('$img', width: 50, height: 16),
+                Text("$title",
+                    style: primaryTextStyle.copyWith(
+                        fontSize: 18, fontWeight: bold)),
+                Radio(
+                  value: '$id', // Mengganti value menjadi 'INVENTORI_TP_1'
+                  groupValue: selectPayment,
+                  onChanged: (value) {
+                    setState(() {
+                      selectPayment = value.toString();
+                    });
+                  },
+                ),
+              ],
+            ),
+            Divider(
+              height: 20,
+              thickness: 0.5,
+              indent: 10,
+              endIndent: 10,
+              color: secondaryTextColor,
+            ),
+          ],
+        ),
+      );
+    }
+
+    Widget paymentList() {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 24),
+          Text("Metode Pembayaran",
+              style: primaryTextStyle.copyWith(fontWeight: bold)),
+          Card(
+              clipBehavior: Clip.antiAlias,
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(3),
-                  color: getColorForItemType('${type}'),
+                  borderRadius: BorderRadius.circular(10),
+                  color: Color(0xffF3F3F3),
                 ),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                  child: Column(
+                    children: [
+                      paymentTile("assets/ic_bankMandiri.png",
+                          "BNI Virtual Account", "982"),
+                      paymentTile("assets/ic_bankBri.png",
+                          "BRI Virtual Account", "932"),
+                    ],
+                  ),
+                ),
+              )),
+        ],
+      );
+    }
+
+    Widget pricing() {
+      return Card(
+        clipBehavior: Clip.antiAlias,
+        elevation: 5,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Color(0xffF3F3F3),
+          ),
+          padding: EdgeInsets.fromLTRB(24, 16, 24, 16),
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
                 child: Text(
-                  '${type}',
-                  style: buttonTextStyle.copyWith(fontWeight: FontWeight.bold),
-                ),
+                    'Total item (${checkOutProvider.checkout?.item?.length})',
+                    style: secondaryTextStyle.copyWith(fontWeight: bold)),
+              ),
+              Column(
+                children: checkOutProvider.checkout!.item!
+                    .map(
+                      (item) => Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '• ${item.title!.length > 20 ? item.title!.substring(0, 20) + '...' : item.title}',
+                            style: secondaryTextStyle,
+                          ),
+                          NewPrice("${item.newPrice}")
+                        ],
+                      ),
+                    )
+                    .toList(),
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  NewPrice(newPrice),
-                  SizedBox(width: 8),
-                  OldPrice(oldPrice),
+                  Text('  • Flash Sale', style: secondaryTextStyle),
+                  // Text(flashSale, style: secondaryTextStyle),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Total',
+                      style: primaryTextStyle.copyWith(
+                          fontWeight: bold, fontSize: 16)),
+                  Text(
+                      NumberFormat.simpleCurrency(locale: 'id')
+                          .format(
+                              int.parse('${checkOutProvider.checkout?.total}'))
+                          .replaceAll(',00', ''),
+                      style: primaryTextStyle.copyWith(
+                          fontWeight: bold, fontSize: 16)),
                 ],
               )
             ],
@@ -111,7 +270,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
             icon: Icon(Icons.arrow_back),
             color: Colors.black,
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/home');
+              Navigator.pop(context);
             },
           ),
           backgroundColor: Colors.white,
@@ -122,19 +281,22 @@ class _CheckOutPageState extends State<CheckOutPage> {
           child: ListView(
             shrinkWrap: true,
             children: [
-              Text('Pesanan anda',
-                  style: primaryTextStyle.copyWith(fontWeight: bold)),
-              loading
-                  ? Center(child: CircularProgressIndicator())
-                  : Column(
-                      children: checkOutProvider.checkout!.item!
-                          .map((checkout) => checkoutTile(
-                              '${checkout.thumbnail}',
-                              '${checkout.title}',
-                              '${checkout.type}',
-                              '${checkout.newPrice}',
-                              '${checkout.oldPrice}'))
-                          .toList())
+              checkoutList(),
+              paymentList(),
+              pricing(),
+              SizedBox(height: 14),
+              Container(
+                  width: double.infinity,
+                  height: 54,
+                  child: PrimaryButton(
+                      text: 'Bayar',
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PaymentPage()),
+                        );
+                      })),
             ],
           ),
         ));

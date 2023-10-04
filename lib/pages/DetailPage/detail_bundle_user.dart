@@ -148,7 +148,7 @@ class _DetailBundleState extends State<DetailBundle> {
             children: [
               Align(
                 alignment: Alignment.centerLeft,
-                child: Text('Course UIX',
+                child: Text('${detail?.title}',
                     style: secondaryTextStyle.copyWith(fontWeight: bold)),
               ),
               Column(

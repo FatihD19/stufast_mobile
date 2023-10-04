@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
       loading = true;
     });
     await Provider.of<ChartProvider>(context, listen: false).getChart();
-    setState(() async {
+    setState(() {
       jumlahCart = context.watch<ChartProvider>().chart?.item?.length;
     });
 

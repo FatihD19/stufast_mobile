@@ -132,6 +132,9 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
             detail!,
             video!,
             isLocked: isLocked,
+            progressCourse: widget.progressCourse,
+            persen: widget.persen,
+            totalDuration: widget.totalDuration,
           );
         },
       );

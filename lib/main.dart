@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:stufast_mobile/pages/Faq-Support/contact_us_page.dart';
 import 'package:stufast_mobile/pages/Faq-Support/faq_page.dart';
 import 'package:stufast_mobile/pages/checkout/add_chart_page.dart';
 import 'package:stufast_mobile/pages/checkout/checkout_page.dart';
@@ -62,6 +63,7 @@ class MyApp extends StatelessWidget {
           '/edit-profile': (context) => EditProfile(),
           '/chart-page': (context) => AddToChartPage(),
           '/faq-page': (context) => FaqPage(),
+          '/contact-page': (context) => ContactUsPage()
         },
       ),
     );
