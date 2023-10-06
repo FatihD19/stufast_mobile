@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       loading = true;
     });
-    await Provider.of<ChartProvider>(context, listen: false).getChart();
+    Provider.of<ChartProvider>(context, listen: false).getChart();
     setState(() {
       jumlahCart = context.watch<ChartProvider>().chart?.item?.length;
     });
@@ -81,21 +81,15 @@ class _HomePageState extends State<HomePage> {
           ),
           Positioned(
             right: 0,
-            bottom: 0,
-            child: Container(
-              padding: EdgeInsets.all(4), // Sesuaikan dengan kebutuhan Anda
-              decoration: BoxDecoration(
-                color: Colors.red, // Warna latar belakang angka
-                borderRadius: BorderRadius.circular(20), // Bentuk angka
-              ),
+            bottom: 25,
+            child: CircleAvatar(
+              radius: 8, // Sesuaikan dengan ukuran yang Anda inginkan
+              backgroundColor:
+                  Colors.yellow.shade700, // Warna latar belakang angka
               child: Text(
-                '${chartProvider.chart?.item?.length ?? 0}', // Angka yang ingin ditampilkan
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.white, // Warna teks angka
-                  fontWeight: FontWeight.bold, // Gaya teks angka
-                ),
-              ),
+                  '${chartProvider.chart?.item?.length ?? 0}', // Angka yang ingin ditampilkan
+                  style:
+                      primaryTextStyle.copyWith(fontSize: 9, fontWeight: bold)),
             ),
           ),
         ],
@@ -103,6 +97,11 @@ class _HomePageState extends State<HomePage> {
     }
 
     Widget header() {
+      String? fullName = user?.fullname;
+      if (fullName != null && fullName.length > 13) {
+        fullName = fullName.substring(
+            0, 13); // Memotong teks jika lebih dari 15 karakter
+      }
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -114,7 +113,7 @@ class _HomePageState extends State<HomePage> {
                   style: primaryTextStyle.copyWith(fontSize: 18),
                 ),
                 TextSpan(
-                  text: '${user?.fullname}',
+                  text: '$fullName',
                   style: primaryTextStyle.copyWith(
                       fontWeight: FontWeight.bold, fontSize: 18),
                 ),

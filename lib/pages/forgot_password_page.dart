@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stufast_mobile/pages/succsess_page.dart';
-import 'package:stufast_mobile/services/reset_password_service.dart';
+import 'package:stufast_mobile/services/Auth/reset_password_service.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/primary_button.dart';
 import 'package:stufast_mobile/widget/username_textfield.dart';

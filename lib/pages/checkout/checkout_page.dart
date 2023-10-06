@@ -1,7 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:stufast_mobile/models/chart_model.dart';
 import 'package:stufast_mobile/pages/checkout/payment_page.dart';
+import 'package:stufast_mobile/pages/checkout/payment_view.dart';
 
 import '../../providers/checkout_provider.dart';
 import '../../theme.dart';
@@ -214,22 +218,24 @@ class _CheckOutPageState extends State<CheckOutPage> {
                     'Total item (${checkOutProvider.checkout?.item?.length})',
                     style: secondaryTextStyle.copyWith(fontWeight: bold)),
               ),
-              Column(
-                children: checkOutProvider.checkout!.item!
-                    .map(
-                      (item) => Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '• ${item.title!.length > 20 ? item.title!.substring(0, 20) + '...' : item.title}',
-                            style: secondaryTextStyle,
-                          ),
-                          NewPrice("${item.newPrice}")
-                        ],
-                      ),
-                    )
-                    .toList(),
-              ),
+              loading
+                  ? CircularProgressIndicator()
+                  : Column(
+                      children: checkOutProvider.checkout!.item!
+                          .map(
+                            (item) => Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '• ${item.title!.length > 20 ? item.title!.substring(0, 20) + '...' : item.title}',
+                                  style: secondaryTextStyle,
+                                ),
+                                NewPrice("${item.newPrice}")
+                              ],
+                            ),
+                          )
+                          .toList(),
+                    ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -278,27 +284,33 @@ class _CheckOutPageState extends State<CheckOutPage> {
         ),
         body: Container(
           padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              checkoutList(),
-              paymentList(),
-              pricing(),
-              SizedBox(height: 14),
-              Container(
-                  width: double.infinity,
-                  height: 54,
-                  child: PrimaryButton(
-                      text: 'Bayar',
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => PaymentPage()),
-                        );
-                      })),
-            ],
-          ),
+          child: loading
+              ? Center(child: CircularProgressIndicator())
+              : ListView(
+                  shrinkWrap: true,
+                  children: [
+                    checkoutList(),
+                    paymentList(),
+                    pricing(),
+                    SizedBox(height: 14),
+                    Container(
+                        width: double.infinity,
+                        height: 54,
+                        child: PrimaryButton(
+                            text: 'Bayar',
+                            onPressed: () async {
+                              await Provider.of<CheckoutProvider>(context,
+                                      listen: false)
+                                  .orderItem(widget.selectedItem);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => PaymentView(
+                                        "${checkOutProvider.order?.token}")),
+                              );
+                            })),
+                  ],
+                ),
         ));
   }
 }

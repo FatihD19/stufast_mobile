@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:stufast_mobile/models/user_model.dart';
-import 'package:stufast_mobile/services/auth_service.dart';
+import 'package:stufast_mobile/services/Auth/auth_service.dart';
 
 class AuthProvider with ChangeNotifier {
   UserModel? _user;

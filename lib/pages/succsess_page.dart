@@ -5,8 +5,9 @@ import 'package:stufast_mobile/widget/primary_button.dart';
 class SuccsessPage extends StatelessWidget {
   String? titleMess;
   String? mess;
+  bool? pay;
 
-  SuccsessPage({this.titleMess, this.mess});
+  SuccsessPage({this.titleMess, this.mess, this.pay});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +36,9 @@ class SuccsessPage extends StatelessWidget {
         child: PrimaryButton(
             text: 'Masuk',
             onPressed: () {
-              Navigator.pushNamed(context, '/login-page');
+              pay == true
+                  ? Navigator.popAndPushNamed(context, '/home')
+                  : Navigator.pushNamed(context, '/login-page');
             }),
       );
     }

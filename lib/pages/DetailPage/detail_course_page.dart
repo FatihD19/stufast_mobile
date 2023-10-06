@@ -135,6 +135,7 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
             progressCourse: widget.progressCourse,
             persen: widget.persen,
             totalDuration: widget.totalDuration,
+            index: index,
           );
         },
       );

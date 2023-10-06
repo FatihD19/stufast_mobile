@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:stufast_mobile/models/bundling_model.dart';
 import 'package:stufast_mobile/models/course_model.dart';
-import 'package:stufast_mobile/services/user_course_service.dart';
+import 'package:stufast_mobile/services/Course/user_course_service.dart';
 
 class UserCourseProvider with ChangeNotifier {
   List<CourseModel> _userCourses = [];

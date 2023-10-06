@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:stufast_mobile/services/auth_service.dart';
+import 'package:stufast_mobile/services/Auth/auth_service.dart';
 
 class ResetPasswordService {
   String baseurl = AuthService.baseUrl;

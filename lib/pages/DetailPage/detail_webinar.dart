@@ -1,9 +1,11 @@
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:stufast_mobile/models/webinar_model.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/price_text_widget.dart';
 
+import '../../providers/chart_provider.dart';
 import '../../widget/description_widget.dart';
 import '../../widget/primary_button.dart';
 
@@ -17,6 +19,32 @@ class DetailWebinarPage extends StatefulWidget {
 
 class _DetailWebinarPageState extends State<DetailWebinarPage> {
   bool isExpanded = false;
+  handleAddChart() async {
+    if (await context
+        .read<ChartProvider>()
+        .addToChart('webinar', "${widget.detailWebinar.webinarId}")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.green,
+          content: Text(
+            'berhasil tambah ke chart',
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text(
+            'Gagal!',
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget imageCourse() {
@@ -133,7 +161,7 @@ class _DetailWebinarPageState extends State<DetailWebinarPage> {
                   width: double.infinity,
                   height: 54,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: handleAddChart,
                     style: ElevatedButton.styleFrom(
                       primary: Colors.white, // Latar belakang putih
                       onPrimary: Color(

@@ -48,6 +48,7 @@ dependencies:
   expandable_text: ^2.3.0
   image_picker: ^1.0.4
   file_picker: ^5.2.10
+  webview_flutter: ^2.3.0
 
 dev_dependencies:
   flutter_test:

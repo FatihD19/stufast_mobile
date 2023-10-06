@@ -1,6 +1,6 @@
 import 'package:stufast_mobile/models/category_model.dart';
 import 'package:stufast_mobile/models/tag_model.dart';
-import 'package:stufast_mobile/models/video_duration_model.dart';
+
 import 'package:stufast_mobile/models/video_model.dart';
 
 class CourseModel {

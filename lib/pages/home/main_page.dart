@@ -5,6 +5,7 @@ import 'package:stufast_mobile/pages/home/home_page.dart';
 import 'package:stufast_mobile/pages/home/my_course_page.dart';
 import 'package:stufast_mobile/pages/home/profile_page.dart';
 import 'package:stufast_mobile/pages/home/my_webinar_page.dart';
+import 'package:stufast_mobile/pages/talent-hub/talent_hub_page.dart';
 import 'package:stufast_mobile/theme.dart';
 
 class MainPage extends StatefulWidget {
@@ -57,10 +58,11 @@ class _MainPageState extends State<MainPage> {
       return ClipRRect(
         borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
         child: BottomAppBar(
-          shape: CircularNotchedRectangle(),
           notchMargin: 12,
           clipBehavior: Clip.antiAlias,
           child: BottomNavigationBar(
+              showSelectedLabels: false, // <-- HERE
+              showUnselectedLabels: false, // <-- AND HERE
               backgroundColor: primaryColor,
               currentIndex: currentIndex,
               onTap: (value) {
@@ -110,11 +112,23 @@ class _MainPageState extends State<MainPage> {
                 BottomNavigationBarItem(
                   icon: Container(
                     child: Image.asset(
-                      'assets/icon_profile.png',
+                      'assets/ic_talent.png',
                       width: 81,
                       height: 69,
                       color:
                           currentIndex == 3 ? buttonTextColor : Colors.white70,
+                    ),
+                  ),
+                  label: '',
+                ),
+                BottomNavigationBarItem(
+                  icon: Container(
+                    child: Image.asset(
+                      'assets/icon_profile.png',
+                      width: 81,
+                      height: 69,
+                      color:
+                          currentIndex == 4 ? buttonTextColor : Colors.white70,
                     ),
                   ),
                   label: '',
@@ -136,6 +150,9 @@ class _MainPageState extends State<MainPage> {
           return WebinarPage();
           break;
         case 3:
+          return TalentHubPage();
+          break;
+        case 4:
           return ProfilePage();
           break;
         default:

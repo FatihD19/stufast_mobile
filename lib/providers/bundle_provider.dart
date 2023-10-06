@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:stufast_mobile/models/bundling_model.dart';
-import 'package:stufast_mobile/services/bundle_service.dart';
-import 'package:stufast_mobile/services/user_course_service.dart';
+import 'package:stufast_mobile/services/Course/bundle_service.dart';
+import 'package:stufast_mobile/services/Course/user_course_service.dart';
 
 class BundleProvider with ChangeNotifier {
   List<BundlingModel> _userBundle = [];

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stufast_mobile/models/webinar_model.dart';
-import 'package:stufast_mobile/services/auth_service.dart';
+import 'package:stufast_mobile/services/Auth/auth_service.dart';
 
 class WebinarService {
   Future<List<WebinarModel>> getWebinar(bool owned) async {

@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stufast_mobile/models/user_model.dart';
 import 'package:stufast_mobile/providers/auth_provider.dart';
-import 'package:stufast_mobile/services/auth_service.dart';
+import 'package:stufast_mobile/services/Auth/auth_service.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/primary_button.dart';
 import 'package:stufast_mobile/widget/username_textfield.dart';

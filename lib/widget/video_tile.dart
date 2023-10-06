@@ -13,9 +13,14 @@ class VideoTile extends StatefulWidget {
   dynamic progressCourse;
   String? totalDuration;
   int? persen;
+  int? index;
 
   VideoTile(this.opacity, this.detailVideo, this.video,
-      {this.isLocked, this.progressCourse, this.persen, this.totalDuration});
+      {this.isLocked,
+      this.progressCourse,
+      this.persen,
+      this.totalDuration,
+      this.index});
 
   @override
   State<VideoTile> createState() => _VideoTileState();
@@ -66,6 +71,7 @@ class _VideoTileState extends State<VideoTile> {
                                           progressCourse: widget.progressCourse,
                                           persen: widget.persen,
                                           totalDuration: widget.totalDuration,
+                                          viewedVideoIndex: widget.index,
                                         )));
                           },
                           style: ElevatedButton.styleFrom(

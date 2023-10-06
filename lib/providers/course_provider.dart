@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:stufast_mobile/models/course_model.dart';
 import 'package:stufast_mobile/models/tag_model.dart';
-import 'package:stufast_mobile/services/course_service.dart';
+import 'package:stufast_mobile/services/Course/course_service.dart';
 
 class CourseProvider with ChangeNotifier {
   List<CourseModel> _courses = [];

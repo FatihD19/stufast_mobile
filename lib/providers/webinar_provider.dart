@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stufast_mobile/models/webinar_model.dart';
-import 'package:stufast_mobile/services/webinar_service.dart';
+import 'package:stufast_mobile/services/Course/webinar_service.dart';
 
 class WebinarProvider with ChangeNotifier {
   List<WebinarModel> _webinar = [];

@@ -17,9 +17,13 @@ class VideoDetailPage extends StatefulWidget {
   dynamic progressCourse;
   String? totalDuration;
   int? persen;
+  int? viewedVideoIndex;
 
   VideoDetailPage(this.detailCourse, this.video,
-      {this.progressCourse, this.totalDuration, this.persen});
+      {this.progressCourse,
+      this.totalDuration,
+      this.persen,
+      this.viewedVideoIndex});
 
   @override
   State<VideoDetailPage> createState() => _VideoDetailPageState();
@@ -30,7 +34,6 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
 
   VideoModel? selectedVideo;
   List<bool> isVideoViewed = [];
-  int? viewedVideoIndex;
 
   @override
   void initState() {
@@ -61,11 +64,6 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    // FlickManager flickManager = FlickManager(
-    //   videoPlayerController: VideoPlayerController.networkUrl(
-    //       Uri.parse("${videoUrl ?? widget.video.video}")),
-    // );
-
     Widget videoPlayTile(
         VideoModel video, bool isLocked, String subtitleText, int index) {
       return Opacity(
@@ -105,7 +103,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
                             onPressed: () {
                               _changeVideo("${video.video}", video);
                               setState(() {
-                                viewedVideoIndex = index;
+                                widget.viewedVideoIndex = index;
                               });
                             },
                             style: ElevatedButton.styleFrom(
@@ -150,7 +148,8 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
             final isLocked =
                 index > 0 && videoList?[(index) - 1].resume == null;
             // bool currentVideo = isVideoViewed[index];
-            String subtitleText = viewedVideoIndex == index ? "view" : "unview";
+            String subtitleText =
+                widget.viewedVideoIndex == index ? "view" : "unview";
             return videoPlayTile(video!, isLocked, subtitleText, index);
           },
         ),
@@ -201,110 +200,108 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          '${widget.video.title}',
-          style: primaryTextStyle.copyWith(fontWeight: semiBold),
-        ),
-        elevation: 0, // Menghilangkan shadow
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          color: Colors.black,
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        backgroundColor: Colors.white,
-        centerTitle: false,
-      ),
-      body: ListView(shrinkWrap: true, children: [
-        AspectRatio(
-          aspectRatio: 16 / 9,
-          child: FlickVideoPlayer(flickManager: flickManager),
-        ), // Video di atas tab bar
-        keterangan(),
-        videoTile(),
-      ]),
-    );
-
-    // DefaultTabController(
-    //   length: 2, // Jumlah tab
-    //   child: Scaffold(
-    //     resizeToAvoidBottomInset: false,
-    //     body: Column(
-    //       children: [
-    //         AspectRatio(
-    //           aspectRatio: 16 / 9,
-    //           child: FlickVideoPlayer(flickManager: flickManager),
-    //         ), // Video di atas tab bar
-    //         keterangan(),
-    //         Container(
-    //           color: Colors.white,
-    //           child: TabBar(
-    //             labelColor: Color(0xFF248043), // Warna teks saat aktif
-    //             unselectedLabelColor:
-    //                 Color(0xFF7D7D7D), // Warna teks saat tidak aktif
-    //             indicatorWeight: 4, // Ketebalan garis tepi bawah saat aktif
-    //             indicator: BoxDecoration(
-    //               color:
-    //                   Color(0xFFE9F2EC), // Warna latar belakang saat tab aktif
-    //               border: Border(
-    //                 bottom: BorderSide(
-    //                   color: Color(
-    //                       0xFF248043), // Warna garis tepi bawah saat aktif
-    //                   width: 4, // Ketebalan garis tepi bawah saat aktif
-    //                 ),
-    //               ),
-    //             ), // W
-    //             tabs: [
-    //               Tab(text: 'Video'), // Tab pertama dengan teks 'Video'
-    //               Tab(text: 'Project'), // Tab kedua dengan teks 'Project'
-    //             ],
-    //           ),
-    //         ),
-    //         Expanded(
-    //           child: TabBarView(
-    //             children: [
-    //               // Konten untuk tab 'Video'
-    //               Container(
-    //                 padding: EdgeInsets.all(16),
-    //                 child: videoTile(),
-    //               )
-    //               // Konten untuk tab 'Project' bisa Anda tambahkan di sini
-    //             ],
-    //           ),
-    //         ),
-    //       ],
+    // return Scaffold(
+    //   appBar: AppBar(
+    //     title: Text(
+    //       '${widget.video.title}',
+    //       style: primaryTextStyle.copyWith(fontWeight: semiBold),
     //     ),
-    //     appBar: AppBar(
-    //       title: Text(
-    //         '${widget.video.title}',
-    //         style: primaryTextStyle.copyWith(fontWeight: semiBold),
-    //       ),
-    //       elevation: 0, // Menghilangkan shadow
-    //       leading: IconButton(
-    //         icon: Icon(Icons.arrow_back),
-    //         color: Colors.black,
-    //         onPressed: () {
-    //           flickManager.dispose();
-    //           Navigator.pop(context);
-    //           // Navigator.push(
-    //           //   context,
-    //           //   MaterialPageRoute(
-    //           //       builder: (context) => DetailCoursePage(
-    //           //             idUserCourse: "${widget.detailCourse.courseId}",
-    //           //             progressCourse: widget.progressCourse,
-    //           //             persen: widget.persen,
-    //           //             totalDuration: widget.totalDuration,
-    //           //           )),
-    //           // );
-    //         },
-    //       ),
-    //       backgroundColor: Colors.white,
-    //       centerTitle: false,
+    //     elevation: 0, // Menghilangkan shadow
+    //     leading: IconButton(
+    //       icon: Icon(Icons.arrow_back),
+    //       color: Colors.black,
+    //       onPressed: () {
+    //         Navigator.pop(context);
+    //       },
     //     ),
+    //     backgroundColor: Colors.white,
+    //     centerTitle: false,
     //   ),
+    //   body: ListView(shrinkWrap: true, children: [
+    //     AspectRatio(
+    //       aspectRatio: 16 / 9,
+    //       child: FlickVideoPlayer(flickManager: flickManager),
+    //     ), // Video di atas tab bar
+    //     keterangan(),
+    //     videoTile(),
+    //   ]),
     // );
+
+    return DefaultTabController(
+      length: 2, // Jumlah tab
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Column(
+          children: [
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: FlickVideoPlayer(flickManager: flickManager),
+            ), // Video di atas tab bar
+            keterangan(),
+            Container(
+              color: Colors.white,
+              child: TabBar(
+                labelColor: Color(0xFF248043), // Warna teks saat aktif
+                unselectedLabelColor:
+                    Color(0xFF7D7D7D), // Warna teks saat tidak aktif
+                indicatorWeight: 4, // Ketebalan garis tepi bawah saat aktif
+                indicator: BoxDecoration(
+                  color:
+                      Color(0xFFE9F2EC), // Warna latar belakang saat tab aktif
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Color(
+                          0xFF248043), // Warna garis tepi bawah saat aktif
+                      width: 4, // Ketebalan garis tepi bawah saat aktif
+                    ),
+                  ),
+                ), // W
+                tabs: [
+                  Tab(text: 'Video'), // Tab pertama dengan teks 'Video'
+                  Tab(text: 'Project'), // Tab kedua dengan teks 'Project'
+                ],
+              ),
+            ),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  // Konten untuk tab 'Video'
+                  videoTile(),
+                  Center(child: Text('tugas'))
+                  // Konten untuk tab 'Project' bisa Anda tambahkan di sini
+                ],
+              ),
+            ),
+          ],
+        ),
+        appBar: AppBar(
+          title: Text(
+            '${widget.video.title}',
+            style: primaryTextStyle.copyWith(fontWeight: semiBold),
+          ),
+          elevation: 0, // Menghilangkan shadow
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            color: Colors.black,
+            onPressed: () {
+              flickManager.dispose();
+              Navigator.pop(context);
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //       builder: (context) => DetailCoursePage(
+              //             idUserCourse: "${widget.detailCourse.courseId}",
+              //             progressCourse: widget.progressCourse,
+              //             persen: widget.persen,
+              //             totalDuration: widget.totalDuration,
+              //           )),
+              // );
+            },
+          ),
+          backgroundColor: Colors.white,
+          centerTitle: false,
+        ),
+      ),
+    );
   }
 }
