@@ -5,7 +5,7 @@ class TalentHubModel {
   String? id;
   String? profilePicture;
   dynamic averageScore;
-  int? totalCourse;
+  dynamic totalCourse;
   List<CourseModel>? courses;
 
   TalentHubModel({

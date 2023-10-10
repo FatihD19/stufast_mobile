@@ -6,6 +6,8 @@ class ChartProvider with ChangeNotifier {
   ChartModel? _chart;
   ChartModel? get chart => _chart;
 
+  int _lenCart = 0;
+  int get lenCart => _lenCart;
   set chart(ChartModel? chart) {
     _chart = chart;
     notifyListeners();
@@ -18,6 +20,11 @@ class ChartProvider with ChangeNotifier {
     } catch (e) {
       print(e);
     }
+  }
+
+  void getLenCart() {
+    _lenCart = _chart!.item!.length;
+    notifyListeners();
   }
 
   Future<bool> addToChart(String type, String id) async {

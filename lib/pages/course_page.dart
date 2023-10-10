@@ -628,7 +628,7 @@ class _CoursePageState extends State<CoursePage> {
                 icon: Icon(Icons.arrow_back),
                 color: Colors.black,
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pushReplacementNamed(context, '/home');
                 },
               ),
               backgroundColor: Colors.white,

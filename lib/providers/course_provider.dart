@@ -6,6 +6,7 @@ import 'package:stufast_mobile/services/Course/course_service.dart';
 class CourseProvider with ChangeNotifier {
   List<CourseModel> _courses = [];
   List<CourseModel> get courses => _courses;
+  bool loading = true;
 
   List<CourseModel> _coursesFilter = [];
   List<CourseModel> get coursesFilter => _coursesFilter;
@@ -27,6 +28,7 @@ class CourseProvider with ChangeNotifier {
     try {
       List<CourseModel> courses = await CourseService().getCourse(typeCourse);
       _courses = courses;
+      loading = false;
     } catch (e) {
       print(e);
     }

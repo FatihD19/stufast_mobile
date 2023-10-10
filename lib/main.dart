@@ -11,6 +11,7 @@ import 'package:stufast_mobile/pages/home/main_page.dart';
 import 'package:stufast_mobile/pages/home/my_course_page.dart';
 import 'package:stufast_mobile/pages/landing_page.dart';
 import 'package:stufast_mobile/pages/login_page.dart';
+import 'package:stufast_mobile/pages/notifikasi_page.dart';
 import 'package:stufast_mobile/pages/register_page.dart';
 import 'package:stufast_mobile/pages/splash_page.dart';
 import 'package:stufast_mobile/providers/auth_provider.dart';
@@ -19,6 +20,7 @@ import 'package:stufast_mobile/providers/chart_provider.dart';
 import 'package:stufast_mobile/providers/checkout_provider.dart';
 import 'package:stufast_mobile/providers/course_provider.dart';
 import 'package:stufast_mobile/providers/faq_provider.dart';
+import 'package:stufast_mobile/providers/talentHub_provider.dart';
 import 'package:stufast_mobile/providers/user_course_provider.dart';
 import 'package:stufast_mobile/providers/webinar_provider.dart';
 import 'package:stufast_mobile/theme.dart';
@@ -43,6 +45,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => WebinarProvider()),
         ChangeNotifierProvider(create: (context) => CheckoutProvider()),
         ChangeNotifierProvider(create: (context) => FaqProvider()),
+        ChangeNotifierProvider(create: (context) => TalentHubProvider()),
       ],
       child: MaterialApp(
         theme: ThemeData(
@@ -63,7 +66,8 @@ class MyApp extends StatelessWidget {
           '/edit-profile': (context) => EditProfile(),
           '/chart-page': (context) => AddToChartPage(),
           '/faq-page': (context) => FaqPage(),
-          '/contact-page': (context) => ContactUsPage()
+          '/contact-page': (context) => ContactUsPage(),
+          '/notif-page': (context) => NotifikasiPage()
         },
       ),
     );

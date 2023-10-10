@@ -125,7 +125,7 @@ class _HomePageState extends State<HomePage> {
               cartItem(),
               IconButton(
                 onPressed: () {
-                  // Tambahkan fungsi ketika icon notification ditekan
+                  Navigator.pushNamed(context, '/notif-page');
                 },
                 icon: Image.asset('assets/icon_notification.png'),
               ),
@@ -300,21 +300,19 @@ class _HomePageState extends State<HomePage> {
           FutureBuilder(
               future: courseProvider.getCourses('all'),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: courseProvider.courses
-                          .take(10) // Hanya ambil 10 data
-                          .map((course) => CardCourse(
-                                course: course,
-                              ))
-                          .toList(),
-                    ),
-                  );
-                } else {
-                  return Center(child: CircularProgressIndicator());
-                }
+                return courseProvider.loading == true
+                    ? CircularProgressIndicator()
+                    : SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: courseProvider.courses
+                              .take(10) // Hanya ambil 10 data
+                              .map((course) => CardCourse(
+                                    course: course,
+                                  ))
+                              .toList(),
+                        ),
+                      );
               }),
           // SingleChildScrollView(
           //   scrollDirection: Axis.horizontal,
