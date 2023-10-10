@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import '../theme.dart';
@@ -45,7 +46,10 @@ class NotifikasiPage extends StatelessWidget {
         ),
         actions: [
           TextButton(
-              onPressed: () {},
+              onPressed: () async {
+                String? token = await FirebaseMessaging.instance.getToken();
+                print(token);
+              },
               child: Text(
                 'sudah dibaca',
                 style: thirdTextStyle,
