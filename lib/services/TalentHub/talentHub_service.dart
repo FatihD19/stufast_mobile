@@ -28,23 +28,29 @@ class TalentService {
         talent.add(TalentHubModel.fromJson(item));
       }
 
-      // // Melakukan sorting berdasarkan kriteria tertentu jika sortBy ditentukan
-      // if (sortBy != null) {
-      //   if (sortBy == 'average_score') {
-      //     talent.sort((a, b) => b.averageScore.compareTo(a.averageScore));
-      //   } else if (sortBy == 'total_course') {
-      //     talent.sort((a, b) => b.totalCourse.compareTo(a.totalCourse));
-      //   }
-      // }
-
-      // // Melakukan pencarian jika searchQuery ditentukan
-      // if (searchQuery != null && searchQuery.isNotEmpty) {
-      //   talent = talent.where((t) => t.fullname!.contains(searchQuery)).toList();
-      // }
-
       return talent;
     } else {
       throw Exception('Gagal get bundle');
+    }
+  }
+
+  Future<DetailTalentHubModel> getDetailTalent(String id) async {
+    var url = Uri.parse(AuthService.baseUrl + '/talent-hub/detail/$id');
+    final prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+    var response = await http.get(url, headers: headers);
+    print('DETAIL_TALENT ' + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      DetailTalentHubModel detail = DetailTalentHubModel.fromJson(data);
+      return detail;
+    } else {
+      throw Exception('failed load detail course');
     }
   }
 }

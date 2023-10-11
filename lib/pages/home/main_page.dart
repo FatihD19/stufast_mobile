@@ -12,6 +12,8 @@ import 'package:stufast_mobile/pages/home/my_webinar_page.dart';
 import 'package:stufast_mobile/pages/talent-hub/talent_hub_page.dart';
 import 'package:stufast_mobile/theme.dart';
 
+import '../succsess_page.dart';
+
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
 
@@ -40,6 +42,16 @@ class _MainPageState extends State<MainPage> {
                 icon: 'launch_background',
               ),
             ));
+        setState(() {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => SuccsessPage(
+                        titleMess: "Selamat Pembayaran anda Berhasil",
+                        mess: "silahkan buka course di halaman My Course",
+                        pay: true,
+                      )));
+        });
       }
     });
 

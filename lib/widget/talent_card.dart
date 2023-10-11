@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stufast_mobile/models/talent_hub_model.dart';
+import 'package:stufast_mobile/pages/talent-hub/detail_talentHub.dart';
 
 import '../theme.dart';
 
@@ -80,7 +81,12 @@ class TalentCard extends StatelessWidget {
             ),
             SizedBox(height: 11),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DetailTalentHubPage()));
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryColor,
                 shape: RoundedRectangleBorder(

@@ -11,6 +11,14 @@ class TalentHubProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  DetailTalentHubModel? _detailTalent;
+  DetailTalentHubModel? get detailTalent => _detailTalent;
+
+  set detailTalent(DetailTalentHubModel? detailTalent) {
+    _detailTalent = detailTalent;
+    notifyListeners();
+  }
+
   bool loading = true;
   Future<void> getTalentHub({String? sortBy, String? searchQuery}) async {
     try {
@@ -41,6 +49,17 @@ class TalentHubProvider with ChangeNotifier {
       }
       _talent = talent;
       loading = false;
+      notifyListeners();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> getDetailBundle(String id) async {
+    try {
+      DetailTalentHubModel detailTalent =
+          await TalentService().getDetailTalent(id);
+      _detailTalent = detailTalent;
       notifyListeners();
     } catch (e) {
       print(e);

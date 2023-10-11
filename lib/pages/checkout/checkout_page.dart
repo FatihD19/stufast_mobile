@@ -302,6 +302,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                               await Provider.of<CheckoutProvider>(context,
                                       listen: false)
                                   .orderItem(widget.selectedItem);
+
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
