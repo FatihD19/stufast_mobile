@@ -85,7 +85,8 @@ class TalentCard extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => DetailTalentHubPage()));
+                        builder: (context) =>
+                            DetailTalentHubPage("${talent.id}")));
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryColor,

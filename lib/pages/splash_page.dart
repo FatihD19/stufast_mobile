@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stufast_mobile/providers/auth_provider.dart';
 import 'package:stufast_mobile/providers/course_provider.dart';
 import 'package:stufast_mobile/theme.dart';
 
@@ -19,9 +21,16 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   getInit() async {
-    await Provider.of<CourseProvider>(context, listen: false).getCourses('all');
+    // await Provider.of<CourseProvider>(context, listen: false).getCourses('all');
     Provider.of<CourseProvider>(context, listen: false).loadTags();
-    Navigator.pushNamed(context, '/landing-page');
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var saveLogin = prefs.getBool('saveLogin');
+    if (saveLogin == true) {
+      await Provider.of<AuthProvider>(context, listen: false).getProfileUser();
+      Navigator.pushNamed(context, '/home');
+    } else {
+      Navigator.pushNamed(context, '/landing-page');
+    }
   }
 
   @override

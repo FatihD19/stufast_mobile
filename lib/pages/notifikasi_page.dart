@@ -1,5 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:stufast_mobile/services/Auth/auth_service.dart';
 
 import '../theme.dart';
 
@@ -48,6 +49,7 @@ class NotifikasiPage extends StatelessWidget {
           TextButton(
               onPressed: () async {
                 String? token = await FirebaseMessaging.instance.getToken();
+                AuthService.sendDeviceToken("${token}");
                 print(token);
               },
               child: Text(

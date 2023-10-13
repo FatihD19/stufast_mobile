@@ -55,7 +55,7 @@ class TalentHubProvider with ChangeNotifier {
     }
   }
 
-  Future<void> getDetailBundle(String id) async {
+  Future<void> getDetailTalentHub(String id) async {
     try {
       DetailTalentHubModel detailTalent =
           await TalentService().getDetailTalent(id);

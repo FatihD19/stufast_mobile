@@ -56,9 +56,9 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<void> getProfileUser(String token) async {
+  Future<void> getProfileUser() async {
     try {
-      UserModel user = await AuthService().getProfile(token);
+      UserModel user = await AuthService().getProfile();
       _user = user;
       notifyListeners();
     } catch (e) {

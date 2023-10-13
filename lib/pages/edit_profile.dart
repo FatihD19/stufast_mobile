@@ -66,9 +66,7 @@ class _EditProfileState extends State<EditProfile> {
           phoneNumber: phoneNumberController.text,
           dateBirth: selectedDate.toString(),
           profilePicture: _profilePicture)) {
-        final prefs = await SharedPreferences.getInstance();
-        var token = prefs.getString('token');
-        await authProvider.getProfileUser(token!);
+        await authProvider.getProfileUser();
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

@@ -61,6 +61,8 @@ class AuthService {
       print(data['data'][0]);
       UserModel user = UserModel.fromJson(data['user']);
       user.token = data['data'][0];
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('token', data['data'][0]);
       return user;
     } else {
       throw Exception('Gagal Login');
@@ -130,8 +132,10 @@ class AuthService {
     }
   }
 
-  Future<UserModel> getProfile(String token) async {
+  Future<UserModel> getProfile() async {
     var url = Uri.parse('$baseUrl/profile');
+    final prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
@@ -142,6 +146,24 @@ class AuthService {
       var data = jsonDecode(response.body);
       UserModel user = UserModel.fromJson(data);
       return user;
+    } else {
+      throw Exception('failed load data');
+    }
+  }
+
+  static Future<bool> sendDeviceToken(String dToken) async {
+    var url = Uri.parse('$baseUrl/device-token');
+    final prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+    var body = jsonEncode({'device_token': dToken});
+    var response = await http.post(url, headers: headers, body: body);
+    print('sendToken ' + response.body);
+    if (response.statusCode == 200) {
+      return true;
     } else {
       throw Exception('failed load data');
     }

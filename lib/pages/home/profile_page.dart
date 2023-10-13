@@ -273,6 +273,7 @@ class ProfilePage extends StatelessWidget {
                               SharedPreferences prefs =
                                   await SharedPreferences.getInstance();
                               prefs.remove('token');
+                              prefs.remove('saveLogin');
                               Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
