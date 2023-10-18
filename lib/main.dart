@@ -24,6 +24,7 @@ import 'package:stufast_mobile/providers/chart_provider.dart';
 import 'package:stufast_mobile/providers/checkout_provider.dart';
 import 'package:stufast_mobile/providers/course_provider.dart';
 import 'package:stufast_mobile/providers/faq_provider.dart';
+import 'package:stufast_mobile/providers/quiz_provider.dart';
 import 'package:stufast_mobile/providers/talentHub_provider.dart';
 import 'package:stufast_mobile/providers/user_course_provider.dart';
 import 'package:stufast_mobile/providers/webinar_provider.dart';
@@ -86,6 +87,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => CheckoutProvider()),
         ChangeNotifierProvider(create: (context) => FaqProvider()),
         ChangeNotifierProvider(create: (context) => TalentHubProvider()),
+        ChangeNotifierProvider(create: (context) => QuizProvider())
       ],
       child: MaterialApp(
         theme: ThemeData(

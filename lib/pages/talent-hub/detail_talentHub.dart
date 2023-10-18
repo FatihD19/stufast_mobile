@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:stufast_mobile/models/talent_hub_model.dart';
 import 'package:stufast_mobile/providers/talentHub_provider.dart';
 import 'package:stufast_mobile/widget/achievment_tile.dart';
 
@@ -37,6 +38,7 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
   Widget build(BuildContext context) {
     TalentHubProvider talentHubProvider =
         Provider.of<TalentHubProvider>(context);
+    DetailTalentHubModel? detailTalent = talentHubProvider.detailTalent;
     Widget actionButton(VoidCallback onPressed, String img, String title) {
       return Container(
         width: 136,
@@ -66,7 +68,7 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
     Widget headProfile() {
       return Container(
         width: 378,
-        height: 291,
+        height: 311,
         color: Color(0xffF2F4F6),
         child: Column(
           children: [
@@ -85,7 +87,8 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
-                        image: AssetImage("assets/img_talent.png"),
+                        image: NetworkImage(
+                            "https://dev.stufast.id/public/upload/users/${detailTalent?.user?.profilePicture}"),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -94,11 +97,11 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
               ],
             ),
             Text(
-              'Akar citra lesnyanyi',
+              '${detailTalent?.user?.fullname}',
               style: primaryTextStyle.copyWith(fontSize: 18, fontWeight: bold),
             ),
             Text(
-              'Bantul, Yogyakarta',
+              '${detailTalent?.user?.address}',
               style: secondaryTextStyle.copyWith(
                   fontSize: 12, fontWeight: semiBold),
             ),
@@ -115,7 +118,7 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
                       textAlign: TextAlign.center,
                     ),
                     Text(
-                      '10',
+                      '${detailTalent?.totalCourse}',
                       style: primaryTextStyle.copyWith(fontWeight: bold),
                     ),
                   ],
@@ -128,7 +131,7 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
                       textAlign: TextAlign.center,
                     ),
                     Text(
-                      '98',
+                      '${detailTalent?.averageScore}',
                       style: primaryTextStyle.copyWith(fontWeight: bold),
                     ),
                   ],
@@ -184,7 +187,7 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
           icon: Icon(Icons.arrow_back),
           color: Colors.black,
           onPressed: () {
-            Navigator.pushReplacementNamed(context, '/home');
+            Navigator.pop(context);
           },
         ),
         backgroundColor: Colors.white,

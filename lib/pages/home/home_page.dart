@@ -31,8 +31,8 @@ class _HomePageState extends State<HomePage> {
     getInit();
     Provider.of<WebinarProvider>(context, listen: false).getWebinar(false);
     Provider.of<UserCourseProvider>(context, listen: false).getUserCourses();
-    jumlahCart =
-        Provider.of<ChartProvider>(context, listen: false).chart?.item?.length;
+    // jumlahCart =
+    //     Provider.of<ChartProvider>(context, listen: false).chart?.item?.length;
 
     super.initState();
   }
@@ -43,7 +43,10 @@ class _HomePageState extends State<HomePage> {
     });
     Provider.of<ChartProvider>(context, listen: false).getChart();
     setState(() {
-      jumlahCart = context.watch<ChartProvider>().chart?.item?.length;
+      jumlahCart = Provider.of<ChartProvider>(context, listen: false)
+          .chart
+          ?.item
+          ?.length;
     });
 
     setState(() {

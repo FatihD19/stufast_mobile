@@ -42,7 +42,12 @@ class _PaymentViewState extends State<PaymentView> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pop(false);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            PaymentView("${widget.tokenPay}")),
+                  );
                 },
                 child: Text('Sekarang'),
               ),
@@ -83,7 +88,7 @@ class _PaymentViewState extends State<PaymentView> {
                 return NavigationDecision.prevent;
               } else if (request.url
                   .startsWith('https://dev.stufast.id/snap/batal')) {
-                Navigator.pushNamed(context, '/contact-page');
+                showExitPopup();
                 return NavigationDecision.prevent;
               }
               return NavigationDecision.navigate;

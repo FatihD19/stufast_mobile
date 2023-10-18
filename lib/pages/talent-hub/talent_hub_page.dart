@@ -13,12 +13,41 @@ class TalentHubPage extends StatefulWidget {
 }
 
 class _TalentHubPageState extends State<TalentHubPage> {
+  ScrollController _scrollController = ScrollController();
+  int totalTalentCount = 10;
+
   @override
   void initState() {
     // TODO: implement initState\
 
     Provider.of<TalentHubProvider>(context, listen: false)
         .getTalentHub(searchQuery: _searchQuery);
+
+    // _scrollController.addListener(() {
+    //   if (_scrollController.position.pixels ==
+    //       _scrollController.position.maxScrollExtent) {
+    //     if (totalTalentCount >
+    //         Provider.of<TalentHubProvider>(context, listen: false)
+    //             .talent
+    //             .length) {
+    //       setState(() {
+    //         totalTalentCount += 10;
+    //       });
+    //       print('on bottom');
+
+    //     } else {
+    //       ScaffoldMessenger.of(context).showSnackBar(
+    //         SnackBar(
+    //           backgroundColor: Colors.green,
+    //           content: Text(
+    //             'berhasil tambah ke chart',
+    //             textAlign: TextAlign.center,
+    //           ),
+    //         ),
+    //       );
+    //     }
+    //   }
+    // });
     super.initState();
   }
 
@@ -215,6 +244,7 @@ class _TalentHubPageState extends State<TalentHubPage> {
       return talentHubProvider.loading == true
           ? Center(child: CircularProgressIndicator())
           : GridView(
+              controller: _scrollController,
               physics: ClampingScrollPhysics(),
               shrinkWrap: true,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -225,26 +255,8 @@ class _TalentHubPageState extends State<TalentHubPage> {
               ),
               children: talentHubProvider.talent
                   .map((talent) => TalentCard(talent))
+                  .take(totalTalentCount)
                   .toList());
-
-      // FutureBuilder(
-      //     future: getTalent(cari: _searchQuery),
-      //     builder: (context, snapshot) {
-      //       return talentHubProvider.loading == true
-      //           ? CircularProgressIndicator()
-      //           : GridView(
-      //               physics: ClampingScrollPhysics(),
-      //               shrinkWrap: true,
-      //               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-      //                 crossAxisCount: 2,
-      //                 crossAxisSpacing: 4,
-      //                 mainAxisSpacing: 8,
-      //                 childAspectRatio: 0.5893,
-      //               ),
-      //               children: talentHubProvider.talent
-      //                   .map((talent) => TalentCard(talent))
-      //                   .toList());
-      //     });
     }
     // Widget gridTalent() {
     //   return GridView.builder(

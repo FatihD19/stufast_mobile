@@ -236,11 +236,25 @@ class _CheckOutPageState extends State<CheckOutPage> {
                           )
                           .toList(),
                     ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     Text('  • Flash Sale', style: secondaryTextStyle),
+              //     // Text(flashSale, style: secondaryTextStyle),
+              //   ],
+              // ),
+              SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('  • Flash Sale', style: secondaryTextStyle),
-                  // Text(flashSale, style: secondaryTextStyle),
+                  Text('PPN', style: primaryTextStyle.copyWith(fontSize: 16)),
+                  Text(
+                      '+ ' +
+                          NumberFormat.simpleCurrency(locale: 'id')
+                              .format(int.parse(
+                                  '${checkOutProvider.checkout?.tax}'))
+                              .replaceAll(',00', ''),
+                      style: primaryTextStyle.copyWith(fontSize: 14)),
                 ],
               ),
               Row(
@@ -257,7 +271,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                       style: primaryTextStyle.copyWith(
                           fontWeight: bold, fontSize: 16)),
                 ],
-              )
+              ),
             ],
           ),
         ),
@@ -290,7 +304,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                   shrinkWrap: true,
                   children: [
                     checkoutList(),
-                    paymentList(),
+                    // paymentList(),
                     pricing(),
                     SizedBox(height: 14),
                     Container(

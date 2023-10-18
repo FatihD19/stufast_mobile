@@ -76,7 +76,7 @@ class DetailTalentHubModel {
 
 class Ach {
   String? courseTitle;
-  String? finalScore;
+  dynamic finalScore;
   List<Score>? score;
 
   Ach({
@@ -104,7 +104,7 @@ class Ach {
 
 class Score {
   String? title;
-  String? score;
+  dynamic score;
 
   Score({
     this.title,
