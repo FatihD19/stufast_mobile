@@ -22,46 +22,46 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  @override
-  void initState() {
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      RemoteNotification? notification = message.notification!;
-      AndroidNotification? android = message.notification?.android;
-      if (notification != null && android != null && !kIsWeb) {
-        flutterLocalNotificationsPlugin!.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-              android: AndroidNotificationDetails(
-                channel!.id,
-                channel!.name,
-                // channel!.description,
-                // TODO add a proper drawable resource to android, for now using
-                //      one that already exists in example app.
-                icon: 'launch_background',
-              ),
-            ));
-        setState(() {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => SuccsessPage(
-                        titleMess: "Selamat Pembayaran anda Berhasil",
-                        mess: "silahkan buka course di halaman My Course",
-                        pay: true,
-                      )));
-        });
-      }
-    });
+  // @override
+  // void initState() {
+  //   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+  //     RemoteNotification? notification = message.notification!;
+  //     AndroidNotification? android = message.notification?.android;
+  //     if (notification != null && android != null && !kIsWeb) {
+  //       flutterLocalNotificationsPlugin!.show(
+  //           notification.hashCode,
+  //           notification.title,
+  //           notification.body,
+  //           NotificationDetails(
+  //             android: AndroidNotificationDetails(
+  //               channel!.id,
+  //               channel!.name,
+  //               // channel!.description,
+  //               // TODO add a proper drawable resource to android, for now using
+  //               //      one that already exists in example app.
+  //               icon: 'launch_background',
+  //             ),
+  //           ));
+  //       setState(() {
+  //         Navigator.pushReplacement(
+  //             context,
+  //             MaterialPageRoute(
+  //                 builder: (context) => SuccsessPage(
+  //                       titleMess: "Selamat Pembayaran anda Berhasil",
+  //                       mess: "silahkan buka course di halaman My Course",
+  //                       pay: true,
+  //                     )));
+  //       });
+  //     }
+  //   });
 
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('A new onMessageOpenedApp event was published!');
-      // Navigator.pushNamed(context, '/message',
-      //     arguments: MessageArguments(message, true));
-    });
-    super.initState();
-  }
+  //   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+  //     print('A new onMessageOpenedApp event was published!');
+  //     // Navigator.pushNamed(context, '/message',
+  //     //     arguments: MessageArguments(message, true));
+  //   });
+  //   super.initState();
+  // }
 
   int currentIndex = 0;
   Future<bool> showExitPopup() async {

@@ -31,4 +31,31 @@ class QuizService {
       throw Exception('Gagal get bundle');
     }
   }
+
+  Future<Map<String, dynamic>> submitQuiz(
+      String id, List selectedQuizId, List selectedAnswer) async {
+    var url = Uri.parse('https://dev.stufast.id/api/course/video_2/$id');
+
+    final prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+    var body =
+        jsonEncode({'question': selectedQuizId, 'answer': selectedAnswer});
+
+    var response = await http.post(
+      url,
+      headers: headers,
+      body: body,
+    );
+    print('RESULT_QUIZ' + response.body);
+
+    if (response.statusCode == 201) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to submit quiz');
+    }
+  }
 }

@@ -2,12 +2,16 @@
 
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:stufast_mobile/models/course_model.dart';
 import 'package:stufast_mobile/models/video_model.dart';
 import 'package:stufast_mobile/pages/DetailPage/detail_course_page.dart';
+import 'package:stufast_mobile/pages/DetailPage/quiz_page.dart';
+import 'package:stufast_mobile/providers/quiz_provider.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../models/quiz_model.dart';
 import '../../widget/video_tile.dart';
 
 class VideoDetailPage extends StatefulWidget {
@@ -18,9 +22,11 @@ class VideoDetailPage extends StatefulWidget {
   String? totalDuration;
   int? persen;
   int? viewedVideoIndex;
+  String? idCourse;
 
   VideoDetailPage(this.detailCourse, this.video,
-      {this.progressCourse,
+      {this.idCourse,
+      this.progressCourse,
       this.totalDuration,
       this.persen,
       this.viewedVideoIndex});
@@ -34,10 +40,12 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
 
   VideoModel? selectedVideo;
   List<bool> isVideoViewed = [];
+  List<QuizModel>? quiz;
 
   @override
   void initState() {
     super.initState();
+
     flickManager = FlickManager(
       videoPlayerController: VideoPlayerController.networkUrl(
           Uri.parse("${widget.video.video}")), // Video awal
@@ -67,7 +75,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
     Widget videoPlayTile(
         VideoModel video, bool isLocked, String subtitleText, int index) {
       return Opacity(
-        opacity: video.video == null ? 0.5 : 1,
+        opacity: video.video == null || isLocked == true ? 0.5 : 1,
         child: Card(
           clipBehavior: Clip.antiAlias,
           elevation: 5,
@@ -83,7 +91,12 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
               data:
                   Theme.of(context).copyWith(dividerColor: Colors.transparent),
               child: ExpansionTile(
-                leading: Image.asset('assets/icon_video.png'),
+                leading: video.video == null || isLocked == true
+                    ? Icon(
+                        Icons.lock,
+                        color: Colors.black,
+                      )
+                    : Image.asset('assets/icon_video.png'),
                 title: Text(
                   '${video.title}',
                   style: primaryTextStyle.copyWith(fontWeight: bold),
@@ -95,35 +108,134 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
                 children: [
                   video.video == null || isLocked == true
                       ? SizedBox()
-                      : Container(
-                          margin: EdgeInsets.all(16),
-                          width: double.infinity,
-                          height: 40,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              _changeVideo("${video.video}", video);
-                              setState(() {
-                                widget.viewedVideoIndex = index;
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              primary: Colors.white, // Latar belakang putih
-                              onPrimary: Color(
-                                  0xFF164520), // Warna teks saat di atas latar putih
-                              side: BorderSide(
-                                  color: Color(0xFF164520),
-                                  width:
-                                      2), // Border berwarna 248043 dengan lebar 2
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    10), // Border radius 10
+                      : Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                InkWell(
+                                  onTap: () async {
+                                    // _changeVideo("${video.video}", video);
+                                    setState(() {
+                                      widget.viewedVideoIndex = index;
+                                    });
+                                    await Provider.of<QuizProvider>(context,
+                                            listen: false)
+                                        .getQuiz("${video.videoId}");
+                                    quiz = Provider.of<QuizProvider>(context,
+                                            listen: false)
+                                        .quizList;
+
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => QuizPage(
+                                                video.videoId,
+                                                detailQuiz: quiz,
+                                                title: video.title,
+                                              )),
+                                    );
+                                  },
+                                  child: Container(
+                                    height: 60,
+                                    width: 135,
+                                    child: Card(
+                                      clipBehavior: Clip.antiAlias,
+                                      elevation: 3,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 6, horizontal: 10),
+                                        child: Row(
+                                          children: [
+                                            video.isViewed == "true"
+                                                ? Image.asset(
+                                                    'assets/ic_quiz.png',
+                                                    width: 40,
+                                                    height: 40,
+                                                  )
+                                                : Icon(Icons.lock),
+                                            SizedBox(width: 10),
+                                            Text(
+                                              "Quiz",
+                                              style:
+                                                  secondaryTextStyle.copyWith(
+                                                      fontWeight: semiBold),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  height: 60,
+                                  width: 135,
+                                  child: Card(
+                                    clipBehavior: Clip.antiAlias,
+                                    elevation: 3,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 6, horizontal: 10),
+                                      child: Row(
+                                        children: [
+                                          video.resume == null
+                                              ? Icon(Icons.lock)
+                                              : Image.asset(
+                                                  'assets/ic_quiz.png',
+                                                  width: 40,
+                                                  height: 40,
+                                                ),
+                                          SizedBox(width: 10),
+                                          Text(
+                                            'Resume',
+                                            style: secondaryTextStyle.copyWith(
+                                                fontWeight: semiBold),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                            Container(
+                              margin: EdgeInsets.all(16),
+                              width: double.infinity,
+                              height: 40,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  _changeVideo("${video.video}", video);
+                                  setState(() {
+                                    widget.viewedVideoIndex = index;
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.white, // Latar belakang putih
+                                  onPrimary: Color(
+                                      0xFF164520), // Warna teks saat di atas latar putih
+                                  side: BorderSide(
+                                      color: Color(0xFF164520),
+                                      width:
+                                          2), // Border berwarna 248043 dengan lebar 2
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        10), // Border radius 10
+                                  ),
+                                ),
+                                child: Text(
+                                  "Lanjutkan",
+                                  style:
+                                      thirdTextStyle.copyWith(fontWeight: bold),
+                                ),
                               ),
                             ),
-                            child: Text(
-                              "Lanjutkan",
-                              style: thirdTextStyle.copyWith(fontWeight: bold),
-                            ),
-                          ),
+                          ],
                         ),
                 ],
               ),

@@ -78,6 +78,8 @@ class ProfilePage extends StatelessWidget {
           borderRadius: BorderRadius.circular(8), // Sudut border radius
         ),
         child: Card(
+          clipBehavior: Clip.antiAlias,
+          elevation: 5,
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -114,6 +116,31 @@ class ProfilePage extends StatelessWidget {
       );
     }
 
+    Widget orderBtn() {
+      return InkWell(
+        onTap: () {
+          Navigator.pushNamed(context, '/order-page');
+        },
+        child: Container(
+          decoration: BoxDecoration(
+              color: Color(0xF3F3F3), // Warna background FAFAFA
+              border:
+                  Border.all(color: Color(0xF3F3F3)), // Warna garis tepi F3F3F3
+              borderRadius: BorderRadius.circular(8)), // Sudut border radius
+          child: Card(
+            clipBehavior: Clip.antiAlias,
+            elevation: 4,
+            child: ListTile(
+              leading: Icon(Icons.shopping_cart_outlined),
+              title: Text('Riwayat Order',
+                  style: primaryTextStyle.copyWith(fontWeight: semiBold)),
+              trailing: Icon(Icons.arrow_forward_ios_rounded),
+            ),
+          ),
+        ),
+      );
+    }
+
     Widget inviteFriend() {
       return Container(
         decoration: BoxDecoration(
@@ -122,6 +149,8 @@ class ProfilePage extends StatelessWidget {
           borderRadius: BorderRadius.circular(8), // Sudut border radius
         ),
         child: Card(
+          clipBehavior: Clip.antiAlias,
+          elevation: 5,
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -187,6 +216,8 @@ class ProfilePage extends StatelessWidget {
           borderRadius: BorderRadius.circular(8), // Sudut border radius
         ),
         child: Card(
+          clipBehavior: Clip.antiAlias,
+          elevation: 5,
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -244,7 +275,8 @@ class ProfilePage extends StatelessWidget {
           header(),
           SizedBox(height: 28),
           learnProgress(),
-          SizedBox(height: 16),
+          orderBtn(),
+          SizedBox(height: 12),
           inviteFriend(),
           settings(),
           SizedBox(height: 25),

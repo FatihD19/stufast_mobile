@@ -78,6 +78,16 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
 
     CourseModel? detail = userDetailCourseProvider.detailCourse;
 
+    String? progressText =
+        '${detail?.mengerjakan_video ?? '1 / 2'}'; // Assuming the format is "0 / 3"
+    List<String> parts = progressText.split(' / ');
+    int currentProgress = int.tryParse(parts[0]) ?? 0;
+    int totalProgress = int.tryParse(parts[1]) ?? 1;
+    int courseLeft = totalProgress - currentProgress; // Avoid division by zero
+
+    double progressPercentage = (currentProgress / totalProgress)
+        .clamp(0.0, 1.0); // Ensure progress is between 0 and 1
+    int persen = (progressPercentage * 100).toInt();
     Widget progressBar(double progress) {
       return detail?.owned == true
           ? Container(
@@ -89,17 +99,17 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
                       width: 34,
                       height: 34,
                       child: CircularProgressIndicator(
-                        value: widget.progressCourse,
+                        value: progressPercentage,
                         strokeWidth: 3,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          widget.progressCourse == 1.0
+                          progressPercentage == 1.0
                               ? primaryColor
                               : Color(0xFFfec202),
                         ),
                         backgroundColor: Colors.grey[300],
                       )),
                   Center(
-                    child: Text('${widget.persen}',
+                    child: Text('${persen}',
                         style: primaryTextStyle.copyWith(fontWeight: bold)),
                   ),
                 ],
@@ -136,6 +146,7 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
             persen: widget.persen,
             totalDuration: widget.totalDuration,
             index: index,
+            idCourse: widget.idUserCourse,
           );
         },
       );
@@ -295,7 +306,7 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
           icon: Icon(Icons.arrow_back),
           color: Colors.black,
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushNamed(context, '/user-course');
           },
         ),
         backgroundColor: Colors.white,

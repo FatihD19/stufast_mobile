@@ -37,7 +37,7 @@ class DataOrder {
   int? orderId;
   String? userId;
   dynamic couponCode;
-  int? discountPrice;
+  dynamic discountPrice;
   int? subTotal;
   int? grossAmount;
   String? transactionStatus;

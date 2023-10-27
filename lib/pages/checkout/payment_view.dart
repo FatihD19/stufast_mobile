@@ -62,6 +62,9 @@ class _PaymentViewState extends State<PaymentView> {
     return WillPopScope(
       onWillPop: showExitPopup,
       child: Scaffold(
+        // appBar: AppBar(
+        //   title: Text("${widget.tokenPay}"),
+        // ),
         resizeToAvoidBottomInset: false,
         body: SafeArea(
           child: WebView(

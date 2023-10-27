@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stufast_mobile/models/order_model.dart';
+import 'package:stufast_mobile/models/voucher_model.dart';
 import 'package:stufast_mobile/services/Auth/auth_service.dart';
 
 import '../models/chart_model.dart';
@@ -30,7 +31,7 @@ class CheckOutService {
     }
   }
 
-  Future<OrderModel> orderItem(List id) async {
+  Future<OrderModel> orderItem(List id, {String? kupon}) async {
     var url = Uri.parse(AuthService.baseUrl + '/order/generatesnap-2');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
@@ -38,7 +39,10 @@ class CheckOutService {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
     };
-    var body = jsonEncode({"cart_id": id, "platform": "mobile", "code": ""});
+    var body = jsonEncode({
+      "item_id": id, "type": "cart", //langsung course/bundling
+      "code": '$kupon'
+    });
 
     var response = await http.post(url, headers: headers, body: body);
 
@@ -50,6 +54,30 @@ class CheckOutService {
       return order;
     } else {
       throw Exception('Gagal get chart');
+    }
+  }
+
+  Future<VoucherModel> useVoucher(String code) async {
+    var url =
+        Uri.parse(AuthService.baseUrl + '/voucher/code-detail?code=$code');
+    final prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    var response = await http.get(url, headers: headers);
+
+    print('get VOUCHER' + response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      VoucherModel voucher = VoucherModel.fromJson(data);
+
+      return voucher;
+    } else {
+      throw Exception('Gagal get voucher');
     }
   }
 }

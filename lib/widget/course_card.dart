@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:stufast_mobile/models/bundling_model.dart';
@@ -99,19 +100,34 @@ class _CardCourseState extends State<CardCourse> {
                               ? '${widget.bundle?.category_name}'
                               : '${widget.course?.category}',
                         ),
-                        SizedBox(height: 2),
                         widget.isBundle
                             ? SizedBox()
-                            : Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: widget.course!.tag!
-                                    .map((tag) => Text(
-                                          '- ${tag.name}',
-                                          style: secondaryTextStyle.copyWith(
-                                              fontSize: 12),
-                                        ))
-                                    .toList(),
+                            : RatingBarIndicator(
+                                unratedColor: Color(0xffF0DB96),
+                                rating: double.parse(
+                                    '${widget.course!.rating_course}'),
+                                itemBuilder: (context, index) => Icon(
+                                  Icons.star,
+                                  color: Color(0xffFFCB42),
+                                ),
+                                itemCount: 5,
+                                itemSize: 25.0,
+                                direction: Axis.horizontal,
                               ),
+
+                        SizedBox(height: 2),
+                        // widget.isBundle
+                        //     ? SizedBox()
+                        //     : Column(
+                        //         crossAxisAlignment: CrossAxisAlignment.start,
+                        //         children: widget.course!.tag!
+                        //             .map((tag) => Text(
+                        //                   '- ${tag.name}',
+                        //                   style: secondaryTextStyle.copyWith(
+                        //                       fontSize: 12),
+                        //                 ))
+                        //             .toList(),
+                        //       ),
                         Row(
                           children: [
                             RichText(

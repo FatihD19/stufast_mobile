@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stufast_mobile/models/order_model.dart';
+import 'package:stufast_mobile/models/voucher_model.dart';
 import 'package:stufast_mobile/services/checkout_services.dart';
 
 import '../models/chart_model.dart';
@@ -21,6 +22,14 @@ class CheckoutProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  VoucherModel? _voucher;
+  VoucherModel? get voucher => _voucher;
+
+  set voucher(VoucherModel? voucher) {
+    _voucher = voucher;
+    notifyListeners();
+  }
+
   Future<void> checkoutCourse(List id) async {
     try {
       ChartModel checkout = await CheckOutService().checkoutCourse(id);
@@ -30,11 +39,22 @@ class CheckoutProvider with ChangeNotifier {
     }
   }
 
-  Future<void> orderItem(List id) async {
+  Future<void> orderItem(List id, {String? kupon}) async {
     try {
-      OrderModel order = await CheckOutService().orderItem(id);
+      OrderModel order = await CheckOutService().orderItem(id, kupon: kupon);
       _order = order;
     } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> useVoucher(String code) async {
+    try {
+      VoucherModel voucher = await CheckOutService().useVoucher(code);
+      voucher.status = true;
+      _voucher = voucher;
+    } catch (e) {
+      voucher?.status = false;
       print(e);
     }
   }

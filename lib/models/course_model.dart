@@ -20,6 +20,7 @@ class CourseModel {
   String? authorCompany;
   String? type;
   String? mengerjakan_video;
+  dynamic rating_course;
   bool? owned;
   List<TagModel>? tag;
   List<VideoModel>? video;
@@ -46,6 +47,7 @@ class CourseModel {
     this.authorCompany,
     this.type,
     this.mengerjakan_video,
+    this.rating_course,
     this.owned,
     this.tag,
     this.video,
@@ -84,6 +86,7 @@ class CourseModel {
           : List<VideoModel>.from(
               json["video"]!.map((x) => VideoModel.fromJson(x))),
       total_video_duration: json["total_video_duration"],
+      rating_course: json["rating_course"],
       // totalVideoDuration: json["total_video_duration"] == null
       //     ? null
       //     : VideoDurationModel.fromJson(json["total_video_duration"]),
@@ -117,6 +120,7 @@ class CourseModel {
             ? []
             : List<dynamic>.from(video!.map((x) => x.toJson())),
         "total_video_duration": total_video_duration,
+        "rating_course": rating_course,
         // "total_video_duration": totalVideoDuration?.toJson(),
         // "rating_course": ratingCourse,
         // "category": category?.toJson(),

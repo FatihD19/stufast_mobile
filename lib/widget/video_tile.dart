@@ -18,9 +18,11 @@ class VideoTile extends StatefulWidget {
   String? totalDuration;
   int? persen;
   int? index;
+  String? idCourse;
 
   VideoTile(this.opacity, this.detailVideo, this.video,
-      {this.isLocked,
+      {this.idCourse,
+      this.isLocked,
       this.progressCourse,
       this.persen,
       this.totalDuration,
@@ -64,85 +66,6 @@ class _VideoTileState extends State<VideoTile> {
                     ? SizedBox()
                     : Column(
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              InkWell(
-                                onTap: () async {
-                                  await quizProvider
-                                      .getQuiz("${widget.video.videoId}");
-                                  quiz = quizProvider.quizList;
-                                  // ignore: use_build_context_synchronously
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => QuizPage(
-                                              widget.video.videoId,
-                                              detailQuiz: quiz,
-                                            )),
-                                  );
-                                },
-                                child: Container(
-                                  width: 135,
-                                  child: Card(
-                                    clipBehavior: Clip.antiAlias,
-                                    elevation: 3,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 6, horizontal: 10),
-                                      child: Row(
-                                        children: [
-                                          Image.asset(
-                                            'assets/ic_quiz.png',
-                                            width: 40,
-                                            height: 40,
-                                          ),
-                                          SizedBox(width: 10),
-                                          Text(
-                                            'Quiz',
-                                            style: secondaryTextStyle.copyWith(
-                                                fontWeight: semiBold),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                width: 135,
-                                child: Card(
-                                  clipBehavior: Clip.antiAlias,
-                                  elevation: 3,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 6, horizontal: 10),
-                                    child: Row(
-                                      children: [
-                                        Image.asset(
-                                          'assets/ic_quiz.png',
-                                          width: 40,
-                                          height: 40,
-                                        ),
-                                        SizedBox(width: 10),
-                                        Text(
-                                          'Resume',
-                                          style: secondaryTextStyle.copyWith(
-                                              fontWeight: semiBold),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
                           Container(
                             margin: EdgeInsets.fromLTRB(16, 6, 16, 0),
                             width: double.infinity,
@@ -155,6 +78,7 @@ class _VideoTileState extends State<VideoTile> {
                                         builder: (context) => VideoDetailPage(
                                               widget.detailVideo,
                                               widget.video,
+                                              idCourse: widget.idCourse,
                                               progressCourse:
                                                   widget.progressCourse,
                                               persen: widget.persen,

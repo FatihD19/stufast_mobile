@@ -23,6 +23,10 @@ class CheckOutPage extends StatefulWidget {
 class _CheckOutPageState extends State<CheckOutPage> {
   bool loading = true;
   String? selectPayment;
+  String? token;
+  int? discountAmount;
+  bool? usingVoucher;
+  final _voucherController = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
@@ -45,6 +49,41 @@ class _CheckOutPageState extends State<CheckOutPage> {
   @override
   Widget build(BuildContext context) {
     CheckoutProvider checkOutProvider = Provider.of<CheckoutProvider>(context);
+
+    useVoucher() async {
+      await checkOutProvider.useVoucher(_voucherController.text);
+      if (checkOutProvider.voucher?.status == true) {
+        int totalPrice = int.parse('${checkOutProvider.checkout?.total}');
+        int discount = int.parse("${checkOutProvider.voucher?.discountPrice}");
+        setState(() {
+          usingVoucher = true;
+          discountAmount = (discount / 100 * totalPrice).round();
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: primaryColor,
+            content: Text(
+              'Voucher berhasil digunakan',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      } else {
+        setState(() {
+          usingVoucher = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Text(
+              'Voucher tidak tersedia',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      }
+    }
 
     Color getColorForItemType(String itemType) {
       switch (itemType) {
@@ -200,81 +239,158 @@ class _CheckOutPageState extends State<CheckOutPage> {
       );
     }
 
+    Widget voucher() {
+      return Column(
+        children: [
+          SizedBox(height: 24),
+          Container(
+            decoration: BoxDecoration(
+              color: Color(0xFFFAFAFA), // Warna latar belakang FAFAFA
+              border: Border.all(
+                  color: Color(0xFFD2D2D2),
+                  width: 1), // Border dengan stroke D2D2D2
+              borderRadius: BorderRadius.circular(8), // Border radius 8
+            ),
+            child: TextField(
+              controller: _voucherController,
+              decoration: InputDecoration(
+                hintText: 'Masukkan kupon yang kamu miliki',
+                hintStyle: secondaryTextStyle.copyWith(
+                    fontWeight: FontWeight.bold, fontSize: 14),
+                contentPadding: EdgeInsets.all(12),
+                border: InputBorder
+                    .none, // Tidak menampilkan border bawaan TextField
+              ),
+            ),
+          ),
+          SizedBox(height: 16),
+          Container(
+            width: double.infinity,
+            height: 40,
+            child: ElevatedButton(
+              onPressed: useVoucher,
+              style: ElevatedButton.styleFrom(
+                primary: Colors.white, // Latar belakang putih
+                onPrimary: primaryColor, // Warna teks saat di atas latar putih
+                side: BorderSide(
+                    color: primaryColor,
+                    width: 2), // Border berwarna 248043 dengan lebar 2
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10), // Border radius 10
+                ),
+              ),
+              child: Text('Terapkan',
+                  style: thirdTextStyle.copyWith(fontWeight: bold)),
+            ),
+          )
+        ],
+      );
+    }
+
     Widget pricing() {
-      return Card(
-        clipBehavior: Clip.antiAlias,
-        elevation: 5,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Color(0xffF3F3F3),
-          ),
-          padding: EdgeInsets.fromLTRB(24, 16, 24, 16),
-          child: Column(
-            children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                    'Total item (${checkOutProvider.checkout?.item?.length})',
-                    style: secondaryTextStyle.copyWith(fontWeight: bold)),
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 26),
+          Text('Ringkasan Pembayaran',
+              style: primaryTextStyle.copyWith(fontWeight: bold, fontSize: 14)),
+          SizedBox(height: 8),
+          Card(
+            clipBehavior: Clip.antiAlias,
+            elevation: 5,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Color(0xffF3F3F3),
               ),
-              loading
-                  ? CircularProgressIndicator()
-                  : Column(
-                      children: checkOutProvider.checkout!.item!
-                          .map(
-                            (item) => Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  '• ${item.title!.length > 20 ? item.title!.substring(0, 20) + '...' : item.title}',
-                                  style: secondaryTextStyle,
+              padding: EdgeInsets.fromLTRB(24, 16, 24, 16),
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                        'Total item (${checkOutProvider.checkout?.item?.length})',
+                        style: secondaryTextStyle.copyWith(fontWeight: bold)),
+                  ),
+                  loading
+                      ? CircularProgressIndicator()
+                      : Column(
+                          children: checkOutProvider.checkout!.item!
+                              .map(
+                                (item) => Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      '• ${item.title!.length > 20 ? item.title!.substring(0, 20) + '...' : item.title}',
+                                      style: secondaryTextStyle,
+                                    ),
+                                    NewPrice("${item.newPrice}")
+                                  ],
                                 ),
-                                NewPrice("${item.newPrice}")
-                              ],
-                            ),
-                          )
-                          .toList(),
-                    ),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: [
-              //     Text('  • Flash Sale', style: secondaryTextStyle),
-              //     // Text(flashSale, style: secondaryTextStyle),
-              //   ],
-              // ),
-              SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('PPN', style: primaryTextStyle.copyWith(fontSize: 16)),
-                  Text(
-                      '+ ' +
+                              )
+                              .toList(),
+                        ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: [
+                  //     Text('  • Flash Sale', style: secondaryTextStyle),
+                  //     // Text(flashSale, style: secondaryTextStyle),
+                  //   ],
+                  // ),
+                  SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('PPN',
+                          style: primaryTextStyle.copyWith(fontSize: 16)),
+                      Text(
+                          '+ ' +
+                              NumberFormat.simpleCurrency(locale: 'id')
+                                  .format(int.parse(
+                                      '${checkOutProvider.checkout?.tax}'))
+                                  .replaceAll(',00', ''),
+                          style: primaryTextStyle.copyWith(fontSize: 14)),
+                    ],
+                  ),
+                  usingVoucher == true
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Kupon',
+                                style: primaryTextStyle.copyWith(fontSize: 16)),
+                            Text(
+                                '- ' +
+                                    NumberFormat.simpleCurrency(locale: 'id')
+                                        .format(discountAmount)
+                                        .replaceAll(',00', '') +
+                                    " (${checkOutProvider.voucher?.discountPrice}%)",
+                                style: primaryTextStyle.copyWith(
+                                    fontSize: 14, fontWeight: semiBold)),
+                          ],
+                        )
+                      : SizedBox(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Total',
+                          style: primaryTextStyle.copyWith(
+                              fontWeight: bold, fontSize: 16)),
+                      Text(
                           NumberFormat.simpleCurrency(locale: 'id')
-                              .format(int.parse(
-                                  '${checkOutProvider.checkout?.tax}'))
+                              .format(discountAmount ??
+                                  int.parse(
+                                      '${checkOutProvider.checkout?.total}'))
                               .replaceAll(',00', ''),
-                      style: primaryTextStyle.copyWith(fontSize: 14)),
+                          style: primaryTextStyle.copyWith(
+                              fontWeight: bold, fontSize: 16)),
+                    ],
+                  ),
                 ],
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Total',
-                      style: primaryTextStyle.copyWith(
-                          fontWeight: bold, fontSize: 16)),
-                  Text(
-                      NumberFormat.simpleCurrency(locale: 'id')
-                          .format(
-                              int.parse('${checkOutProvider.checkout?.total}'))
-                          .replaceAll(',00', ''),
-                      style: primaryTextStyle.copyWith(
-                          fontWeight: bold, fontSize: 16)),
-                ],
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       );
     }
 
@@ -305,8 +421,10 @@ class _CheckOutPageState extends State<CheckOutPage> {
                   children: [
                     checkoutList(),
                     // paymentList(),
+                    voucher(),
                     pricing(),
                     SizedBox(height: 14),
+                    // Text('$token'),
                     Container(
                         width: double.infinity,
                         height: 54,
@@ -315,13 +433,15 @@ class _CheckOutPageState extends State<CheckOutPage> {
                             onPressed: () async {
                               await Provider.of<CheckoutProvider>(context,
                                       listen: false)
-                                  .orderItem(widget.selectedItem);
-
+                                  .orderItem(widget.selectedItem,
+                                      kupon: _voucherController.text);
+                              setState(() {
+                                token = "${checkOutProvider.order?.token}";
+                              });
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => PaymentView(
-                                        "${checkOutProvider.order?.token}")),
+                                    builder: (context) => PaymentView(token)),
                               );
                             })),
                   ],
