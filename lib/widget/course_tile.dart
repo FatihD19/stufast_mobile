@@ -37,8 +37,8 @@ class _CourseTileState extends State<CourseTile> {
           MaterialPageRoute(
               builder: (context) => DetailCoursePage(
                     idUserCourse: '${widget.userCourse.courseId}',
-                    progressCourse: progressPercentage,
-                    persen: persen,
+                    // progressCourse: progressPercentage,
+                    // persen: persen,
                     totalDuration: widget.userCourse.total_video_duration,
                   )),
         );

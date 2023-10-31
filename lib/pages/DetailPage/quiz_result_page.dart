@@ -108,7 +108,8 @@ class _QuizResultPageState extends State<QuizResultPage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => DetailCoursePage(
-                                  idUserCourse: "${widget.idCourse}")),
+                                  idUserCourse: "${widget.idCourse}"
+                                      .replaceAll(' ', ''))),
                         );
                       })),
           SizedBox(height: 18),
@@ -166,7 +167,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            'Hasil Quiz',
+            'Hasil Quiz "${widget.idCourse}"',
             style: primaryTextStyle.copyWith(fontWeight: semiBold),
           ),
           elevation: 0, // Menghilangkan shadow

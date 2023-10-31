@@ -16,11 +16,11 @@ class OrderTile extends StatelessWidget {
     String status = '${order?.transactionStatus}';
     Color getColorForItemType(String itemType) {
       switch (itemType) {
-        case 'course':
+        case 'Course':
           return Color(0xffA9CAFD);
-        case 'bundling':
+        case 'Bundling':
           return Color(0xFFF5C64C);
-        case 'webinar':
+        case 'Webinar':
           return Color(0xFFF2ACF3);
         default:
           return Colors
@@ -94,7 +94,7 @@ class OrderTile extends StatelessWidget {
                             padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(3),
-                              color: getColorForItemType('course'),
+                              color: getColorForItemType('${item.type}'),
                             ),
                             child: Text(
                               '${item.type}',
@@ -177,7 +177,8 @@ class OrderTile extends StatelessWidget {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => InvoicePage()));
+                                      builder: (context) =>
+                                          InvoicePage('${order?.orderId}')));
                             })),
                 Container(
                   width: 130,

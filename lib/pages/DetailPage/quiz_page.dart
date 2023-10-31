@@ -280,6 +280,9 @@ class _QuizPageState extends State<QuizPage> {
                   .toList(),
             ),
             SizedBox(height: 24),
+            Text(
+                "valid answer ${widget.detailQuiz![currentIndex].validAnswer}"),
+            Text('${widget.idCourse}'),
             answer(),
             SizedBox(height: 94),
           ]),

@@ -134,7 +134,10 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
         itemCount: videoList?.length,
         itemBuilder: (context, index) {
           final video = videoList?[index];
-          final isLocked = index > 0 && videoList?[(index) - 1].resume == null;
+          // final isLocked = index > 0 && videoList?[(index) - 1].resume == null;
+
+          final isLocked =
+              index > 0 && int.parse(videoList![(index) - 1].score) < 60;
 
           // Tambahkan isLocked ke VideoTile
           return VideoTile(

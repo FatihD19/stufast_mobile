@@ -44,9 +44,9 @@ class OrderService {
       'Authorization': 'Bearer $token',
     };
 
-    var response = await http.post(url, headers: headers);
+    var response = await http.get(url, headers: headers);
 
-    print('InvoiceModel' + response.body);
+    print('InvoiceView' + response.body);
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);

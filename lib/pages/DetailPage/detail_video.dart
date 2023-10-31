@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, use_build_context_synchronously
 
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
@@ -133,6 +133,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
                                                 video.videoId,
                                                 detailQuiz: quiz,
                                                 title: video.title,
+                                                idCourse: '${widget.idCourse}',
                                               )),
                                     );
                                   },
@@ -257,8 +258,10 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
             final video = videoList?[index];
             final opacity =
                 widget.detailCourse.owned == true || index == 0 ? 1.0 : 0.5;
+            // final isLocked =
+            //     index > 0 && videoList?[(index) - 1].resume == null;
             final isLocked =
-                index > 0 && videoList?[(index) - 1].resume == null;
+                index > 0 && int.parse(videoList![(index) - 1].score) < 60;
             // bool currentVideo = isVideoViewed[index];
             String subtitleText =
                 widget.viewedVideoIndex == index ? "view" : "unview";
@@ -379,7 +382,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
                 children: [
                   // Konten untuk tab 'Video'
                   videoTile(),
-                  Center(child: Text('tugas'))
+                  Center(child: Text(' ${widget.idCourse}'))
                   // Konten untuk tab 'Project' bisa Anda tambahkan di sini
                 ],
               ),

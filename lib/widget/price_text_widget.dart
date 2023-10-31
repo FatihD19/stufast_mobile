@@ -38,3 +38,21 @@ class NewPrice extends StatelessWidget {
     );
   }
 }
+
+class InvoicePrice extends StatelessWidget {
+  String? invoicePrice;
+  InvoicePrice(this.invoicePrice);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      NumberFormat.simpleCurrency(locale: 'id')
+          .format(int.parse('${invoicePrice}'))
+          .replaceAll(',00', ''),
+      style: primaryTextStyle.copyWith(
+        // fontWeight: FontWeight.bold,
+        fontSize: 12,
+      ),
+    );
+  }
+}

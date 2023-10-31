@@ -1,23 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:stufast_mobile/models/invoice_model.dart';
+import 'package:stufast_mobile/providers/order_provider.dart';
+import 'package:stufast_mobile/widget/price_text_widget.dart';
 
 import '../../theme.dart';
 
-class InvoicePage extends StatelessWidget {
-  const InvoicePage({super.key});
+class InvoicePage extends StatefulWidget {
+  String orderId;
+  InvoicePage(this.orderId, {super.key});
+
+  @override
+  State<InvoicePage> createState() => _InvoicePageState();
+}
+
+class _InvoicePageState extends State<InvoicePage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    getInit();
+    super.initState();
+  }
+
+  getInit() async {
+    await Provider.of<OrderProvider>(context, listen: false)
+        .getInvoice(widget.orderId);
+  }
 
   @override
   Widget build(BuildContext context) {
+    OrderProvider orderProvider = Provider.of<OrderProvider>(context);
+    InvoiceModel? invoice = orderProvider.invoice;
+
+    String status = '${invoice?.transactionStatus}';
+
     Widget header() {
       return Column(
         children: [
-          SizedBox(height: 40),
-          Text('Invoice #1711670',
+          Text('Invoice #${invoice?.orderId}',
               style: primaryTextStyle.copyWith(fontWeight: bold, fontSize: 18)),
-          Text('2023-02-07 11:38:25',
+          Text('${invoice?.transactionTime}',
               style: primaryTextStyle.copyWith(fontSize: 14)),
           Chip(
-              backgroundColor: primaryColor,
-              label: Text('Lunas',
+              backgroundColor: status == 'paid'
+                  ? primaryColor
+                  : status == 'pending'
+                      ? Color(0xffE57917)
+                      : Color(0xffD82222),
+              label: Text('${invoice?.transactionStatus}',
                   style:
                       buttonTextStyle.copyWith(fontWeight: bold, fontSize: 14)))
         ],
@@ -46,7 +76,8 @@ class InvoicePage extends StatelessWidget {
             children: [
               Text('PT .SWEVEL UNIVERSAL MEDIA',
                   style: primaryTextStyle.copyWith(fontSize: 12)),
-              Text('UserName', style: primaryTextStyle.copyWith(fontSize: 12)),
+              Text('${invoice?.fullname}',
+                  style: primaryTextStyle.copyWith(fontSize: 12)),
             ],
           ),
           SizedBox(height: 13),
@@ -55,7 +86,7 @@ class InvoicePage extends StatelessWidget {
             children: [
               Text('09.254.294.3-407.000 (NPWP)',
                   style: primaryTextStyle.copyWith(fontSize: 12)),
-              Text('posmn@gmail.com',
+              Text('${invoice?.email}',
                   style: primaryTextStyle.copyWith(fontSize: 12)),
             ],
           ),
@@ -69,47 +100,118 @@ class InvoicePage extends StatelessWidget {
 
     Widget invoiceItems() {
       return Column(
+          children: orderProvider.invoice!.item!
+              .map((item) => Column(
+                    children: [
+                      SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text('${item.title}',
+                                style: primaryTextStyle.copyWith(fontSize: 12)),
+                          ),
+                          InvoicePrice('${item.price}')
+                        ],
+                      ),
+                      SizedBox(height: 5),
+                      Divider(
+                        height: 20,
+                        thickness: 1,
+                        indent: 1,
+                        endIndent: 1,
+                        color: secondaryTextColor,
+                      ),
+                    ],
+                  ))
+              .toList());
+    }
+
+    Widget pricingItem(String tittle, String value, {bool line = true}) {
+      return Column(
         children: [
-          SizedBox(height: 20),
+          SizedBox(height: 10),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text('Course Documentations Report',
-                  style: primaryTextStyle.copyWith(fontSize: 12)),
-              Text('Rp 450.000',
-                  style: primaryTextStyle.copyWith(fontSize: 12)),
+              Container(
+                  width: 60,
+                  alignment: Alignment.bottomLeft,
+                  child: Text('$tittle',
+                      style: primaryTextStyle.copyWith(fontSize: 12))),
+              SizedBox(width: 40),
+              Container(
+                  alignment: Alignment.bottomRight,
+                  width: 80,
+                  child: InvoicePrice(value)),
             ],
           ),
           SizedBox(height: 5),
-          Divider(
-            height: 20,
-            thickness: 1,
-            indent: 1,
-            endIndent: 1,
-            color: secondaryTextColor,
-          ),
+          line == true
+              ? Divider(
+                  height: 20,
+                  thickness: 1,
+                  indent: 1,
+                  endIndent: 1,
+                  color: secondaryTextColor,
+                )
+              : SizedBox(),
         ],
       );
     }
 
-    Widget content() {
-      return Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Deskripsi',
+    Widget total() {
+      return Container(
+        padding: EdgeInsets.only(right: 11),
+        color: Color(0xffBEE5EB),
+        width: double.infinity,
+        height: 51,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              width: 60,
+              alignment: Alignment.centerLeft,
+              child: Text('total',
                   style: primaryTextStyle.copyWith(
                       fontSize: 12, fontWeight: bold)),
-              Text('Jumlah',
-                  style: primaryTextStyle.copyWith(
-                      fontSize: 12, fontWeight: bold)),
-            ],
-          ),
-          invoiceItems()
-        ],
+            ),
+            SizedBox(width: 40),
+            InvoicePrice('${invoice?.subTotal}'),
+          ],
+        ),
       );
     }
+
+    Widget content() {
+      return Container(
+        padding: EdgeInsets.only(right: 11),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Deskripsi',
+                    style: primaryTextStyle.copyWith(
+                        fontSize: 12, fontWeight: bold)),
+                Text('Jumlah',
+                    style: primaryTextStyle.copyWith(
+                        fontSize: 12, fontWeight: bold)),
+              ],
+            ),
+            invoiceItems(),
+            pricingItem('Sub Total', '${invoice?.rawPrice}'),
+            pricingItem('Diskon ${invoice?.discountPrice}%',
+                '${invoice?.discountAmount}'),
+            pricingItem('PPN 11%', '${invoice?.tax}', line: false),
+          ],
+        ),
+      );
+    }
+
+    // Widget pricing(){
+    //   return
+    // }
 
     return Scaffold(
       appBar: AppBar(
@@ -122,7 +224,7 @@ class InvoicePage extends StatelessWidget {
           icon: Icon(Icons.arrow_back),
           color: Colors.black,
           onPressed: () {
-            Navigator.pushNamed(context, '/order-page');
+            Navigator.pushReplacementNamed(context, '/order-page');
           },
         ),
         backgroundColor: Colors.white,
@@ -139,13 +241,18 @@ class InvoicePage extends StatelessWidget {
       ),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 24),
-        child: ListView(
-          children: [
-            header(),
-            profile(),
-            content(),
-          ],
-        ),
+        child: orderProvider.loading == true
+            ? Center(child: CircularProgressIndicator())
+            : ListView(
+                children: [
+                  SizedBox(height: 20),
+                  header(),
+                  profile(),
+                  content(),
+                  total(),
+                  SizedBox(height: 20),
+                ],
+              ),
       ),
     );
   }

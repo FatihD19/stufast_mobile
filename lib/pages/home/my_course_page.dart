@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stufast_mobile/pages/DetailPage/detail_bundle_user.dart';
+import 'package:stufast_mobile/pages/home/main_page.dart';
 import 'package:stufast_mobile/providers/bundle_provider.dart';
 import 'package:stufast_mobile/providers/user_course_provider.dart';
 import 'package:stufast_mobile/theme.dart';
@@ -201,27 +202,36 @@ class _MyCoursePageState extends State<MyCoursePage> {
       );
     }
 
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: Container(
-          // margin: EdgeInsets.only(top: 24),
-          child: AppBar(
-              elevation: 0,
-              backgroundColor: Colors.white,
-              centerTitle: false,
-              leadingWidth: 0,
-              title: Container(
-                padding: const EdgeInsets.only(left: 5.0),
-                child: Text(
-                  'My Course',
-                  style:
-                      primaryTextStyle.copyWith(fontWeight: bold, fontSize: 18),
-                ),
-              )),
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MainPage()),
+        );
+        return false;
+      },
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(60),
+          child: Container(
+            // margin: EdgeInsets.only(top: 24),
+            child: AppBar(
+                elevation: 0,
+                backgroundColor: Colors.white,
+                centerTitle: false,
+                leadingWidth: 0,
+                title: Container(
+                  padding: const EdgeInsets.only(left: 5.0),
+                  child: Text(
+                    'My Course',
+                    style: primaryTextStyle.copyWith(
+                        fontWeight: bold, fontSize: 18),
+                  ),
+                )),
+          ),
         ),
+        body: tabBar(),
       ),
-      body: tabBar(),
     );
   }
 }

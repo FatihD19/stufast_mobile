@@ -33,6 +33,8 @@ class OrderProvider with ChangeNotifier {
     try {
       InvoiceModel invoice = await OrderService().getInvoice(orderId);
       _invoice = invoice;
+      notifyListeners();
+      loading = false;
     } catch (e) {
       print(e);
     }
