@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stufast_mobile/models/quiz_model.dart';
+import 'package:stufast_mobile/pages/DetailPage/detail_course_page.dart';
 import 'package:stufast_mobile/pages/DetailPage/quiz_result_page.dart';
 import 'package:stufast_mobile/providers/quiz_provider.dart';
 import 'package:stufast_mobile/theme.dart';
@@ -247,53 +248,87 @@ class _QuizPageState extends State<QuizPage> {
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          '${widget.title}',
-          style: primaryTextStyle.copyWith(fontWeight: semiBold),
+    Future<bool> showExitPopup() async {
+      return await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('Keluar dari Quiz',
+                  style: primaryTextStyle.copyWith(fontWeight: bold)),
+              content: Text('Kerjakan Quiz Nanti ?', style: primaryTextStyle),
+              actions: [
+                ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  //return false when click on "NO"
+                  child:
+                      Text('Tidak, kerjakan sekarang', style: buttonTextStyle),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DetailCoursePage(
+                              idUserCourse: '${widget.idCourse}')),
+                    );
+                  },
+                  child: Text('Keluar', style: buttonTextStyle),
+                ),
+              ],
+            ),
+          ) ??
+          false; //if showDialouge had returned null, then return false
+    }
+
+    return WillPopScope(
+      onWillPop: showExitPopup,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            '${widget.title}',
+            style: primaryTextStyle.copyWith(fontWeight: semiBold),
+          ),
+          elevation: 0, // Menghilangkan shadow
+          leadingWidth: 0,
+          backgroundColor: Colors.white,
+          centerTitle: false,
         ),
-        elevation: 0, // Menghilangkan shadow
-        leadingWidth: 0,
-        backgroundColor: Colors.white,
-        centerTitle: false,
+        body:
+            // loading == true
+            //     ? CircularProgressIndicator()
+            //     :
+            Stack(children: [
+          Container(
+            padding: EdgeInsets.all(24),
+            child: ListView(children: [
+              progress(),
+              SizedBox(height: 24),
+              question(),
+              Row(
+                children: quizProvider.selectedQuizId
+                    .map((e) => Text(e + ', '))
+                    .toList(),
+              ),
+              Row(
+                children: quizProvider.selectedAnswers
+                    .map((e) => Text(e + ', '))
+                    .toList(),
+              ),
+              SizedBox(height: 24),
+              Text(
+                  "valid answer ${widget.detailQuiz![currentIndex].validAnswer}"),
+              Text('${widget.idCourse}'),
+              answer(),
+              SizedBox(height: 94),
+            ]),
+          ),
+          Positioned(
+            bottom: 0, // Menempatkan checkout di bagian bawah
+            left: 0, // Atur posisi horizontal ke kiri
+            right: 0, // Atur posisi horizontal ke kanan
+            child: navigation(),
+          ),
+        ]),
       ),
-      body:
-          // loading == true
-          //     ? CircularProgressIndicator()
-          //     :
-          Stack(children: [
-        Container(
-          padding: EdgeInsets.all(24),
-          child: ListView(children: [
-            progress(),
-            SizedBox(height: 24),
-            question(),
-            Row(
-              children: quizProvider.selectedQuizId
-                  .map((e) => Text(e + ', '))
-                  .toList(),
-            ),
-            Row(
-              children: quizProvider.selectedAnswers
-                  .map((e) => Text(e + ', '))
-                  .toList(),
-            ),
-            SizedBox(height: 24),
-            Text(
-                "valid answer ${widget.detailQuiz![currentIndex].validAnswer}"),
-            Text('${widget.idCourse}'),
-            answer(),
-            SizedBox(height: 94),
-          ]),
-        ),
-        Positioned(
-          bottom: 0, // Menempatkan checkout di bagian bawah
-          left: 0, // Atur posisi horizontal ke kiri
-          right: 0, // Atur posisi horizontal ke kanan
-          child: navigation(),
-        ),
-      ]),
     );
   }
 }

@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "714321758449",
-    "project_id": "stufast-notification",
-    "storage_bucket": "stufast-notification.appspot.com"
+    "project_number": "716501114019",
+    "project_id": "stufast-notification-e79e7",
+    "storage_bucket": "stufast-notification-e79e7.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:714321758449:android:434556aca5e21a10bc8150",
+        "mobilesdk_app_id": "1:716501114019:android:61266f60f8bf11ef987316",
         "android_client_info": {
           "package_name": "com.example.stufast_mobile"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBNzTkBoV5vhxkcSuQERCZXXI3QI2dTgog"
+          "current_key": "AIzaSyC5z0zZkJgMSgIvd5gAKjRGKD1cAVRJrms"
         }
       ],
       "services": {

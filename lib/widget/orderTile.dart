@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:stufast_mobile/models/orderHistoryModel.dart';
 import 'package:stufast_mobile/models/order_model.dart';
 import 'package:stufast_mobile/pages/checkout/invoice_page.dart';
+import 'package:stufast_mobile/pages/course_page.dart';
+import 'package:stufast_mobile/pages/home/my_course_page.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/price_text_widget.dart';
 import 'package:stufast_mobile/widget/primary_button.dart';
+
+import '../pages/checkout/payment_view.dart';
 
 class OrderTile extends StatelessWidget {
   OrderHistoryModel? order;
@@ -184,7 +188,27 @@ class OrderTile extends StatelessWidget {
                   width: 130,
                   height: 35,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      if (status == 'pending') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  PaymentView(order?.snapToken)),
+                        );
+                      } else if (status == 'paid') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MyCoursePage()),
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => CoursePage()),
+                        );
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       primary: Colors.white, // Latar belakang putih
                       onPrimary: Color(

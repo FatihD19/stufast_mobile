@@ -56,7 +56,7 @@ class _VideoTileState extends State<VideoTile> {
               title: Text(
                 '${widget.video.title}',
                 style: primaryTextStyle.copyWith(fontWeight: bold),
-                maxLines: 2,
+                maxLines: _customTileExpanded == true ? 4 : 2,
                 overflow: TextOverflow.ellipsis,
               ),
               trailing: Text('${widget.video.duration} menit',
@@ -110,11 +110,11 @@ class _VideoTileState extends State<VideoTile> {
                         ],
                       ),
               ],
-              // onExpansionChanged: (bool expanded) {
-              //   setState(() {
-              //     _customTileExpanded = expanded;
-              //   });
-              // },
+              onExpansionChanged: (bool expanded) {
+                setState(() {
+                  _customTileExpanded = expanded;
+                });
+              },
             ),
           ),
         ),

@@ -7,6 +7,7 @@ import 'package:stufast_mobile/models/course_model.dart';
 import 'package:stufast_mobile/models/video_model.dart';
 import 'package:stufast_mobile/pages/DetailPage/detail_course_page.dart';
 import 'package:stufast_mobile/pages/DetailPage/quiz_page.dart';
+import 'package:stufast_mobile/pages/DetailPage/resume_page.dart';
 import 'package:stufast_mobile/providers/quiz_provider.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:video_player/video_player.dart';
@@ -171,34 +172,54 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
                                     ),
                                   ),
                                 ),
-                                Container(
-                                  height: 60,
-                                  width: 135,
-                                  child: Card(
-                                    clipBehavior: Clip.antiAlias,
-                                    elevation: 3,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 6, horizontal: 10),
-                                      child: Row(
-                                        children: [
-                                          video.resume == null
-                                              ? Icon(Icons.lock)
-                                              : Image.asset(
-                                                  'assets/ic_quiz.png',
-                                                  width: 40,
-                                                  height: 40,
-                                                ),
-                                          SizedBox(width: 10),
-                                          Text(
-                                            'Resume',
-                                            style: secondaryTextStyle.copyWith(
-                                                fontWeight: semiBold),
-                                          )
-                                        ],
+                                InkWell(
+                                  onTap: video.resume == null
+                                      ? null
+                                      : () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ResumePage(
+                                                      '${video.videoId}',
+                                                      isDetail: true,
+                                                      idResume: video
+                                                          .resume?.resumeId,
+                                                      detail: video.resume,
+                                                      courseId: widget.idCourse,
+                                                    )),
+                                          );
+                                        },
+                                  child: Container(
+                                    height: 60,
+                                    width: 135,
+                                    child: Card(
+                                      clipBehavior: Clip.antiAlias,
+                                      elevation: 3,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 6, horizontal: 10),
+                                        child: Row(
+                                          children: [
+                                            video.resume == null
+                                                ? Icon(Icons.lock)
+                                                : Image.asset(
+                                                    'assets/ic_quiz.png',
+                                                    width: 40,
+                                                    height: 40,
+                                                  ),
+                                            SizedBox(width: 10),
+                                            Text(
+                                              'Resume',
+                                              style:
+                                                  secondaryTextStyle.copyWith(
+                                                      fontWeight: semiBold),
+                                            )
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -345,6 +366,33 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
     return DefaultTabController(
       length: 2, // Jumlah tab
       child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            '${widget.video.title}',
+            style: primaryTextStyle.copyWith(fontWeight: semiBold),
+          ),
+          elevation: 0, // Menghilangkan shadow
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            color: Colors.black,
+            onPressed: () {
+              flickManager.dispose();
+              Navigator.pop(context);
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //       builder: (context) => DetailCoursePage(
+              //             idUserCourse: "${widget.detailCourse.courseId}",
+              //             progressCourse: widget.progressCourse,
+              //             persen: widget.persen,
+              //             totalDuration: widget.totalDuration,
+              //           )),
+              // );
+            },
+          ),
+          backgroundColor: Colors.white,
+          centerTitle: false,
+        ),
         resizeToAvoidBottomInset: false,
         body: Column(
           children: [
@@ -388,33 +436,6 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
               ),
             ),
           ],
-        ),
-        appBar: AppBar(
-          title: Text(
-            '${widget.video.title}',
-            style: primaryTextStyle.copyWith(fontWeight: semiBold),
-          ),
-          elevation: 0, // Menghilangkan shadow
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            color: Colors.black,
-            onPressed: () {
-              flickManager.dispose();
-              Navigator.pop(context);
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //       builder: (context) => DetailCoursePage(
-              //             idUserCourse: "${widget.detailCourse.courseId}",
-              //             progressCourse: widget.progressCourse,
-              //             persen: widget.persen,
-              //             totalDuration: widget.totalDuration,
-              //           )),
-              // );
-            },
-          ),
-          backgroundColor: Colors.white,
-          centerTitle: false,
         ),
       ),
     );

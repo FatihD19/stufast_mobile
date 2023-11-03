@@ -27,6 +27,7 @@ import 'package:stufast_mobile/providers/course_provider.dart';
 import 'package:stufast_mobile/providers/faq_provider.dart';
 import 'package:stufast_mobile/providers/order_provider.dart';
 import 'package:stufast_mobile/providers/quiz_provider.dart';
+import 'package:stufast_mobile/providers/resume_provider.dart';
 import 'package:stufast_mobile/providers/talentHub_provider.dart';
 import 'package:stufast_mobile/providers/user_course_provider.dart';
 import 'package:stufast_mobile/providers/webinar_provider.dart';
@@ -42,33 +43,33 @@ AndroidNotificationChannel? channel;
 FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin;
 
 void main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp();
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
 
-  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  // if (!kIsWeb) {
-  //   channel = const AndroidNotificationChannel(
-  //     'high_importance_channel', // id
-  //     'High Importance Notifications', // title
-  //     // 'This channel is used for important notifications.', // description
-  //     importance: Importance.high,
-  //   );
+  if (!kIsWeb) {
+    channel = const AndroidNotificationChannel(
+      'high_importance_channel', // id
+      'High Importance Notifications', // title
+      // 'This channel is used for important notifications.', // description
+      importance: Importance.high,
+    );
 
-  //   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  //   await flutterLocalNotificationsPlugin!
-  //       .resolvePlatformSpecificImplementation<
-  //           AndroidFlutterLocalNotificationsPlugin>()
-  //       ?.createNotificationChannel(channel!);
+    await flutterLocalNotificationsPlugin!
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel!);
 
-  //   await FirebaseMessaging.instance
-  //       .setForegroundNotificationPresentationOptions(
-  //     alert: true,
-  //     badge: true,
-  //     sound: true,
-  //   );
-  // }
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+  }
   runApp(const MyApp());
 }
 
@@ -90,7 +91,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => FaqProvider()),
         ChangeNotifierProvider(create: (context) => TalentHubProvider()),
         ChangeNotifierProvider(create: (context) => QuizProvider()),
-        ChangeNotifierProvider(create: (context) => OrderProvider())
+        ChangeNotifierProvider(create: (context) => OrderProvider()),
+        ChangeNotifierProvider(create: (context) => ResumeProvider())
       ],
       child: MaterialApp(
         theme: ThemeData(

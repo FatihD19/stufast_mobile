@@ -230,7 +230,24 @@ class _MyCoursePageState extends State<MyCoursePage> {
                 )),
           ),
         ),
-        body: tabBar(),
+        body: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              SizedBox(height: 24),
+              filterTag(),
+              SizedBox(height: 24),
+              selectedTag == 'Semua'
+                  ? Column(
+                      children: [userBundleTile(), userCourseTile()],
+                    )
+                  : selectedTag == 'Course'
+                      ? userCourseTile()
+                      : userBundleTile()
+            ],
+          ),
+        ),
       ),
     );
   }

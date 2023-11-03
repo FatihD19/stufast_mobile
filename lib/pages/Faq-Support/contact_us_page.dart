@@ -74,67 +74,9 @@ class ContactUsPage extends StatelessWidget {
                 ),
               ),
             ),
-            VideoPlayerScreen()
           ],
         ),
       ),
-    );
-  }
-}
-
-class VideoPlayerScreen extends StatefulWidget {
-  @override
-  _VideoPlayerScreenState createState() => _VideoPlayerScreenState();
-}
-
-class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
-  late FlickManager flickManager;
-  String videoUrl =
-      'https://dev.stufast.id/upload/course-video/19d2f84802cbd7374273d729783db3a6.mp4';
-
-  @override
-  void initState() {
-    super.initState();
-    flickManager = FlickManager(
-      videoPlayerController:
-          VideoPlayerController.network(videoUrl), // Video awal
-    );
-  }
-
-  void _changeVideo(String newVideoUrl) {
-    setState(() {
-      flickManager
-          .handleChangeVideo(VideoPlayerController.network(newVideoUrl));
-      videoUrl = newVideoUrl;
-    });
-  }
-
-  @override
-  void dispose() {
-    flickManager.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        FlickVideoPlayer(flickManager: flickManager),
-        ElevatedButton(
-          onPressed: () {
-            _changeVideo(
-                'https://dev.stufast.id/upload/course-video/19d2f84802cbd7374273d729783db3a6.mp4');
-          },
-          child: Text('Link 1'),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            _changeVideo(
-                'https://dev.stufast.id/upload/course-video/video.mp4');
-          },
-          child: Text('Link 2'),
-        ),
-      ],
     );
   }
 }

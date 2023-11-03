@@ -9,6 +9,7 @@ import 'package:stufast_mobile/pages/home/home_page.dart';
 import 'package:stufast_mobile/pages/home/my_course_page.dart';
 import 'package:stufast_mobile/pages/home/profile_page.dart';
 import 'package:stufast_mobile/pages/home/my_webinar_page.dart';
+import 'package:stufast_mobile/pages/notifikasi_page.dart';
 import 'package:stufast_mobile/pages/talent-hub/talent_hub_page.dart';
 import 'package:stufast_mobile/theme.dart';
 
@@ -22,46 +23,66 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  // @override
-  // void initState() {
-  //   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-  //     RemoteNotification? notification = message.notification!;
-  //     AndroidNotification? android = message.notification?.android;
-  //     if (notification != null && android != null && !kIsWeb) {
-  //       flutterLocalNotificationsPlugin!.show(
-  //           notification.hashCode,
-  //           notification.title,
-  //           notification.body,
-  //           NotificationDetails(
-  //             android: AndroidNotificationDetails(
-  //               channel!.id,
-  //               channel!.name,
-  //               // channel!.description,
-  //               // TODO add a proper drawable resource to android, for now using
-  //               //      one that already exists in example app.
-  //               icon: 'launch_background',
-  //             ),
-  //           ));
-  //       setState(() {
-  //         Navigator.pushReplacement(
-  //             context,
-  //             MaterialPageRoute(
-  //                 builder: (context) => SuccsessPage(
-  //                       titleMess: "Selamat Pembayaran anda Berhasil",
-  //                       mess: "silahkan buka course di halaman My Course",
-  //                       pay: true,
-  //                     )));
-  //       });
-  //     }
-  //   });
+  @override
+  void initState() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification!;
+      AndroidNotification? android = message.notification?.android;
+      if (notification != null && android != null && !kIsWeb) {
+        flutterLocalNotificationsPlugin!.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel!.id,
+                channel!.name,
+                // channel!.description,
+                // TODO add a proper drawable resource to android, for now using
+                //      one that already exists in example app.
+                icon: 'launch_background',
+              ),
+            ));
+        if ("${notification.title}" == 'Pesanan dibatalkan') {
+          setState(() {
+            print(
+              'NOTIF_MESS' + "${notification.title}" + "${channel?.id}",
+            );
+          });
+        } else {
+          setState(() {
+            print(
+              'NOTIF_MESS' + "${notification.title}" + "${channel?.id}",
+            );
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => SuccsessPage(
+                          titleMess: "Selamat Pembayaran anda Berhasil",
+                          mess: "silahkan buka course di halaman My Course",
+                          pay: true,
+                        )));
+          });
+        }
+      }
+    });
 
-  //   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-  //     print('A new onMessageOpenedApp event was published!');
-  //     // Navigator.pushNamed(context, '/message',
-  //     //     arguments: MessageArguments(message, true));
-  //   });
-  //   super.initState();
-  // }
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print(
+          'A new onMessageOpenedApp event was published! ${message.messageType}');
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => SuccsessPage(
+                    titleMess: "Selamat Pembayaran anda Berhasil",
+                    mess: "silahkan buka course di halaman My Course",
+                    pay: true,
+                  )));
+      // Navigator.pushNamed(context, '/message',
+      //     arguments: MessageArguments(message, true));
+    });
+    super.initState();
+  }
 
   int currentIndex = 0;
   Future<bool> showExitPopup() async {

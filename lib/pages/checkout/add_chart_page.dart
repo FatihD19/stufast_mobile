@@ -293,7 +293,10 @@ class _AddToChartPageState extends State<AddToChartPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => CheckOutPage(selectedIds)),
+                            builder: (context) => CheckOutPage(
+                                  selectedIds,
+                                  type: 'cart',
+                                )),
                       );
                     })),
           ],

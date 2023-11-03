@@ -1,13 +1,18 @@
+// ignore_for_file: prefer_const_literals_to_create_immutables
+
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:stufast_mobile/models/course_model.dart';
 import 'package:stufast_mobile/pages/DetailPage/detail_video.dart';
+import 'package:stufast_mobile/pages/checkout/checkout_page.dart';
 import 'package:stufast_mobile/providers/chart_provider.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/description_widget.dart';
 import 'package:stufast_mobile/widget/primary_button.dart';
+import 'package:stufast_mobile/widget/review_widget.dart';
 import 'package:stufast_mobile/widget/video_tile.dart';
 
 import '../../providers/user_course_provider.dart';
@@ -29,6 +34,9 @@ class DetailCoursePage extends StatefulWidget {
 
 class _DetailCoursePageState extends State<DetailCoursePage> {
   bool? loading;
+  List selectedIds = [];
+
+  @override
   void initState() {
     getInit();
     super.initState();
@@ -122,44 +130,47 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
       return Image.network(
         '${detail?.thumbnail}',
         width: double.infinity,
-        height: 233,
+        height: 183,
+        fit: BoxFit.cover,
       );
     }
 
     Widget videoTile() {
       final videoList = detail?.video;
-      return ListView.builder(
-        shrinkWrap: true,
-        physics: ScrollPhysics(),
-        itemCount: videoList?.length,
-        itemBuilder: (context, index) {
-          final video = videoList?[index];
-          // final isLocked = index > 0 && videoList?[(index) - 1].resume == null;
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 24),
+        child: ListView.builder(
+          shrinkWrap: true,
+          physics: ScrollPhysics(),
+          itemCount: videoList?.length,
+          itemBuilder: (context, index) {
+            final video = videoList?[index];
+            // final isLocked = index > 0 && videoList?[(index) - 1].resume == null;
 
-          final isLocked =
-              index > 0 && int.parse(videoList![(index) - 1].score) < 60;
+            final isLocked =
+                index > 0 && int.parse(videoList![(index) - 1].score) < 60;
 
-          // Tambahkan isLocked ke VideoTile
-          return VideoTile(
-            detail?.owned == true || index == 0 ? 1.0 : 0.5,
-            detail!,
-            video!,
-            isLocked: isLocked,
-            progressCourse: widget.progressCourse,
-            persen: widget.persen,
-            totalDuration: widget.totalDuration,
-            index: index,
-            idCourse: widget.idUserCourse,
-          );
-        },
+            // Tambahkan isLocked ke VideoTile
+            return VideoTile(
+              detail?.owned == true || index == 0 ? 1.0 : 0.5,
+              detail!,
+              video!,
+              isLocked: isLocked,
+              progressCourse: widget.progressCourse,
+              persen: widget.persen,
+              totalDuration: widget.totalDuration,
+              index: index,
+              idCourse: widget.idUserCourse,
+            );
+          },
+        ),
       );
     }
 
-    Widget content() {
+    Widget infoHeader() {
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 24),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -225,13 +236,80 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
                     Image.asset('assets/icon_list.png'),
                     SizedBox(width: 8),
                     Text(
-                      '${widget.totalDuration}',
+                      '${detail.total_video_duration}',
                       style: secondaryTextStyle,
                     ),
                   ],
                 ),
               ],
             ),
+            SizedBox(height: 10),
+          ],
+        ),
+      );
+    }
+
+    Widget actionBtn() {
+      return Column(
+        children: [
+          SizedBox(height: 24),
+          detail?.owned == true
+              ? SizedBox()
+              : Column(
+                  children: [
+                    Container(
+                        width: double.infinity,
+                        height: 54,
+                        child: PrimaryButton(
+                            text: 'Beli Sekarang',
+                            onPressed: () {
+                              selectedIds.add(detail?.courseId);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => CheckOutPage(
+                                          selectedIds,
+                                          type: 'course',
+                                        )),
+                              );
+                            })),
+                    SizedBox(height: 18),
+                    Container(
+                      width: double.infinity,
+                      height: 54,
+                      child: ElevatedButton(
+                        onPressed: handleAddChart,
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.white, // Latar belakang putih
+                          onPrimary: Color(
+                              0xFF248043), // Warna teks saat di atas latar putih
+                          side: BorderSide(
+                              color: Color(0xFF248043),
+                              width:
+                                  2), // Border berwarna 248043 dengan lebar 2
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(10), // Border radius 10
+                          ),
+                        ),
+                        child: Text(
+                          'Masukan ke Keranjang',
+                          style: thirdTextStyle.copyWith(fontWeight: bold),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 24),
+                  ],
+                ),
+        ],
+      );
+    }
+
+    Widget infoDesc() {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 24),
+        child: ListView(
+          children: [
             SizedBox(height: 18),
             Text(
               'Deskripsi',
@@ -244,7 +322,7 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
             // DescriptionList(description: '${detail?.description}'),
             // DescriptionText(text: '${detail?.description}'),
             ExpandableText(
-              '${detail.description?.replaceAll('\r', ' ')}',
+              '${detail?.description?.replaceAll('\r\n                        ', '\n')}',
               style: secondaryTextStyle,
               maxLines: 7,
               expandText: 'show more',
@@ -252,78 +330,127 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
               linkColor: primaryColor,
               textAlign: TextAlign.justify,
             ),
-            Text('${detail.video?.length} video',
-                style: primaryTextStyle.copyWith(fontWeight: bold)),
-            videoTile(),
-            SizedBox(height: 24),
-            detail.owned == true
-                ? SizedBox()
-                : Column(
-                    children: [
-                      Container(
-                          width: double.infinity,
-                          height: 54,
-                          child: PrimaryButton(
-                              text: 'Beli Sekarang', onPressed: () {})),
-                      SizedBox(height: 18),
-                      Container(
-                        width: double.infinity,
-                        height: 54,
-                        child: ElevatedButton(
-                          onPressed: handleAddChart,
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.white, // Latar belakang putih
-                            onPrimary: Color(
-                                0xFF248043), // Warna teks saat di atas latar putih
-                            side: BorderSide(
-                                color: Color(0xFF248043),
-                                width:
-                                    2), // Border berwarna 248043 dengan lebar 2
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(10), // Border radius 10
-                            ),
-                          ),
-                          child: Text(
-                            'Masukan ke Keranjang',
-                            style: thirdTextStyle.copyWith(fontWeight: bold),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 24),
-                    ],
-                  ),
+            SizedBox(height: 18),
+            Text(
+              'Key Takeway',
+              style: primaryTextStyle.copyWith(fontWeight: bold),
+            ),
+
+            ExpandableText(
+              '${detail?.keyTakeaways?.replaceAll('\r\n                        ', '\n')}',
+              style: secondaryTextStyle,
+              maxLines: 7,
+              expandText: 'show more',
+              collapseText: 'show less',
+              linkColor: primaryColor,
+              textAlign: TextAlign.justify,
+            ),
+            SizedBox(height: 16),
+            actionBtn(),
           ],
         ),
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Detail Course',
-          style: primaryTextStyle.copyWith(fontWeight: semiBold, fontSize: 18),
+    Widget infoReview() {
+      return Container(
+          padding: EdgeInsets.symmetric(horizontal: 24),
+          child: ListView(
+              children: detail!.review!
+                  .map((review) => ReviewTile(review))
+                  .toList()));
+    }
+
+    Widget content() {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            infoHeader(),
+            infoDesc(),
+            Text('${detail?.video?.length} video',
+                style: primaryTextStyle.copyWith(fontWeight: bold)),
+            videoTile(),
+            actionBtn(),
+          ],
         ),
-        elevation: 0, // Menghilangkan shadow
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          color: Colors.black,
-          onPressed: () {
-            Navigator.pushNamed(context, '/user-course');
-          },
+      );
+    }
+
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'Detail Course',
+            style:
+                primaryTextStyle.copyWith(fontWeight: semiBold, fontSize: 18),
+          ),
+          elevation: 0, // Menghilangkan shadow
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            color: Colors.black,
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          backgroundColor: Colors.white,
+          centerTitle: false,
+          actions: [loading == false ? progressBar(0.62) : SizedBox()],
         ),
-        backgroundColor: Colors.white,
-        centerTitle: false,
-        actions: [loading == false ? progressBar(0.62) : SizedBox()],
+        body: Center(
+          child: loading == false
+              ? Column(
+                  children: [
+                    imageCourse(),
+                    infoHeader(),
+                    Container(
+                      color: Colors.white,
+                      child: TabBar(
+                        labelColor: Color(0xFF248043), // Warna teks saat aktif
+                        unselectedLabelColor:
+                            Color(0xFF7D7D7D), // Warna teks saat tidak aktif
+                        indicatorWeight:
+                            4, // Ketebalan garis tepi bawah saat aktif
+                        indicator: BoxDecoration(
+                          color: Color(
+                              0xFFE9F2EC), // Warna latar belakang saat tab aktif
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Color(
+                                  0xFF248043), // Warna garis tepi bawah saat aktif
+                              width: 4, // Ketebalan garis tepi bawah saat aktif
+                            ),
+                          ),
+                        ), // W
+                        tabs: [
+                          Tab(
+                              text:
+                                  'Deskripsi'), // Tab pertama dengan teks 'Video'
+                          Tab(text: 'Kurikulum'),
+                          Tab(
+                              text:
+                                  'Review'), // Tab kedua dengan teks 'Project'
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: TabBarView(
+                        children: [
+                          // Konten untuk tab 'Video'
+                          infoDesc(),
+                          videoTile(),
+                          infoReview(),
+                          // Konten untuk tab 'Project' bisa Anda tambahkan di sini
+                        ],
+                      ),
+                    ),
+                  ],
+                )
+              : CircularProgressIndicator(),
+        ),
       ),
-      body: SafeArea(
-          child: Center(
-        child: loading == false
-            ? ListView(
-                children: [imageCourse(), content()],
-              )
-            : CircularProgressIndicator(),
-      )),
     );
   }
 }

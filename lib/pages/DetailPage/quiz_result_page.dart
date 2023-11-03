@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stufast_mobile/pages/DetailPage/detail_course_page.dart';
 import 'package:stufast_mobile/pages/DetailPage/quiz_page.dart';
+import 'package:stufast_mobile/pages/DetailPage/resume_page.dart';
 
 import '../../models/quiz_model.dart';
 import '../../providers/quiz_provider.dart';
@@ -107,10 +108,18 @@ class _QuizResultPageState extends State<QuizResultPage> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => DetailCoursePage(
-                                  idUserCourse: "${widget.idCourse}"
-                                      .replaceAll(' ', ''))),
+                              builder: (context) => ResumePage(
+                                    "${widget.id}",
+                                    courseId: widget.idCourse,
+                                  )),
                         );
+                        // Navigator.pushReplacement(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //       builder: (context) => DetailCoursePage(
+                        //           idUserCourse:"${widget.idCourse}"
+                        //               .replaceAll(' ', ''))),
+                        // );
                       })),
           SizedBox(height: 18),
           Container(
@@ -154,16 +163,49 @@ class _QuizResultPageState extends State<QuizResultPage> {
       );
     }
 
+    Future<bool> showExitPopup() async {
+      return widget.quizPass == true
+          ? Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      DetailCoursePage(idUserCourse: "${widget.idCourse}")),
+            )
+          : await showDialog(
+                //show confirm dialogue
+                //the return value will be from "Yes" or "No" options
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('Anda belum lolos Quis',
+                      style: primaryTextStyle.copyWith(fontWeight: bold)),
+                  content:
+                      Text('Kerjakan quis Nanti?', style: primaryTextStyle),
+                  actions: [
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      //return false when click on "NO"
+                      child: Text('Tidak, kerjakan sekarang',
+                          style: buttonTextStyle),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DetailCoursePage(
+                                  idUserCourse: "${widget.idCourse}")),
+                        );
+                      },
+                      child: Text('Ya', style: buttonTextStyle),
+                    ),
+                  ],
+                ),
+              ) ??
+              false; //if showDialouge had returned null, then return false
+    }
+
     return WillPopScope(
-      onWillPop: () async {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  DetailCoursePage(idUserCourse: "${widget.idCourse}")),
-        );
-        return false;
-      },
+      onWillPop: showExitPopup,
       child: Scaffold(
         appBar: AppBar(
           title: Text(

@@ -15,6 +15,7 @@ class InvoicePage extends StatefulWidget {
 }
 
 class _InvoicePageState extends State<InvoicePage> {
+  bool? loading;
   @override
   void initState() {
     // TODO: implement initState
@@ -23,8 +24,14 @@ class _InvoicePageState extends State<InvoicePage> {
   }
 
   getInit() async {
+    setState(() {
+      loading = true;
+    });
     await Provider.of<OrderProvider>(context, listen: false)
         .getInvoice(widget.orderId);
+    setState(() {
+      loading = false;
+    });
   }
 
   @override
@@ -76,18 +83,29 @@ class _InvoicePageState extends State<InvoicePage> {
             children: [
               Text('PT .SWEVEL UNIVERSAL MEDIA',
                   style: primaryTextStyle.copyWith(fontSize: 12)),
-              Text('${invoice?.fullname}',
-                  style: primaryTextStyle.copyWith(fontSize: 12)),
+              Container(
+                width: 140,
+                child: Text('${invoice?.fullname}',
+                    textAlign: TextAlign.right,
+                    style: primaryTextStyle.copyWith(fontSize: 12)),
+              ),
             ],
           ),
           SizedBox(height: 13),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('09.254.294.3-407.000 (NPWP)',
-                  style: primaryTextStyle.copyWith(fontSize: 12)),
-              Text('${invoice?.email}',
-                  style: primaryTextStyle.copyWith(fontSize: 12)),
+              Container(
+                width: 140,
+                child: Text('09.254.294.3-407.000 (NPWP)',
+                    style: primaryTextStyle.copyWith(fontSize: 12)),
+              ),
+              Container(
+                width: 140,
+                child: Text('${invoice?.email}',
+                    textAlign: TextAlign.right,
+                    style: primaryTextStyle.copyWith(fontSize: 12)),
+              ),
             ],
           ),
           SizedBox(height: 18),
@@ -99,32 +117,35 @@ class _InvoicePageState extends State<InvoicePage> {
     }
 
     Widget invoiceItems() {
-      return Column(
-          children: orderProvider.invoice!.item!
-              .map((item) => Column(
-                    children: [
-                      SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      return orderProvider.loading == true
+          ? Center(child: CircularProgressIndicator())
+          : Column(
+              children: orderProvider.invoice!.item!
+                  .map((item) => Column(
                         children: [
-                          Expanded(
-                            child: Text('${item.title}',
-                                style: primaryTextStyle.copyWith(fontSize: 12)),
+                          SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text('${item.title}',
+                                    style: primaryTextStyle.copyWith(
+                                        fontSize: 12)),
+                              ),
+                              InvoicePrice('${item.price}')
+                            ],
                           ),
-                          InvoicePrice('${item.price}')
+                          SizedBox(height: 5),
+                          Divider(
+                            height: 20,
+                            thickness: 1,
+                            indent: 1,
+                            endIndent: 1,
+                            color: secondaryTextColor,
+                          ),
                         ],
-                      ),
-                      SizedBox(height: 5),
-                      Divider(
-                        height: 20,
-                        thickness: 1,
-                        indent: 1,
-                        endIndent: 1,
-                        color: secondaryTextColor,
-                      ),
-                    ],
-                  ))
-              .toList());
+                      ))
+                  .toList());
     }
 
     Widget pricingItem(String tittle, String value, {bool line = true}) {
@@ -241,7 +262,7 @@ class _InvoicePageState extends State<InvoicePage> {
       ),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 24),
-        child: orderProvider.loading == true
+        child: loading == true
             ? Center(child: CircularProgressIndicator())
             : ListView(
                 children: [

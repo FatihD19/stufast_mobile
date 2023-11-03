@@ -86,7 +86,7 @@ class _OrderPageState extends State<OrderPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Daftar',
+          'Riwayat Order',
           style: primaryTextStyle.copyWith(fontWeight: semiBold),
         ),
         elevation: 0, // Menghilangkan shadow
@@ -94,7 +94,7 @@ class _OrderPageState extends State<OrderPage> {
           icon: Icon(Icons.arrow_back),
           color: Colors.black,
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushNamed(context, 'home');
           },
         ),
         backgroundColor: Colors.white,

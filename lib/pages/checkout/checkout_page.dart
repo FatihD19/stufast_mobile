@@ -14,7 +14,8 @@ import '../../widget/primary_button.dart';
 
 class CheckOutPage extends StatefulWidget {
   List selectedItem;
-  CheckOutPage(this.selectedItem);
+  String? type;
+  CheckOutPage(this.selectedItem, {this.type});
 
   @override
   State<CheckOutPage> createState() => _CheckOutPageState();
@@ -39,7 +40,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
       loading = true;
     });
     await Provider.of<CheckoutProvider>(context, listen: false)
-        .checkoutCourse(widget.selectedItem);
+        .checkoutCourse(widget.selectedItem, type: widget.type);
 
     setState(() {
       loading = false;
@@ -263,6 +264,38 @@ class _CheckOutPageState extends State<CheckOutPage> {
               ),
             ),
           ),
+          SizedBox(height: 16),
+          usingVoucher == true
+              ? Container(
+                  width: double.infinity,
+                  height: 75,
+                  color: Color(0xffD3E6D9),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 18),
+                    child: RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(children: [
+                          TextSpan(
+                              text: 'Selamat!, anda mendapat diskon ',
+                              style: thirdTextStyle),
+                          TextSpan(
+                            text: '${checkOutProvider.voucher?.discountPrice}%',
+                            style: thirdTextStyle.copyWith(fontWeight: bold),
+                          ),
+                          TextSpan(
+                              text: ' dan menghemat ', style: thirdTextStyle),
+                          TextSpan(
+                              text: NumberFormat.simpleCurrency(locale: 'id')
+                                  .format(discountAmount)
+                                  .replaceAll(',00', ''),
+                              style: thirdTextStyle.copyWith(fontWeight: bold)),
+                          TextSpan(
+                              text: ' pada pesananmu', style: thirdTextStyle),
+                        ])),
+                  ),
+                )
+              : SizedBox(),
           SizedBox(height: 16),
           Container(
             width: double.infinity,

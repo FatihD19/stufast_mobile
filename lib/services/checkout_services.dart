@@ -8,7 +8,7 @@ import 'package:stufast_mobile/services/Auth/auth_service.dart';
 import '../models/chart_model.dart';
 
 class CheckOutService {
-  Future<ChartModel> checkoutCourse(List id) async {
+  Future<ChartModel> checkoutCourse(List id, {String? type}) async {
     var url = Uri.parse(AuthService.baseUrl + '/cart/process');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
@@ -16,7 +16,10 @@ class CheckOutService {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
     };
-    var body = jsonEncode({"nama": id});
+    var body = jsonEncode({
+      "item_id": id,
+      "type": type,
+    });
 
     var response = await http.post(url, headers: headers, body: body);
 

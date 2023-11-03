@@ -30,9 +30,10 @@ class CheckoutProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> checkoutCourse(List id) async {
+  Future<void> checkoutCourse(List id, {String? type}) async {
     try {
-      ChartModel checkout = await CheckOutService().checkoutCourse(id);
+      ChartModel checkout =
+          await CheckOutService().checkoutCourse(id, type: type);
       _checkout = checkout;
     } catch (e) {
       print(e);

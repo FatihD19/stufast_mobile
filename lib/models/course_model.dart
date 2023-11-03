@@ -1,4 +1,4 @@
-import 'package:stufast_mobile/models/category_model.dart';
+import 'package:stufast_mobile/models/review_model.dart';
 import 'package:stufast_mobile/models/tag_model.dart';
 
 import 'package:stufast_mobile/models/video_model.dart';
@@ -29,6 +29,7 @@ class CourseModel {
   // double? ratingCourse;
   // CategoryModel? category;
   String? category;
+  List<Review>? review;
 
   CourseModel({
     this.courseId,
@@ -54,47 +55,53 @@ class CourseModel {
     this.total_video_duration,
     // this.ratingCourse,
     this.category,
+    this.review,
   });
 
   factory CourseModel.fromJson(Map<String, dynamic> json) => CourseModel(
-      courseId: json["course_id"],
-      title: json["title"],
-      service: json["service"],
-      description: json["description"],
-      keyTakeaways: json["key_takeaways"],
-      suitableFor: json["suitable_for"],
-      oldPrice: json["old_price"],
-      newPrice: json["new_price"],
-      thumbnail: json["thumbnail"],
-      createdAt: json["created_at"] == null
-          ? null
-          : DateTime.parse(json["created_at"]),
-      updatedAt: json["updated_at"] == null
-          ? null
-          : DateTime.parse(json["updated_at"]),
-      deletedAt: json["deleted_at"],
-      authorFullname: json["author_fullname"],
-      authorCompany: json["author_company"],
-      type: json["type"],
-      mengerjakan_video: json["mengerjakan_video"],
-      owned: json["owned"],
-      tag: json["tag"] == null
-          ? []
-          : List<TagModel>.from(json["tag"]!.map((x) => TagModel.fromJson(x))),
-      video: json["video"] == null
-          ? []
-          : List<VideoModel>.from(
-              json["video"]!.map((x) => VideoModel.fromJson(x))),
-      total_video_duration: json["total_video_duration"],
-      rating_course: json["rating_course"],
-      // totalVideoDuration: json["total_video_duration"] == null
-      //     ? null
-      //     : VideoDurationModel.fromJson(json["total_video_duration"]),
-      // ratingCourse: json["rating_course"],
-      // category: json["category"] == null
-      //     ? null
-      //     : CategoryModel.fromJson(json["category"]),
-      category: json["category"]);
+        courseId: json["course_id"],
+        title: json["title"],
+        service: json["service"],
+        description: json["description"],
+        keyTakeaways: json["key_takeaways"],
+        suitableFor: json["suitable_for"],
+        oldPrice: json["old_price"],
+        newPrice: json["new_price"],
+        thumbnail: json["thumbnail"],
+        createdAt: json["created_at"] == null
+            ? null
+            : DateTime.parse(json["created_at"]),
+        updatedAt: json["updated_at"] == null
+            ? null
+            : DateTime.parse(json["updated_at"]),
+        deletedAt: json["deleted_at"],
+        authorFullname: json["author_fullname"],
+        authorCompany: json["author_company"],
+        type: json["type"],
+        mengerjakan_video: json["mengerjakan_video"],
+        owned: json["owned"],
+        tag: json["tag"] == null
+            ? []
+            : List<TagModel>.from(
+                json["tag"]!.map((x) => TagModel.fromJson(x))),
+        video: json["video"] == null
+            ? []
+            : List<VideoModel>.from(
+                json["video"]!.map((x) => VideoModel.fromJson(x))),
+        total_video_duration: json["total_video_duration"],
+        rating_course: json["rating_course"],
+        // totalVideoDuration: json["total_video_duration"] == null
+        //     ? null
+        //     : VideoDurationModel.fromJson(json["total_video_duration"]),
+        // ratingCourse: json["rating_course"],
+        // category: json["category"] == null
+        //     ? null
+        //     : CategoryModel.fromJson(json["category"]),
+        category: json["category"],
+        review: json["review"] == null
+            ? []
+            : List<Review>.from(json["review"]!.map((x) => Review.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
         "course_id": courseId,
@@ -124,6 +131,9 @@ class CourseModel {
         // "total_video_duration": totalVideoDuration?.toJson(),
         // "rating_course": ratingCourse,
         // "category": category?.toJson(),
-        "category": category
+        "category": category,
+        "review": review == null
+            ? []
+            : List<dynamic>.from(review!.map((x) => x.toJson())),
       };
 }
