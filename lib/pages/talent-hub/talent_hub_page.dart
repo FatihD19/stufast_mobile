@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 import 'package:stufast_mobile/models/talent_hub_model.dart';
 import 'package:stufast_mobile/providers/talentHub_provider.dart';
@@ -13,15 +14,39 @@ class TalentHubPage extends StatefulWidget {
 }
 
 class _TalentHubPageState extends State<TalentHubPage> {
-  ScrollController _scrollController = ScrollController();
+  final _scrollController = ScrollController();
   int totalTalentCount = 10;
+  int _currentPage = 1;
+  bool error = false;
+
+  void _loadMore() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      _currentPage++;
+      try {
+        setState(() {
+          loading = false;
+        });
+        Provider.of<TalentHubProvider>(context, listen: false)
+            .getTalentHub(index: _currentPage);
+        setState(() {
+          loading = true;
+        });
+      } catch (e) {
+        setState(() {
+          error = true;
+        });
+      }
+    }
+  }
 
   @override
   void initState() {
     // TODO: implement initState\
-
+    _scrollController.addListener(_loadMore);
     Provider.of<TalentHubProvider>(context, listen: false)
-        .getTalentHub(searchQuery: _searchQuery);
+        .getTalentHub(searchQuery: _searchQuery, index: _currentPage);
+    // Provider.of<TalentHubProvider>(context, listen: false).fetchTalentData();
 
     // _scrollController.addListener(() {
     //   if (_scrollController.position.pixels ==
@@ -55,7 +80,7 @@ class _TalentHubPageState extends State<TalentHubPage> {
   String _searchQuery = '';
   String _sortBy = '';
 
-  bool? loading;
+  bool loading = false;
 
   getInit() async {
     setState(() {
@@ -241,22 +266,52 @@ class _TalentHubPageState extends State<TalentHubPage> {
     }
 
     Widget gridTalent() {
+      // return PagedGridView<int, TalentHubModel>(
+      //   pagingController: talentHubProvider.pagingController,
+      //   physics: ClampingScrollPhysics(),
+      //   shrinkWrap: true,
+      //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      //                    crossAxisCount: 2,
+      //                 crossAxisSpacing: 4,
+      //                 mainAxisSpacing: 8,
+      //                 childAspectRatio: 0.5893,
+      //   ),
+      //   builderDelegate: PagedChildBuilderDelegate<TalentHubModel>(
+      //     itemBuilder: (context, talent, index) {
+      //       return TalentCard(talent);
+      //     },
+      //   ),
+      // );
       return talentHubProvider.loading == true
           ? Center(child: CircularProgressIndicator())
-          : GridView(
-              controller: _scrollController,
-              physics: ClampingScrollPhysics(),
+          : GridView.builder(
               shrinkWrap: true,
+              physics: ScrollPhysics(),
+              itemCount: talentHubProvider.talent.length,
+              // + (loading ? 1 : 0),
+              itemBuilder: (context, index) {
+                final talent = talentHubProvider.talent[index];
+                if (index == talentHubProvider.talent.length - 1) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (talentHubProvider.error == true) {
+                  Center(child: Text('error'));
+                } else {
+                  return TalentCard(talent);
+                }
+              },
+              // controller: _scrollController,
+              // physics: ClampingScrollPhysics(),
+              // shrinkWrap: true,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: 4,
                 mainAxisSpacing: 8,
                 childAspectRatio: 0.5893,
-              ),
-              children: talentHubProvider.talent
-                  .map((talent) => TalentCard(talent))
-                  .take(totalTalentCount)
-                  .toList());
+              ));
+      // children: talentHubProvider.talent
+      //     .map((talent) => TalentCard(talent))
+      //     .take(totalTalentCount)
+      //     .toList());
     }
     // Widget gridTalent() {
     //   return GridView.builder(
@@ -301,12 +356,10 @@ class _TalentHubPageState extends State<TalentHubPage> {
                   SizedBox(height: 16),
                   Expanded(
                     child: ListView(
+                      controller: _scrollController,
+                      physics: ScrollPhysics(),
                       shrinkWrap: true,
-                      children: [
-                        loading == true
-                            ? Center(child: CircularProgressIndicator())
-                            : gridTalent()
-                      ],
+                      children: [gridTalent()],
                     ),
                   ),
                 ],

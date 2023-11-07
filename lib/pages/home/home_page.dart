@@ -1,9 +1,12 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:searchfield/searchfield.dart';
 import 'package:stufast_mobile/models/chart_model.dart';
+import 'package:stufast_mobile/models/course_model.dart';
 import 'package:stufast_mobile/models/user_model.dart';
 import 'package:stufast_mobile/providers/auth_provider.dart';
 import 'package:stufast_mobile/providers/chart_provider.dart';
@@ -15,6 +18,7 @@ import 'package:stufast_mobile/widget/course_tile.dart';
 import 'package:stufast_mobile/widget/webinar_card.dart';
 
 import '../../providers/webinar_provider.dart';
+import '../DetailPage/detail_course_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -24,7 +28,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool? loading;
   int? jumlahCart;
-
+  String? selectedCourse;
   @override
   void initState() {
     // TODO: implement initState
@@ -42,6 +46,7 @@ class _HomePageState extends State<HomePage> {
       loading = true;
     });
     Provider.of<ChartProvider>(context, listen: false).getChart();
+    await Provider.of<CourseProvider>(context, listen: false).getCourses('all');
     setState(() {
       jumlahCart = Provider.of<ChartProvider>(context, listen: false)
           .chart
@@ -140,31 +145,45 @@ class _HomePageState extends State<HomePage> {
 
     Widget searchInput() {
       return Container(
-        padding: EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: Color(0xFFD2D2D2)),
         ),
-        child: Row(
-          children: [
-            Expanded(
-              child: TextFormField(
-                decoration: InputDecoration(
-                  hintText: 'Cari course',
-                  border: InputBorder.none,
+        child: SearchField<CourseModel>(
+          searchInputDecoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+          hint: 'Cari Course...',
+          itemHeight: 56,
+          searchStyle: primaryTextStyle,
+          suggestionState: Suggestion.expand,
+          onSuggestionTap: (p0) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DetailCoursePage(
+                  idUserCourse: p0.item?.courseId ?? '',
                 ),
               ),
-            ),
-            InkWell(
-              onTap: () {
-                // Tambahkan fungsi ketika ikon pencarian ditekan
-              },
-              child: Padding(
-                padding: EdgeInsets.all(8),
-                child: Image.asset('assets/icon_search.png'),
-              ),
-            ),
-          ],
+            );
+          },
+          suggestions: courseProvider.courses
+              .map(
+                (e) => SearchFieldListItem<CourseModel>(
+                  '${e.title}',
+                  item: e,
+                  // Use child to show Custom Widgets in the suggestions
+                  // defaults to Text widget
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      "${e.title}",
+                      style: primaryTextStyle,
+                    ),
+                  ),
+                ),
+              )
+              .toList(),
         ),
       );
     }
@@ -185,37 +204,40 @@ class _HomePageState extends State<HomePage> {
 
     Widget carousel() {
       int index = -1;
-      return Column(
-        children: [
-          CarouselSlider(
-            items: images
-                .map(
-                  (image) => Image.asset(
-                    image,
-                    width: MediaQuery.of(context).size.width,
-                    height: 40,
-                  ),
-                )
-                .toList(),
-            options: CarouselOptions(
-              enlargeCenterPage: true,
-              aspectRatio: 2,
-              initialPage: 1,
-              onPageChanged: (index, reason) {
-                setState(() {
-                  currentIndex = index;
-                });
-              },
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 2),
+        child: Column(
+          children: [
+            CarouselSlider(
+              items: images
+                  .map(
+                    (image) => Image.asset(
+                      image,
+                      width: MediaQuery.of(context).size.width,
+                      height: 40,
+                    ),
+                  )
+                  .toList(),
+              options: CarouselOptions(
+                enlargeCenterPage: true,
+                aspectRatio: 2,
+                initialPage: 1,
+                onPageChanged: (index, reason) {
+                  setState(() {
+                    currentIndex = index;
+                  });
+                },
+              ),
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: images.map((e) {
-              index++;
-              return indicator(index);
-            }).toList(),
-          ),
-        ],
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: images.map((e) {
+                index++;
+                return indicator(index);
+              }).toList(),
+            ),
+          ],
+        ),
       );
     }
 

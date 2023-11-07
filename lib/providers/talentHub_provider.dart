@@ -20,9 +20,12 @@ class TalentHubProvider with ChangeNotifier {
   }
 
   bool loading = true;
-  Future<void> getTalentHub({String? sortBy, String? searchQuery}) async {
+  bool error = false;
+  Future<void> getTalentHub(
+      {String? sortBy, String? searchQuery, int? index}) async {
     try {
-      List<TalentHubModel> talent = await TalentService().getTalentHub();
+      List<TalentHubModel> talent =
+          await TalentService().getTalentHub(index: index);
       // Melakukan sorting berdasarkan kriteria tertentu jika sortBy ditentukan
       if (sortBy != null) {
         if (sortBy == 'average_score') {
@@ -47,10 +50,11 @@ class TalentHubProvider with ChangeNotifier {
         _talent = talent;
         notifyListeners();
       }
-      _talent = talent;
+      _talent.addAll(talent);
       loading = false;
       notifyListeners();
     } catch (e) {
+      error = true;
       print(e);
     }
   }

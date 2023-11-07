@@ -21,13 +21,6 @@ class ProfilePage extends StatelessWidget {
         children: [
           Container(
             alignment: Alignment.topLeft,
-            child: Text(
-              'Profil',
-              style: primaryTextStyle,
-            ),
-          ),
-          Container(
-            alignment: Alignment.topLeft,
             child: ListTile(
               leading: Container(
                 width: 80,
@@ -268,60 +261,81 @@ class ProfilePage extends StatelessWidget {
       );
     }
 
-    return Container(
-      padding: EdgeInsets.all(24),
-      child: ListView(
-        children: [
-          header(),
-          SizedBox(height: 28),
-          learnProgress(),
-          orderBtn(),
-          SizedBox(height: 12),
-          inviteFriend(),
-          settings(),
-          SizedBox(height: 25),
-          Container(
-              width: double.infinity,
-              height: 54,
-              child: PrimaryButton(
-                text: 'Keluar',
-                onPressed: () async {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('Konfirmasi Logout'),
-                        content: Text('Anda yakin ingin keluar?'),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(); // Tutup dialog
-                            },
-                            child: Text('Batal'),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              // Hapus token atau lakukan tindakan logout lainnya
-                              SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
-                              prefs.remove('token');
-                              prefs.remove('saveLogin');
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => LoginPage()),
-                                (Route<dynamic> route) => false,
-                              );
-                            },
-                            child: Text('Ya, Keluar'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(50),
+        child: Container(
+          // margin: EdgeInsets.only(top: 24),
+          child: AppBar(
+              elevation: 0,
+              backgroundColor: Colors.white,
+              centerTitle: false,
+              leadingWidth: 0,
+              title: Container(
+                padding: const EdgeInsets.only(left: 5.0),
+                child: Text(
+                  'Profil',
+                  style:
+                      primaryTextStyle.copyWith(fontWeight: bold, fontSize: 18),
+                ),
               )),
-        ],
+        ),
+      ),
+      body: Container(
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        child: ListView(
+          children: [
+            header(),
+            SizedBox(height: 28),
+            learnProgress(),
+            orderBtn(),
+            SizedBox(height: 12),
+            // inviteFriend(),
+            settings(),
+            SizedBox(height: 25),
+            Container(
+                width: double.infinity,
+                height: 54,
+                child: PrimaryButton(
+                  text: 'Keluar',
+                  onPressed: () async {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Konfirmasi Logout'),
+                          content: Text('Anda yakin ingin keluar?'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(); // Tutup dialog
+                              },
+                              child: Text('Batal'),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                // Hapus token atau lakukan tindakan logout lainnya
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                prefs.remove('token');
+                                prefs.remove('saveLogin');
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => LoginPage()),
+                                  (Route<dynamic> route) => false,
+                                );
+                              },
+                              child: Text('Ya, Keluar'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                )),
+          ],
+        ),
       ),
     );
   }

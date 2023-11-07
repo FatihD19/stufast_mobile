@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:stufast_mobile/models/bundling_model.dart';
+import 'package:stufast_mobile/pages/checkout/checkout_page.dart';
 import 'package:stufast_mobile/providers/bundle_provider.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/course_tile.dart';
@@ -29,6 +30,7 @@ class DetailBundle extends StatefulWidget {
 }
 
 class _DetailBundleState extends State<DetailBundle> {
+  List selectedIds = [];
   bool? loading;
   void initState() {
     getInit();
@@ -292,7 +294,18 @@ class _DetailBundleState extends State<DetailBundle> {
                           width: double.infinity,
                           height: 54,
                           child: PrimaryButton(
-                              text: 'Beli Sekarang', onPressed: () {})),
+                              text: 'Beli Sekarang',
+                              onPressed: () {
+                                selectedIds.add(detail.bundlingId);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => CheckOutPage(
+                                            selectedIds,
+                                            type: 'bundling',
+                                          )),
+                                );
+                              })),
                       SizedBox(height: 18),
                       Container(
                         width: double.infinity,

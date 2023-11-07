@@ -74,7 +74,7 @@ class _CardCourseState extends State<CardCourse> {
                 children: [
                   FadeInImage(
                     placeholder: AssetImage(
-                        'assets/image_course.png'), // Gambar placeholder
+                        'assets/img_loading.gif'), // Gambar placeholder
                     image: NetworkImage(widget.isBundle
                         ? '${widget.bundle?.thumbnail}'
                         : '${widget.course?.thumbnail}'),

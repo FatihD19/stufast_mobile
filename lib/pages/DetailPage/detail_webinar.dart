@@ -8,6 +8,7 @@ import 'package:stufast_mobile/widget/price_text_widget.dart';
 import '../../providers/chart_provider.dart';
 import '../../widget/description_widget.dart';
 import '../../widget/primary_button.dart';
+import '../checkout/checkout_page.dart';
 
 class DetailWebinarPage extends StatefulWidget {
   final WebinarModel detailWebinar;
@@ -18,6 +19,7 @@ class DetailWebinarPage extends StatefulWidget {
 }
 
 class _DetailWebinarPageState extends State<DetailWebinarPage> {
+  List selectedIds = [];
   bool isExpanded = false;
   handleAddChart() async {
     if (await context
@@ -154,8 +156,19 @@ class _DetailWebinarPageState extends State<DetailWebinarPage> {
                 Container(
                     width: double.infinity,
                     height: 54,
-                    child:
-                        PrimaryButton(text: 'Beli Sekarang', onPressed: () {})),
+                    child: PrimaryButton(
+                        text: 'Beli Sekarang',
+                        onPressed: () {
+                          selectedIds.add(widget.detailWebinar.webinarId);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CheckOutPage(
+                                      selectedIds,
+                                      type: 'webinar',
+                                    )),
+                          );
+                        })),
                 SizedBox(height: 18),
                 Container(
                   width: double.infinity,

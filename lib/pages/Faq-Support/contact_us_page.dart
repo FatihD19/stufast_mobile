@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stufast_mobile/widget/primary_button.dart';
 
 import '../../theme.dart';
 
@@ -44,6 +45,7 @@ class ContactUsPage extends StatelessWidget {
             SizedBox(height: 24),
             Text("Tuliskan pesan kamu",
                 style: primaryTextStyle.copyWith(fontWeight: bold)),
+            SizedBox(height: 16),
             ConstrainedBox(
               constraints: BoxConstraints(
                 maxWidth: 380,
@@ -74,6 +76,12 @@ class ContactUsPage extends StatelessWidget {
                 ),
               ),
             ),
+            SizedBox(height: 24),
+            Container(
+              height: 56,
+              width: double.infinity,
+              child: PrimaryButton(text: 'Kirim', onPressed: () {}),
+            )
           ],
         ),
       ),

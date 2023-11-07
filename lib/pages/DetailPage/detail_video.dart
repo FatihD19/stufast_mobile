@@ -48,9 +48,22 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
     super.initState();
 
     flickManager = FlickManager(
-      videoPlayerController: VideoPlayerController.networkUrl(
-          Uri.parse("${widget.video.video}")), // Video awal
-    );
+        videoPlayerController: VideoPlayerController.networkUrl(
+            Uri.parse("${widget.video.video}")), // Video awal
+
+        onVideoEnd: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ResumePage(
+                      '${widget.video.videoId}',
+                      isDetail: true,
+                      idResume: widget.video.resume?.resumeId,
+                      detail: widget.video.resume,
+                      courseId: widget.idCourse,
+                    )),
+          );
+        });
     isVideoViewed =
         List.generate(widget.detailCourse.video?.length ?? 0, (index) => false);
   }
@@ -116,6 +129,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
                               children: [
                                 InkWell(
                                   onTap: () async {
+                                    // flickManager.dispose();
                                     // _changeVideo("${video.video}", video);
                                     setState(() {
                                       widget.viewedVideoIndex = index;
@@ -127,7 +141,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
                                             listen: false)
                                         .quizList;
 
-                                    Navigator.push(
+                                    Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => QuizPage(
@@ -176,7 +190,8 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
                                   onTap: video.resume == null
                                       ? null
                                       : () {
-                                          Navigator.push(
+                                          // flickManager.dispose();
+                                          Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>

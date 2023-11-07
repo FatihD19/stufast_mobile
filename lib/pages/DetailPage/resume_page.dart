@@ -177,9 +177,11 @@ class _ResumePageState extends State<ResumePage> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             color: Colors.black,
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            onPressed: widget.isDetail == true
+                ? () {
+                    Navigator.pop(context);
+                  }
+                : showExitPopup,
           ),
           backgroundColor: Colors.white,
           centerTitle: false,

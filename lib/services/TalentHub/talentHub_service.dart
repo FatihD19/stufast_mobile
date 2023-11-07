@@ -7,8 +7,8 @@ import 'package:http/http.dart' as http;
 
 class TalentService {
   Future<List<TalentHubModel>> getTalentHub(
-      {String? sortBy, String? searchQuery}) async {
-    var url = Uri.parse(AuthService.baseUrl + '/talent-hub');
+      {String? sortBy, String? searchQuery, int? index}) async {
+    var url = Uri.parse(AuthService.baseUrl + '/talent-hub/page/$index');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -18,7 +18,7 @@ class TalentService {
 
     var response = await http.get(url, headers: headers);
 
-    print('LIST BUNDLE' + response.body);
+    print('TALENTHUB' + response.body);
 
     if (response.statusCode == 200) {
       List data = jsonDecode(response.body);

@@ -392,7 +392,7 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
             icon: Icon(Icons.arrow_back),
             color: Colors.black,
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pushNamed(context, '/user-course');
             },
           ),
           backgroundColor: Colors.white,
