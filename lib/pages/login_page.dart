@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stufast_mobile/providers/auth_provider.dart';
 import 'package:stufast_mobile/services/Auth/auth_service.dart';
+import 'package:stufast_mobile/services/Auth/login_google_service.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/loading_button.dart';
 import 'package:stufast_mobile/widget/primary_button.dart';
@@ -38,6 +39,68 @@ class _LoginPageState extends State<LoginPage> {
       AuthService.sendDeviceToken("${token}");
     }
 
+    Widget loadingPopUp() {
+      return Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: Colors.white.withOpacity(0.5),
+        child: Center(
+          child: CircularProgressIndicator(
+            color: primaryColor,
+          ),
+        ),
+      );
+    }
+
+    googleSignIn() async {
+      var user = await LoginApi.login();
+      if (user != null) {
+        setState(() {
+          isLoading = true;
+        });
+        print('sukses login' + user.displayName.toString());
+        print('sukses login' + user.email.toString());
+        print('sukses login' + user.id.toString());
+        final result = await authProvider.login(
+          isGoogle: true,
+          fullname: user.displayName,
+          id: user.id,
+          email: user.email,
+        );
+        if (result == true) {
+          await sendDeviceToken();
+          await authProvider.getProfileUser();
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setBool('saveLogin', true);
+
+          setState(() {
+            isLoading = false;
+          });
+          Navigator.pushNamed(context, '/home');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.red,
+              content: Text(
+                'Gagal Login!',
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Text(
+              'Gagal Login!',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      }
+    }
+
     handleSignIn() async {
       setState(() {
         isLoading = true;
@@ -47,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
         email: emailController.text,
         password: passwordController.text,
       )) {
-        await sendDeviceToken();
+        // await sendDeviceToken();
         await authProvider.getProfileUser();
         Navigator.pushNamed(context, '/home');
       } else {
@@ -193,9 +256,7 @@ class _LoginPageState extends State<LoginPage> {
         width: double.infinity,
         height: 54,
         child: ElevatedButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/login-page');
-          },
+          onPressed: googleSignIn,
           style: ElevatedButton.styleFrom(
             primary: Colors.white, // Latar belakang putih
             onPrimary: Color(0xFF757575), // Warna teks saat di atas latar putih
@@ -247,28 +308,30 @@ class _LoginPageState extends State<LoginPage> {
             backgroundColor: Colors.white,
             centerTitle: false,
           ),
-          body: Container(
-            padding: EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-              children: [
-                formEmail(),
-                formPassword(),
-                remember_forgot(),
-                SizedBox(height: 32),
-                isLoading
-                    ? LoadingButton()
-                    : Container(
-                        width: double.infinity,
-                        height: 54,
-                        child: PrimaryButton(
-                            text: 'Masuk', onPressed: handleSignIn)),
-                SizedBox(height: 35),
-                lineToregis(),
-                SizedBox(height: 35),
-                registerButton()
-              ],
-            ),
-          )),
+          body: isLoading == true
+              ? loadingPopUp()
+              : Container(
+                  padding: EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    children: [
+                      formEmail(),
+                      formPassword(),
+                      remember_forgot(),
+                      SizedBox(height: 32),
+                      isLoading
+                          ? LoadingButton()
+                          : Container(
+                              width: double.infinity,
+                              height: 54,
+                              child: PrimaryButton(
+                                  text: 'Masuk', onPressed: handleSignIn)),
+                      SizedBox(height: 35),
+                      lineToregis(),
+                      SizedBox(height: 35),
+                      registerButton()
+                    ],
+                  ),
+                )),
     );
   }
 }

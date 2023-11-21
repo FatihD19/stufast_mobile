@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stufast_mobile/models/cv_model.dart';
 import 'package:stufast_mobile/models/user_model.dart';
 import 'package:stufast_mobile/pages/login_page.dart';
 import 'package:stufast_mobile/providers/auth_provider.dart';
+import 'package:stufast_mobile/services/Auth/login_google_service.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/primary_button.dart';
+
+import '../../providers/cv_provider.dart';
+import '../cv/create_cv_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -14,6 +19,18 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     AuthProvider? authProvider = Provider.of<AuthProvider>(context);
     UserModel? user = authProvider.user;
+
+    logout() async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.remove('token');
+      prefs.remove('saveLogin');
+      // await LoginApi.logout().then((value) => print('suksesLogout'));
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+        (Route<dynamic> route) => false,
+      );
+    }
 
     Widget header() {
       return Column(
@@ -28,7 +45,11 @@ class ProfilePage extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    image: NetworkImage('${user?.profilePicture}'),
+                    image: FadeInImage.assetNetwork(
+                      placeholder: 'assets/img_loading.gif',
+                      image: '${user?.profilePicture}',
+                      fit: BoxFit.cover,
+                    ).image,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -72,7 +93,7 @@ class ProfilePage extends StatelessWidget {
         ),
         child: Card(
           clipBehavior: Clip.antiAlias,
-          elevation: 5,
+          elevation: 3,
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -109,6 +130,34 @@ class ProfilePage extends StatelessWidget {
       );
     }
 
+    Widget navCv() {
+      return InkWell(
+        onTap: () async {
+          await Provider.of<CvProvider>(context, listen: false).getCV();
+          CVmodel cv = Provider.of<CvProvider>(context, listen: false).cv!;
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => CreateCvPage(cv)));
+        },
+        child: Container(
+          decoration: BoxDecoration(
+              color: Color(0xF3F3F3), // Warna background FAFAFA
+              border:
+                  Border.all(color: Color(0xF3F3F3)), // Warna garis tepi F3F3F3
+              borderRadius: BorderRadius.circular(8)), // Sudut border radius
+          child: Card(
+            clipBehavior: Clip.antiAlias,
+            elevation: 3,
+            child: ListTile(
+              leading: Image.asset('assets/lg_cv.png', width: 30, height: 30),
+              title: Text('CV',
+                  style: primaryTextStyle.copyWith(fontWeight: semiBold)),
+              // trailing: Icon(Icons.arrow_forward_ios_rounded),
+            ),
+          ),
+        ),
+      );
+    }
+
     Widget orderBtn() {
       return InkWell(
         onTap: () {
@@ -122,12 +171,12 @@ class ProfilePage extends StatelessWidget {
               borderRadius: BorderRadius.circular(8)), // Sudut border radius
           child: Card(
             clipBehavior: Clip.antiAlias,
-            elevation: 4,
+            elevation: 3,
             child: ListTile(
               leading: Icon(Icons.shopping_cart_outlined),
               title: Text('Riwayat Order',
                   style: primaryTextStyle.copyWith(fontWeight: semiBold)),
-              trailing: Icon(Icons.arrow_forward_ios_rounded),
+              // trailing: Icon(Icons.arrow_forward_ios_rounded),
             ),
           ),
         ),
@@ -288,6 +337,7 @@ class ProfilePage extends StatelessWidget {
             header(),
             SizedBox(height: 28),
             learnProgress(),
+            navCv(),
             orderBtn(),
             SizedBox(height: 12),
             // inviteFriend(),
@@ -314,17 +364,8 @@ class ProfilePage extends StatelessWidget {
                             ),
                             TextButton(
                               onPressed: () async {
+                                logout();
                                 // Hapus token atau lakukan tindakan logout lainnya
-                                SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
-                                prefs.remove('token');
-                                prefs.remove('saveLogin');
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => LoginPage()),
-                                  (Route<dynamic> route) => false,
-                                );
                               },
                               child: Text('Ya, Keluar'),
                             ),

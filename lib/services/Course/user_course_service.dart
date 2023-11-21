@@ -10,7 +10,7 @@ class UserCourseService {
   String baseUrl = 'https://dev.stufast.id/api';
 
   Future<List<CourseModel>> getUserCourse() async {
-    var url = Uri.parse('$baseUrl/profile');
+    var url = Uri.parse('$baseUrl/profile/course');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -33,7 +33,7 @@ class UserCourseService {
   }
 
   Future<List<BundlingModel>> getUserBundle() async {
-    var url = Uri.parse('$baseUrl/profile');
+    var url = Uri.parse('$baseUrl/profile/course');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {

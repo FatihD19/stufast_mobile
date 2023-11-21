@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -10,6 +12,7 @@ import 'package:stufast_mobile/pages/checkout/add_chart_page.dart';
 import 'package:stufast_mobile/pages/checkout/checkout_page.dart';
 import 'package:stufast_mobile/pages/checkout/order_page.dart';
 import 'package:stufast_mobile/pages/course_page.dart';
+import 'package:stufast_mobile/pages/cv/create_cv_page.dart';
 import 'package:stufast_mobile/pages/edit_profile.dart';
 import 'package:stufast_mobile/pages/forgot_password_page.dart';
 import 'package:stufast_mobile/pages/home/main_page.dart';
@@ -24,11 +27,13 @@ import 'package:stufast_mobile/providers/bundle_provider.dart';
 import 'package:stufast_mobile/providers/chart_provider.dart';
 import 'package:stufast_mobile/providers/checkout_provider.dart';
 import 'package:stufast_mobile/providers/course_provider.dart';
+import 'package:stufast_mobile/providers/cv_provider.dart';
 import 'package:stufast_mobile/providers/faq_provider.dart';
 import 'package:stufast_mobile/providers/order_provider.dart';
 import 'package:stufast_mobile/providers/quiz_provider.dart';
 import 'package:stufast_mobile/providers/resume_provider.dart';
 import 'package:stufast_mobile/providers/talentHub_provider.dart';
+import 'package:stufast_mobile/providers/task_provider.dart';
 import 'package:stufast_mobile/providers/user_course_provider.dart';
 import 'package:stufast_mobile/providers/webinar_provider.dart';
 import 'package:stufast_mobile/theme.dart';
@@ -42,7 +47,17 @@ AndroidNotificationChannel? channel;
 
 FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin;
 
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
+
 void main() async {
+  HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
@@ -92,7 +107,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => TalentHubProvider()),
         ChangeNotifierProvider(create: (context) => QuizProvider()),
         ChangeNotifierProvider(create: (context) => OrderProvider()),
-        ChangeNotifierProvider(create: (context) => ResumeProvider())
+        ChangeNotifierProvider(create: (context) => ResumeProvider()),
+        ChangeNotifierProvider(create: (context) => TaskProvider()),
+        ChangeNotifierProvider(create: (context) => CvProvider()),
       ],
       child: MaterialApp(
         theme: ThemeData(
@@ -115,7 +132,7 @@ class MyApp extends StatelessWidget {
           '/faq-page': (context) => FaqPage(),
           '/contact-page': (context) => ContactUsPage(),
           '/notif-page': (context) => NotifikasiPage(),
-          '/order-page': (context) => OrderPage()
+          '/order-page': (context) => OrderPage(),
         },
       ),
     );

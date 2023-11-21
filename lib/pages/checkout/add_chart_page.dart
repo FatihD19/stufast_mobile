@@ -180,7 +180,7 @@ class _AddToChartPageState extends State<AddToChartPage> {
                                 ),
                               ),
                             );
-                            Navigator.pushNamed(context, '/chart-page');
+                            getInit();
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(

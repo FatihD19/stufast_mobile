@@ -66,6 +66,7 @@ class _HomePageState extends State<HomePage> {
   ];
 
   int currentIndex = 0;
+  TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -150,6 +151,7 @@ class _HomePageState extends State<HomePage> {
           border: Border.all(color: Color(0xFFD2D2D2)),
         ),
         child: SearchField<CourseModel>(
+          controller: searchController,
           searchInputDecoration: InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(horizontal: 10)),
@@ -166,6 +168,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             );
+            searchController.clear();
           },
           suggestions: courseProvider.courses
               .map(
@@ -272,31 +275,33 @@ class _HomePageState extends State<HomePage> {
     // }
 
     Widget continueCourse() {
-      return Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Lanjutkan Kelas',
-                style: primaryTextStyle.copyWith(fontWeight: bold),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/user-course');
-                },
-                child: Text(
-                  'view all',
-                  style: secondaryTextStyle.copyWith(
-                    decoration: TextDecoration.underline,
-                  ),
+      return userCourseProvider.userCourses.length == 0
+          ? Container()
+          : Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Lanjutkan Kelas',
+                      style: primaryTextStyle.copyWith(fontWeight: bold),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/user-course');
+                      },
+                      child: Text(
+                        'view all',
+                        style: secondaryTextStyle.copyWith(
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    )
+                  ],
                 ),
-              )
-            ],
-          ),
-          userCourseTile()
-        ],
-      );
+                userCourseTile()
+              ],
+            );
     }
 
     Widget popularCourse() {
@@ -322,23 +327,24 @@ class _HomePageState extends State<HomePage> {
               )
             ],
           ),
-          FutureBuilder(
-              future: courseProvider.getCourses('all'),
-              builder: (context, snapshot) {
-                return courseProvider.loading == true
-                    ? CircularProgressIndicator()
-                    : SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: courseProvider.courses
-                              .take(10) // Hanya ambil 10 data
-                              .map((course) => CardCourse(
-                                    course: course,
-                                  ))
-                              .toList(),
-                        ),
-                      );
-              }),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: courseProvider.courses
+                  .take(10) // Hanya ambil 10 data
+                  .map((course) => CardCourse(
+                        course: course,
+                      ))
+                  .toList(),
+            ),
+          )
+          // FutureBuilder(
+          //     future: courseProvider.getCourses('all'),
+          //     builder: (context, snapshot) {
+          //       return courseProvider.loading == true
+          //           ? CircularProgressIndicator()
+          //           :
+          //     }),
           // SingleChildScrollView(
           //   scrollDirection: Axis.horizontal,
           //   child: Row(

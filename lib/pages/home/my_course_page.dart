@@ -3,12 +3,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stufast_mobile/pages/DetailPage/detail_bundle_user.dart';
+import 'package:stufast_mobile/pages/course_page.dart';
 import 'package:stufast_mobile/pages/home/main_page.dart';
 import 'package:stufast_mobile/providers/bundle_provider.dart';
 import 'package:stufast_mobile/providers/user_course_provider.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/bundle_tile.dart';
 import 'package:stufast_mobile/widget/course_tile.dart';
+
+import '../../widget/primary_button.dart';
 
 class MyCoursePage extends StatefulWidget {
   const MyCoursePage({super.key});
@@ -21,10 +24,14 @@ class _MyCoursePageState extends State<MyCoursePage> {
   @override
   void initState() {
     // TODO: implement initState
-    Provider.of<UserCourseProvider>(context, listen: false).getUserCourses();
-    // Provider.of<BundleProvider>(context, listen: false).getUserBundle();
-
+    getInit();
     super.initState();
+  }
+
+  getInit() async {
+    await Provider.of<UserCourseProvider>(context, listen: false)
+        .getUserCourses();
+    await Provider.of<BundleProvider>(context, listen: false).getUserBundle();
   }
 
   String selectedTag = 'Semua';
@@ -64,6 +71,32 @@ class _MyCoursePageState extends State<MyCoursePage> {
       );
     }
 
+    Widget nullCourse() {
+      return Center(
+          child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset('assets/img_nullCourse.png'),
+          Text(
+              'Belum ada Course yang kamu ambil, Yuk mulai cari course pilihanmu!',
+              textAlign: TextAlign.center,
+              style: primaryTextStyle.copyWith(fontWeight: bold)),
+          SizedBox(height: 12),
+          Container(
+              width: double.infinity,
+              height: 54,
+              child: PrimaryButton(
+                  text: 'Cari Course',
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CoursePage()),
+                    );
+                  }))
+        ],
+      ));
+    }
+
     Widget filterTag() {
       return Row(
         children: [
@@ -93,15 +126,23 @@ class _MyCoursePageState extends State<MyCoursePage> {
     // }
 
     Widget userCourseTile() {
-      return userCourseProvider.loading
-          ? CircularProgressIndicator()
-          : ListView(
+      return userBundleProvider.loading
+          ? ListView.builder(
               physics: ClampingScrollPhysics(),
               shrinkWrap: true,
-              children: userCourseProvider.userCourses
-                  .map((userCourse) => CourseTile(userCourse))
-                  .toList(),
-            );
+              itemCount: 2,
+              itemBuilder: (context, index) {
+                return CourseTileShimer();
+              })
+          : userCourseProvider.userCourses.length == 0
+              ? nullCourse()
+              : ListView(
+                  physics: ClampingScrollPhysics(),
+                  shrinkWrap: true,
+                  children: userCourseProvider.userCourses
+                      .map((userCourse) => CourseTile(userCourse))
+                      .toList(),
+                );
     }
 
     // Widget userBundleTile() {
@@ -115,23 +156,60 @@ class _MyCoursePageState extends State<MyCoursePage> {
     // }
 
     Widget userBundleTile() {
-      return FutureBuilder(
-          future: userBundleProvider.getUserBundle(),
-          builder: (context, snapshot) {
+      return Consumer<BundleProvider>(
+        builder: (context, bundleState, _) {
+          if (bundleState.userBundle.isNotEmpty) {
             return userBundleProvider.loading
-                ? CircularProgressIndicator()
+                ? ListView.builder(
+                    physics: ClampingScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: 4,
+                    itemBuilder: (context, index) {
+                      return CourseTileShimer();
+                    })
                 : ListView(
                     physics: ClampingScrollPhysics(),
                     shrinkWrap: true,
                     children: userBundleProvider.userBundle
-                        .map((userBundle) => InkWell(
-                            onTap: () {
-                              setState(() {});
-                            },
-                            child: BundlingTile(userBundle)))
+                        .map((userBundle) => BundlingTile(userBundle))
                         .toList(),
                   );
-          });
+          } else {
+            return userBundleProvider.loading == true
+                ? ListView.builder(
+                    physics: ClampingScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: 4,
+                    itemBuilder: (context, index) {
+                      return CourseTileShimer();
+                    })
+                : nullCourse();
+          }
+        },
+      );
+
+      // FutureBuilder(
+      //     future: Provider.of<BundleProvider>(context, listen: false)
+      //         .getUserBundle(),
+      //     builder: (context, snapshot) {
+      //       return userBundleProvider.loading
+      //           ? ListView.builder(
+      //               physics: ClampingScrollPhysics(),
+      //               shrinkWrap: true,
+      //               itemCount: 4,
+      //               itemBuilder: (context, index) {
+      //                 return CourseTileShimer();
+      //               })
+      //           : userCourseProvider.userCourses.isEmpty
+      //               ? nullCourse()
+      //               : ListView(
+      //                   physics: ClampingScrollPhysics(),
+      //                   shrinkWrap: true,
+      //                   children: userBundleProvider.userBundle
+      //                       .map((userBundle) => BundlingTile(userBundle))
+      //                       .toList(),
+      //                 );
+      //     });
     }
 
     Widget tabBar() {
@@ -239,7 +317,12 @@ class _MyCoursePageState extends State<MyCoursePage> {
               filterTag(),
               SizedBox(height: 24),
               selectedTag == 'Semua'
-                  ? Column(
+                  ?
+                  // userCourseProvider.userCourses.length == 0 &&
+                  //         userBundleProvider.userBundle.length == 0
+                  //     ? nullCourse()
+                  //     :
+                  Column(
                       children: [userBundleTile(), userCourseTile()],
                     )
                   : selectedTag == 'Course'

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:stufast_mobile/models/course_model.dart';
 import 'package:stufast_mobile/pages/DetailPage/detail_course_page.dart';
 import 'package:stufast_mobile/theme.dart';
@@ -24,7 +25,9 @@ class _CourseTileState extends State<CourseTile> {
 
     double progressPercentage = (currentProgress / totalProgress)
         .clamp(0.0, 1.0); // Ensure progress is between 0 and 1
+    int videoLeft = totalProgress - currentProgress;
 
+    double scoreCourse = (widget.userCourse.score ?? 0.0) / 100;
     int persen = (progressPercentage * 100).toInt();
 
     Color progressBarColor =
@@ -50,53 +53,274 @@ class _CourseTileState extends State<CourseTile> {
           borderRadius: BorderRadius.circular(10),
         ),
         child: Container(
-          decoration: BoxDecoration(
-            color: Color(0xFAFAFA), // Warna background FAFAFA
-            border:
-                Border.all(color: Color(0xF3F3F3)), // Warna garis tepi F3F3F3
-            borderRadius: BorderRadius.circular(8), // Sudut border radius
-          ),
-          child: ListTile(
-            leading: Image.network(
-              '${widget.userCourse.thumbnail}',
-              width: 95,
-              height: 95,
+            decoration: BoxDecoration(
+              color: Color(0xFAFAFA), // Warna background FAFAFA
+              border:
+                  Border.all(color: Color(0xF3F3F3)), // Warna garis tepi F3F3F3
+              borderRadius: BorderRadius.circular(8), // Sudut border radius
             ),
-            title: Text(
-              '${widget.userCourse.title}',
-              style: primaryTextStyle.copyWith(fontWeight: bold),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${widget.userCourse.video?.length} video\n${widget.userCourse.total_video_duration}',
-                  style: secondaryTextStyle,
-                ),
-                SizedBox(height: 8),
-                if (widget.showProgress) // Use a condition to show/hide the Row
-                  Row(
-                    children: [
-                      Expanded(
-                        child: LinearProgressIndicator(
-                          value: progressPercentage,
-                          backgroundColor: Color(
-                              0xffF0DB96), // Background color of the progress bar
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(progressBarColor),
+            child: Container(
+              height: 134,
+              padding: EdgeInsets.symmetric(vertical: 23, horizontal: 13),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        '${widget.userCourse.thumbnail}',
+                        width: 85,
+                        height: 85,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    SizedBox(width: 5),
+                    Column(
+                      children: [
+                        Container(
+                          width: 139,
+                          alignment: Alignment.bottomCenter,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Container(
+                                height: 40,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  '${widget.userCourse.title}',
+                                  style: primaryTextStyle.copyWith(
+                                      fontWeight: bold),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                videoLeft == 0
+                                    ? 'Selesai'
+                                    : '${videoLeft.toString()} Video Tersisa',
+                                style: videoLeft == 0
+                                    ? thirdTextStyle.copyWith(fontWeight: bold)
+                                    : secondaryTextStyle.copyWith(
+                                        fontWeight: bold),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Column(
+                                children: [
+                                  if (widget
+                                      .showProgress) // Use a condition to show/hide the Row
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: LinearProgressIndicator(
+                                            value: progressPercentage,
+                                            backgroundColor: Color(
+                                                0xffF0DB96), // Background color of the progress bar
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                    progressBarColor),
+                                          ),
+                                        ),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          '${(progressPercentage * 100).toInt()}%', // Convert to integer to remove decimal places
+                                          style: primaryTextStyle.copyWith(
+                                              fontWeight: bold),
+                                        ),
+                                      ],
+                                    ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
+                      ],
+                    ),
+                    SizedBox(width: 5),
+                    Container(
+                      alignment: Alignment.centerRight,
+                      child: Column(
+                        children: [
+                          Text('Nilai', style: primaryTextStyle),
+                          Container(
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                SizedBox(
+                                    width: 34,
+                                    height: 34,
+                                    child: CircularProgressIndicator(
+                                      value: scoreCourse,
+                                      strokeWidth: 3,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        scoreCourse == 1.0
+                                            ? primaryColor
+                                            : Color(0xFFfec202),
+                                      ),
+                                      backgroundColor: Colors.grey[300],
+                                    )),
+                                Center(
+                                  child: Text('${widget.userCourse.score ?? 0}',
+                                      style: primaryTextStyle.copyWith(
+                                          fontWeight: bold)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(width: 8),
-                      Text(
-                        '${(progressPercentage * 100).toInt()}%', // Convert to integer to remove decimal places
-                        style: primaryTextStyle.copyWith(fontWeight: bold),
+                    )
+                  ]),
+            )),
+      ),
+    );
+  }
+}
+// ListTile(
+//   leading: ClipRRect(
+//     borderRadius: BorderRadius.circular(8),
+//     child: Image.network(
+//       '${widget.userCourse.thumbnail}',
+//       width: 85,
+//       height: 85,
+//       fit: BoxFit.cover,
+//     ),
+//   ),
+//   title: Row(
+//     children: [
+//       Expanded(
+//         child: Text(
+//           '${widget.userCourse.title}',
+//           style: primaryTextStyle.copyWith(fontWeight: bold),
+//           maxLines: 2,
+//           overflow: TextOverflow.ellipsis,
+//         ),
+//       ),
+//       Container(
+//         margin: EdgeInsets.only(top: 10),
+//         alignment: Alignment.centerRight,
+//         child: Column(
+//           children: [
+//             Text('Nilai', style: primaryTextStyle),
+//             Container(
+//               margin: EdgeInsets.all(10),
+//               child: Stack(
+//                 alignment: Alignment.center,
+//                 children: [
+//                   SizedBox(
+//                       width: 34,
+//                       height: 34,
+//                       child: CircularProgressIndicator(
+//                         value: scoreCourse,
+//                         strokeWidth: 3,
+//                         valueColor: AlwaysStoppedAnimation<Color>(
+//                           scoreCourse == 1.0
+//                               ? primaryColor
+//                               : Color(0xFFfec202),
+//                         ),
+//                         backgroundColor: Colors.grey[300],
+//                       )),
+//                   Center(
+//                     child: Text('${widget.userCourse.score ?? 0}',
+//                         style: primaryTextStyle.copyWith(
+//                             fontWeight: bold)),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
+//       )
+//     ],
+//   ),
+//   subtitle: Column(
+//     crossAxisAlignment: CrossAxisAlignment.start,
+//     children: [
+//       if (widget.showProgress) // Use a condition to show/hide the Row
+//         Row(
+//           children: [
+//             Expanded(
+//               child: LinearProgressIndicator(
+//                 value: progressPercentage,
+//                 backgroundColor: Color(
+//                     0xffF0DB96), // Background color of the progress bar
+//                 valueColor:
+//                     AlwaysStoppedAnimation<Color>(progressBarColor),
+//               ),
+//             ),
+//             SizedBox(width: 8),
+//             Text(
+//               '${(progressPercentage * 100).toInt()}%', // Convert to integer to remove decimal places
+//               style: primaryTextStyle.copyWith(fontWeight: bold),
+//             ),
+//           ],
+//         ),
+//     ],
+//   ),
+// ),
+
+class CourseTileShimer extends StatelessWidget {
+  const CourseTileShimer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Container(
+        padding: EdgeInsets.all(12),
+        child: Shimmer.fromColors(
+          baseColor: Colors.grey[300]!,
+          highlightColor: Colors.grey[100]!,
+          child: Row(
+            children: [
+              Container(
+                width: 85,
+                height: 85,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              SizedBox(width: 20),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 20,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                    ],
-                  ),
-              ],
-            ),
+                    ),
+                    SizedBox(height: 5),
+                    Container(
+                      height: 20,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Container(
+                      height: 20,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

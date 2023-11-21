@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
@@ -69,9 +69,10 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          duration: Duration(milliseconds: 500),
           backgroundColor: Colors.red,
           content: Text(
-            'Gagal!',
+            'Item sudah ada di keranjang',
             textAlign: TextAlign.center,
           ),
         ),
@@ -138,7 +139,7 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
     Widget videoTile() {
       final videoList = detail?.video;
       return Container(
-        padding: EdgeInsets.symmetric(horizontal: 24),
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         child: ListView.builder(
           shrinkWrap: true,
           physics: ScrollPhysics(),
@@ -171,6 +172,7 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 24),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -212,6 +214,12 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
                       )
               ],
             ),
+            Chip(
+              label: Text('${detail?.authorCompany}',
+                  style: buttonTextStyle.copyWith(fontSize: 12)),
+              backgroundColor: Colors.orange,
+            ),
+            SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -231,13 +239,23 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
                           ),
                         )
                         .toList()),
-                Row(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Image.asset('assets/icon_list.png'),
-                    SizedBox(width: 8),
-                    Text(
-                      '${detail.total_video_duration}',
-                      style: secondaryTextStyle,
+                    // Chip(
+                    //   label: Text('${detail.authorCompany}',
+                    //       style: buttonTextStyle.copyWith(fontSize: 12)),
+                    //   backgroundColor: Colors.orange,
+                    // ),
+                    Row(
+                      children: [
+                        Image.asset('assets/icon_list.png'),
+                        SizedBox(width: 8),
+                        Text(
+                          '${detail.total_video_duration}',
+                          style: secondaryTextStyle,
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -392,7 +410,7 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
             icon: Icon(Icons.arrow_back),
             color: Colors.black,
             onPressed: () {
-              Navigator.pushNamed(context, '/user-course');
+              Navigator.pop(context);
             },
           ),
           backgroundColor: Colors.white,
@@ -407,6 +425,7 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
                     infoHeader(),
                     Container(
                       color: Colors.white,
+                      // ignore: prefer_const_constructors
                       child: TabBar(
                         labelColor: Color(0xFF248043), // Warna teks saat aktif
                         unselectedLabelColor:

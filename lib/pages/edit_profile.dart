@@ -22,50 +22,102 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
-  TextEditingController emailController = TextEditingController(text: '');
-  TextEditingController fullNameController = TextEditingController(text: '');
-  TextEditingController addressController = TextEditingController(text: '');
-  TextEditingController phoneNumberController = TextEditingController(text: '');
-  TextEditingController dateController = TextEditingController(text: '');
   DateTime? selectedDate;
-  bool isLoading = false;
+  bool? isLoading;
   File? _profilePicture;
+  XFile? _image;
+  bool errorImage = false;
   AuthService authService = AuthService();
   @override
   Widget build(BuildContext context) {
     AuthProvider? authProvider = Provider.of<AuthProvider>(context);
     UserModel? user = authProvider.user;
 
-    _pickProfilePicture() async {
-      // FilePickerResult? result = await FilePicker.platform.pickFiles(
-      //   type: FileType.image,
-      //   allowMultiple: true,
-      // );
-      // if (result != null && result.files.isNotEmpty) {
-      //   setState(() {
-      //     _profilePicture = File(result.files.first.path!);
-      //   });
-      // }
-      final pickedFile =
-          await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (pickedFile != null) {
+    TextEditingController emailController = TextEditingController(text: '');
+    TextEditingController fullNameController =
+        TextEditingController(text: '${user?.fullname}');
+    TextEditingController addressController =
+        TextEditingController(text: '${user?.address}');
+    TextEditingController phoneNumberController =
+        TextEditingController(text: '${user?.phoneNumber}');
+    TextEditingController dateController =
+        TextEditingController(text: '${user?.dateBirth}');
+    // _pickProfilePicture() async {
+    //   FilePickerResult? result = await FilePicker.platform.pickFiles(
+    //     type: FileType.image,
+    //   );
+
+    //   if (result != null) {
+    //     setState(() {
+    //       _profilePicture = File(result.files.single.path!);
+    //     });
+    //   } else {
+    //     // User canceled the picker
+    //   }
+    // }
+
+    Future<void> _pickProfilePicture() async {
+      final ImagePicker _picker = ImagePicker();
+// Pick an image
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+//TO convert Xfile into file
+      File file = File(image!.path);
+//print(‘Image picked’);
+      setState(() {
+        isLoading = true;
+        _profilePicture = file;
+        _image = image;
+      });
+      if (await authProvider.uploadProfilePicture(
+          '${user?.id}', _profilePicture!)) {
+        await authProvider.getProfileUser();
         setState(() {
-          _profilePicture = File(pickedFile.path);
+          errorImage = false;
+          isLoading = false;
         });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.green,
+            content: Text(
+              'Berhasil ubah profil',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      } else {
+        setState(() {
+          isLoading = false;
+          errorImage = true;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Text(
+              'Gagal Upload Foto',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
       }
     }
 
     handleEditProfile() async {
-      setState(() {
-        isLoading = true;
-      });
       if (await authProvider.editProfile(
-          id: '${user?.id}',
-          nama: fullNameController.text,
-          address: addressController.text,
-          phoneNumber: phoneNumberController.text,
-          dateBirth: selectedDate.toString(),
-          profilePicture: _profilePicture)) {
+        id: '${user?.id}',
+        nama: fullNameController.text,
+        address: addressController.text,
+        phoneNumber: phoneNumberController.text,
+        dateBirth: selectedDate.toString(),
+      )) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.green,
+            content: Text(
+              'Berhasil ubah profil',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
         await authProvider.getProfileUser();
         Navigator.pop(context);
       } else {
@@ -86,20 +138,37 @@ class _EditProfileState extends State<EditProfile> {
         child: Column(
           children: [
             SizedBox(height: 24),
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: NetworkImage('${user?.profilePicture}'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
+            isLoading == true
+                ? CircularProgressIndicator()
+                : errorImage == true
+                    ? Icon(
+                        Icons.error_outline_rounded,
+                        size: 80,
+                        color: Colors.red,
+                      )
+                    : Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: _profilePicture != null
+                              ? DecorationImage(
+                                  image: FileImage(_profilePicture!),
+                                  fit: BoxFit.cover,
+                                )
+                              : DecorationImage(
+                                  image:
+                                      NetworkImage('${user?.profilePicture}'),
+                                  fit: BoxFit.cover,
+                                ),
+                        ),
+                      ),
             SizedBox(height: 8),
-            Text('Ubah Foto profil',
-                style: thirdTextStyle.copyWith(fontWeight: bold))
+            InkWell(
+              onTap: _pickProfilePicture,
+              child: Text('Ubah Foto profil',
+                  style: thirdTextStyle.copyWith(fontWeight: bold)),
+            )
           ],
         ),
       );
@@ -213,7 +282,7 @@ class _EditProfileState extends State<EditProfile> {
             profilPic(),
             form(),
             SizedBox(height: 24),
-            uploadImgButton(),
+            // uploadImgButton(),
             saveButton()
           ],
         ),

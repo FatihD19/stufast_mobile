@@ -5,8 +5,10 @@ class UsernameTextField extends StatelessWidget {
   final String hintText;
   String? type;
   TextEditingController? controller;
+  bool? readOnly = false;
 
-  UsernameTextField({required this.hintText, this.type, this.controller});
+  UsernameTextField(
+      {required this.hintText, this.type, this.controller, this.readOnly});
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +31,7 @@ class UsernameTextField extends StatelessWidget {
             borderRadius: BorderRadius.circular(8), // Border radius 8
           ),
           child: TextField(
+            readOnly: readOnly ?? false,
             controller: controller,
             decoration: InputDecoration(
               hintText: hintText,

@@ -8,7 +8,6 @@ class LoadingButton extends StatelessWidget {
     return Container(
       height: 54,
       width: double.infinity,
-      margin: EdgeInsets.only(top: 30),
       child: ElevatedButton(
         onPressed: () {},
         style: ElevatedButton.styleFrom(
@@ -26,7 +25,7 @@ class LoadingButton extends StatelessWidget {
               child: CircularProgressIndicator(
                 strokeWidth: 2,
                 valueColor: AlwaysStoppedAnimation(
-                  primaryTextColor,
+                  buttonTextColor,
                 ),
               ),
             ),
@@ -35,9 +34,9 @@ class LoadingButton extends StatelessWidget {
             ),
             Text(
               'Loading',
-              style: primaryTextStyle.copyWith(
+              style: buttonTextStyle.copyWith(
                 fontSize: 16,
-                fontWeight: medium,
+                fontWeight: bold,
               ),
             ),
           ],

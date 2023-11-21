@@ -19,6 +19,7 @@ class CourseModel {
   String? authorFullname;
   String? authorCompany;
   String? type;
+  dynamic score;
   String? mengerjakan_video;
   dynamic rating_course;
   bool? owned;
@@ -47,6 +48,7 @@ class CourseModel {
     this.authorFullname,
     this.authorCompany,
     this.type,
+    this.score,
     this.mengerjakan_video,
     this.rating_course,
     this.owned,
@@ -78,6 +80,7 @@ class CourseModel {
         authorFullname: json["author_fullname"],
         authorCompany: json["author_company"],
         type: json["type"],
+        score: json["score"],
         mengerjakan_video: json["mengerjakan_video"],
         owned: json["owned"],
         tag: json["tag"] == null
@@ -119,6 +122,7 @@ class CourseModel {
         "author_fullname": authorFullname,
         "author_company": authorCompany,
         "type": type,
+        "score": score,
         "mengerjakan_video": mengerjakan_video,
         "owned": owned,
         "tag":

@@ -8,6 +8,8 @@ class BundlingModel {
   String? oldPrice;
   String? newPrice;
   String? thumbnail;
+  String? authorFullname;
+  String? authorCompany;
   String? progress;
   double? score;
   String? category_name;
@@ -21,6 +23,8 @@ class BundlingModel {
     this.oldPrice,
     this.newPrice,
     this.thumbnail,
+    this.authorFullname,
+    this.authorCompany,
     this.progress,
     this.score,
     this.category_name,
@@ -35,6 +39,8 @@ class BundlingModel {
         oldPrice: json["old_price"],
         newPrice: json["new_price"],
         thumbnail: json["thumbnail"],
+        authorFullname: json["author_fullname"],
+        authorCompany: json["author_company"],
         progress: json['progress'],
         score: json["score"]?.toDouble(),
         category_name: json["category_name"],
@@ -52,6 +58,8 @@ class BundlingModel {
         "old_price": oldPrice,
         "new_price": newPrice,
         "thumbnail": thumbnail,
+        "author_fullname": authorFullname,
+        "author_company": authorCompany,
         "progress": progress,
         "score": score,
         "category_name": category_name,

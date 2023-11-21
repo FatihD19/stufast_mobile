@@ -88,18 +88,34 @@ class _CardCourseState extends State<CardCourse> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(height: 8),
-                        Text(
-                            widget.isBundle
-                                ? '${widget.bundle?.title}'
-                                : '${widget.course?.title}',
-                            overflow: TextOverflow.ellipsis,
-                            style: primaryTextStyle.copyWith(fontWeight: bold)),
-                        SizedBox(height: 4),
-                        CustomChip(
-                          label: widget.isBundle
-                              ? '${widget.bundle?.category_name}'
-                              : '${widget.course?.category}',
+                        Container(
+                          height: 40,
+                          child: Text(
+                              widget.isBundle
+                                  ? '${widget.bundle?.title}'
+                                  : '${widget.course?.title}',
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                              style:
+                                  primaryTextStyle.copyWith(fontWeight: bold)),
                         ),
+                        SizedBox(height: 4),
+
+                        widget.isBundle == true
+                            ? CustomChip(
+                                label: widget.isBundle
+                                    ? '${widget.bundle?.category_name}'
+                                    : '${widget.course?.category}',
+                              )
+                            : SizedBox(),
+                        widget.isBundle
+                            ? Text('${widget.bundle?.authorCompany}',
+                                style:
+                                    secondaryTextStyle.copyWith(fontSize: 12))
+                            : Text('${widget.course?.authorFullname}',
+                                style:
+                                    secondaryTextStyle.copyWith(fontSize: 12)),
+                        SizedBox(height: 4),
                         widget.isBundle
                             ? SizedBox()
                             : RatingBarIndicator(
@@ -115,7 +131,7 @@ class _CardCourseState extends State<CardCourse> {
                                 direction: Axis.horizontal,
                               ),
 
-                        SizedBox(height: 2),
+                        SizedBox(height: 7),
                         // widget.isBundle
                         //     ? SizedBox()
                         //     : Column(
@@ -154,7 +170,8 @@ class _CardCourseState extends State<CardCourse> {
                                   fontSize: 12.45, fontWeight: FontWeight.bold),
                             ),
                           ],
-                        )
+                        ),
+                        SizedBox(height: 7),
                       ],
                     ),
                   ),
@@ -162,25 +179,34 @@ class _CardCourseState extends State<CardCourse> {
               ),
               widget.isBundle
                   ? Positioned(
-                      top: 8, // Sesuaikan posisi vertikal sesuai kebutuhan
-                      left: 8, // Sesuaikan posisi horizontal sesuai kebutuhan
-                      child: Chip(
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(color: primaryColor),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        label: Text(
-                          'Bundling',
-                          style: TextStyle(
-                            color: primaryColor,
-                            fontSize: 12,
+                      top: 0, // Sesuaikan posisi vertikal sesuai kebutuhan
+                      left: 3, // Sesuaikan posisi horizontal sesuai kebutuhan
+                      child: Transform(
+                        transform: new Matrix4.identity()..scale(0.8),
+                        child: Chip(
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(color: primaryColor),
+                            borderRadius: BorderRadius.circular(10),
                           ),
+                          label: Text('Bundling',
+                              style: thirdTextStyle.copyWith(fontSize: 12)),
+                          backgroundColor: Colors
+                              .white, // Sesuaikan warna background sesuai kebutuhan
                         ),
-                        backgroundColor: Colors
-                            .white, // Sesuaikan warna background sesuai kebutuhan
                       ),
                     )
-                  : SizedBox(),
+                  : Positioned(
+                      top: 0, // Sesuaikan posisi vertikal sesuai kebutuhan
+                      left: 3,
+                      child: Transform(
+                        transform: new Matrix4.identity()..scale(0.8),
+                        child: CustomChip(
+                          label: widget.isBundle
+                              ? '${widget.bundle?.category_name}'
+                              : '${widget.course?.category}',
+                        ),
+                      ),
+                    ),
             ],
           ),
         ),

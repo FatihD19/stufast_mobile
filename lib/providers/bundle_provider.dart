@@ -43,6 +43,7 @@ class BundleProvider with ChangeNotifier {
           await UserCourseService().getUserBundle();
       _userBundle = userBundle;
       loading = false;
+      notifyListeners();
     } catch (e) {
       print(e);
     }

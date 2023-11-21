@@ -477,7 +477,7 @@ class _CoursePageState extends State<CoursePage> {
                 crossAxisCount: 2,
                 crossAxisSpacing: 8,
                 mainAxisSpacing: 13,
-                childAspectRatio: 0.72,
+                childAspectRatio: showBundle ? 0.62 : 0.72,
               ),
               children: showBundle
                   ? (bundleProvider.bundle

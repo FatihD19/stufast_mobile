@@ -56,6 +56,14 @@ dependencies:
   infinite_scroll_pagination: ^4.0.0
   dropdown_search: ^4.0.1
   searchfield: ^0.8.7
+  google_sign_in: ^6.1.5
+  dio: ^5.3.3
+  url_launcher: ^6.0.13
+  awesome_dialog: ^3.1.0
+  flutter_cached_pdfview: ^0.4.2
+  dropdown_button2: ^2.3.9
+  
+  
 
 dev_dependencies:
   flutter_test:

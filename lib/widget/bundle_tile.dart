@@ -43,7 +43,7 @@ class _BundlingTileState extends State<BundlingTile> {
       child: Container(
         child: Column(
           children: [
-            ListTile(
+            InkWell(
               onTap: () {
                 setState(() {
                   isExpanded = !isExpanded; // Toggle the expanded state
@@ -58,107 +58,184 @@ class _BundlingTileState extends State<BundlingTile> {
                   );
                 });
               },
-              leading: ClipRRect(
-                // Add ClipRRect to apply border radius
-                borderRadius: BorderRadius.circular(8.0),
-                child: Image.network(
-                  '${widget.userBundle.thumbnail}',
-                  width: 110,
-                  height: 110,
-                  fit: BoxFit.contain,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                child: Row(
+                  children: [
+                    ClipRRect(
+                        // Add ClipRRect to apply border radius
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: FadeInImage(
+                            width: 86,
+                            height: 86,
+                            fit: BoxFit.cover,
+                            placeholder: AssetImage('assets/img_loading.gif'),
+                            image: NetworkImage(
+                                '${widget.userBundle.thumbnail}'))),
+                    SizedBox(width: 10),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.5,
+                          child: Text(
+                            '${widget.userBundle.title}',
+                            style: primaryTextStyle.copyWith(
+                                fontWeight: FontWeight.bold),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Text(
+                          courseLeft == 0
+                              ? 'Selesai'
+                              : courseLeft.toString() + ' Course Tersisa',
+                          style: secondaryTextStyle,
+                        ),
+                        Row(
+                          children: [
+                            Container(
+                              width: (MediaQuery.of(context).size.width * 0.5) -
+                                  31,
+                              child: LinearProgressIndicator(
+                                value: progressPercentage,
+                                backgroundColor: Color(
+                                    0xffF0DB96), // Background color of the progress bar
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    progressBarColor),
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                                '${(progressPercentage * 100).toInt()}%', // Convert to integer to remove decimal places
+                                style: primaryTextStyle.copyWith(
+                                    fontWeight: bold)),
+                          ],
+                        ),
+                      ],
+                    )
+                  ],
                 ),
               ),
-              title: Text(
-                '${widget.userBundle.title}',
-                style: primaryTextStyle.copyWith(fontWeight: FontWeight.bold),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    courseLeft.toString() + ' Course Left',
-                    style: secondaryTextStyle,
+            ),
+            // ListTile(
+            //   onTap: () {
+            //     setState(() {
+            //       isExpanded = !isExpanded; // Toggle the expanded state
+            //       Navigator.push(
+            //         context,
+            //         MaterialPageRoute(
+            //             builder: (context) => DetailBundle(
+            //                   idBundle: '${widget.userBundle.bundlingId}',
+            //                   progressCourse: progressPercentage,
+            //                   persen: persen,
+            //                 )),
+            //       );
+            //     });
+            //   },
+            //   leading: ClipRRect(
+            //       // Add ClipRRect to apply border radius
+            //       borderRadius: BorderRadius.circular(8.0),
+            //       child: FadeInImage(
+            //           width: 96,
+            //           height: 96,
+            //           fit: BoxFit.cover,
+            //           placeholder: AssetImage('assets/img_loading.gif'),
+            //           image: NetworkImage('${widget.userBundle.thumbnail}'))),
+            //   title: Text(
+            //     '${widget.userBundle.title}',
+            //     style: primaryTextStyle.copyWith(fontWeight: FontWeight.bold),
+            //     maxLines: 2,
+            //     overflow: TextOverflow.ellipsis,
+            //   ),
+            //   subtitle: Column(
+            //     crossAxisAlignment: CrossAxisAlignment.start,
+            //     children: [
+            //       Text(
+            //         courseLeft.toString() + ' Course Tersisa',
+            //         style: secondaryTextStyle,
+            //       ),
+            //       SizedBox(height: 8),
+            //       Row(
+            //         children: [
+            //           Expanded(
+            //             child: LinearProgressIndicator(
+            //               value: progressPercentage,
+            //               backgroundColor: Color(
+            //                   0xffF0DB96), // Background color of the progress bar
+            //               valueColor:
+            //                   AlwaysStoppedAnimation<Color>(progressBarColor),
+            //             ),
+            //           ),
+            //           SizedBox(width: 8),
+            //           Text(
+            //               '${(progressPercentage * 100).toInt()}%', // Convert to integer to remove decimal places
+            //               style: primaryTextStyle.copyWith(fontWeight: bold)),
+            //         ],
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            Theme(
+              data:
+                  Theme.of(context).copyWith(dividerColor: Colors.transparent),
+              child: ExpansionTile(
+                initiallyExpanded: isExpanded, // Set the initial state
+
+                onExpansionChanged: (value) {
+                  setState(() {
+                    isExpanded = value; // Update expanded state
+                  });
+                },
+                title: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 24),
+                  child: Text(
+                    'Daftar Course',
+                    style: primaryTextStyle.copyWith(fontWeight: bold),
                   ),
-                  SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: LinearProgressIndicator(
-                          value: progressPercentage,
-                          backgroundColor: Color(
-                              0xffF0DB96), // Background color of the progress bar
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(progressBarColor),
-                        ),
+                ),
+                children: [
+                  Divider(
+                    height: 20,
+                    thickness: 1,
+                    indent: 20,
+                    endIndent: 20,
+                    color: secondaryTextColor,
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      children: widget.userBundle.courseBundling!
+                          .map((userCourse) =>
+                              CourseTile(userCourse, showProgress: false))
+                          .toList(),
+                    ),
+                  ),
+                  Divider(
+                    height: 20,
+                    thickness: 1,
+                    indent: 20,
+                    endIndent: 20,
+                    color: secondaryTextColor,
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        isExpanded =
+                            false; // Close the expansion when button is pressed
+                      });
+                      // Add your action here
+                    },
+                    child: Text(
+                      'Lanjutkan',
+                      style: thirdTextStyle.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
                       ),
-                      SizedBox(width: 8),
-                      Text(
-                          '${(progressPercentage * 100).toInt()}%', // Convert to integer to remove decimal places
-                          style: primaryTextStyle.copyWith(fontWeight: bold)),
-                    ],
+                    ),
                   ),
                 ],
               ),
-            ),
-            ExpansionTile(
-              initiallyExpanded: isExpanded, // Set the initial state
-
-              collapsedBackgroundColor: Colors.transparent, // Hide background
-              onExpansionChanged: (value) {
-                setState(() {
-                  isExpanded = value; // Update expanded state
-                });
-              },
-              title: Container(
-                padding: EdgeInsets.symmetric(horizontal: 24),
-                child: Text(
-                  'Daftar Course',
-                  style: primaryTextStyle.copyWith(fontWeight: bold),
-                ),
-              ),
-              children: [
-                Divider(
-                  height: 20,
-                  thickness: 1,
-                  indent: 20,
-                  endIndent: 20,
-                  color: secondaryTextColor,
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    children: widget.userBundle.courseBundling!
-                        .map((userCourse) =>
-                            CourseTile(userCourse, showProgress: false))
-                        .toList(),
-                  ),
-                ),
-                Divider(
-                  height: 20,
-                  thickness: 1,
-                  indent: 20,
-                  endIndent: 20,
-                  color: secondaryTextColor,
-                ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      isExpanded =
-                          false; // Close the expansion when button is pressed
-                    });
-                    // Add your action here
-                  },
-                  child: Text(
-                    'Lanjutkan',
-                    style: thirdTextStyle.copyWith(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-              ],
             ),
           ],
         ),

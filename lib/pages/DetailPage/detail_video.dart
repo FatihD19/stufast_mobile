@@ -8,6 +8,7 @@ import 'package:stufast_mobile/models/video_model.dart';
 import 'package:stufast_mobile/pages/DetailPage/detail_course_page.dart';
 import 'package:stufast_mobile/pages/DetailPage/quiz_page.dart';
 import 'package:stufast_mobile/pages/DetailPage/resume_page.dart';
+import 'package:stufast_mobile/pages/Task/task_view.dart';
 import 'package:stufast_mobile/providers/quiz_provider.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:video_player/video_player.dart';
@@ -43,6 +44,19 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
   List<bool> isVideoViewed = [];
   List<QuizModel>? quiz;
 
+  // ScrollController _scrollController = ScrollController();
+  // void scrollToSelected() {
+  //   int selectedIndex = yourItemList.indexWhere((item) => item.selected);
+  //   if (selectedIndex != -1) {
+  //     _scrollController.animateTo(
+  //       selectedIndex *
+  //           yourItemHeight, // Gantilah yourItemHeight dengan tinggi setiap item
+  //       duration: Duration(milliseconds: 500),
+  //       curve: Curves.easeInOut,
+  //     );
+  //   }
+  // }
+
   @override
   void initState() {
     super.initState();
@@ -50,19 +64,30 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
     flickManager = FlickManager(
         videoPlayerController: VideoPlayerController.networkUrl(
             Uri.parse("${widget.video.video}")), // Video awal
-
-        onVideoEnd: () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ResumePage(
-                      '${widget.video.videoId}',
-                      isDetail: true,
-                      idResume: widget.video.resume?.resumeId,
-                      detail: widget.video.resume,
-                      courseId: widget.idCourse,
-                    )),
-          );
+        onVideoEnd: () async {
+          setState(() {
+            widget.viewedVideoIndex = widget.viewedVideoIndex! + 1;
+          });
+          int.parse(widget.video.score!) > 60
+              ? _changeVideo(
+                  '${widget.detailCourse.video?[widget.viewedVideoIndex!].video}',
+                  widget.detailCourse.video![widget.viewedVideoIndex!])
+              : await Provider.of<QuizProvider>(context, listen: false)
+                  .getQuiz("${widget.video.videoId}")
+                  .then((value) {
+                  quiz = Provider.of<QuizProvider>(context, listen: false)
+                      .quizList;
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => QuizPage(
+                              widget.video.videoId,
+                              detailQuiz: quiz,
+                              title: widget.video.title,
+                              idCourse: '${widget.idCourse}',
+                            )),
+                  );
+                });
         });
     isVideoViewed =
         List.generate(widget.detailCourse.video?.length ?? 0, (index) => false);
@@ -96,7 +121,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
               side: BorderSide(
-                  color: subtitleText == "view"
+                  color: video.videoId == widget.video.videoId
                       ? primaryColor
                       : Colors.transparent)),
           child: Container(
@@ -113,6 +138,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
                     : Image.asset('assets/icon_video.png'),
                 title: Text(
                   '${video.title}',
+                  // ${widget.viewedVideoIndex}
                   style: primaryTextStyle.copyWith(fontWeight: bold),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -191,7 +217,10 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
                                       ? null
                                       : () {
                                           // flickManager.dispose();
-                                          Navigator.pushReplacement(
+
+                                          flickManager.flickControlManager
+                                              ?.togglePlay();
+                                          Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
@@ -287,6 +316,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
       return Container(
         padding: EdgeInsets.all(16),
         child: ListView.builder(
+          // controller: _scrollController,
           shrinkWrap: true,
           physics: ScrollPhysics(),
           itemCount: videoList?.length,
@@ -308,8 +338,11 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
     }
 
     Widget keterangan() {
+      bool resumeUndone = widget.video.resume?.resume == "" ||
+          widget.video.resume?.resume == null;
+      int passScore = int.parse(widget.video.score);
       return Container(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -319,21 +352,58 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: widget.detailCourse.tag!
-                        .map(
-                          (tag) => Row(
-                            children: [
-                              Image.asset('assets/icon_tag.png'),
-                              SizedBox(width: 8),
-                              Text(
-                                '${tag.name}',
-                                style: secondaryTextStyle,
-                              ),
-                            ],
-                          ),
-                        )
-                        .toList()),
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 8),
+                    RichText(
+                        text: TextSpan(children: [
+                      TextSpan(
+                          text: 'Nilai Quiz: ',
+                          style: secondaryTextStyle.copyWith(
+                              fontWeight: semiBold)),
+                      TextSpan(
+                          text: passScore < 60
+                              ? 'Belum lulus'
+                              : '${widget.video.score}',
+                          style: secondaryTextStyle.copyWith(
+                              fontWeight: semiBold,
+                              color:
+                                  passScore < 60 ? Colors.red : primaryColor))
+                    ])),
+                    RichText(
+                        text: TextSpan(children: [
+                      TextSpan(
+                          text: 'Resume: ',
+                          style: secondaryTextStyle.copyWith(
+                              fontWeight: semiBold)),
+                      TextSpan(
+                          text: resumeUndone == true
+                              ? 'Belum dikerjakan'
+                              : 'Sudah dikerjakan',
+                          style: secondaryTextStyle.copyWith(
+                              fontWeight: semiBold,
+                              color: resumeUndone == true
+                                  ? Colors.red
+                                  : primaryColor))
+                    ]))
+                  ],
+                ),
+                // Column(
+                //     crossAxisAlignment: CrossAxisAlignment.start,
+                //     children: widget.detailCourse.tag!
+                //         .map(
+                //           (tag) => Row(
+                //             children: [
+                //               Image.asset('assets/icon_tag.png'),
+                //               SizedBox(width: 8),
+                //               Text(
+                //                 '${tag.name}',
+                //                 style: secondaryTextStyle,
+                //               ),
+                //             ],
+                //           ),
+                //         )
+                //         .toList()),
                 Row(
                   children: [
                     Image.asset('assets/icon_list.png'),
@@ -379,11 +449,11 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
     // );
 
     return DefaultTabController(
-      length: 2, // Jumlah tab
+      length: 3, // Jumlah tab
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            '${widget.video.title}',
+            '${widget.video.title} ',
             style: primaryTextStyle.copyWith(fontWeight: semiBold),
           ),
           elevation: 0, // Menghilangkan shadow
@@ -391,18 +461,13 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
             icon: Icon(Icons.arrow_back),
             color: Colors.black,
             onPressed: () {
-              flickManager.dispose();
-              Navigator.pop(context);
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //       builder: (context) => DetailCoursePage(
-              //             idUserCourse: "${widget.detailCourse.courseId}",
-              //             progressCourse: widget.progressCourse,
-              //             persen: widget.persen,
-              //             totalDuration: widget.totalDuration,
-              //           )),
-              // );
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DetailCoursePage(
+                          idUserCourse: "${widget.detailCourse.courseId}",
+                        )),
+              );
             },
           ),
           backgroundColor: Colors.white,
@@ -436,7 +501,8 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
                 ), // W
                 tabs: [
                   Tab(text: 'Video'), // Tab pertama dengan teks 'Video'
-                  Tab(text: 'Project'), // Tab kedua dengan teks 'Project'
+                  Tab(text: 'Tugas'),
+                  Tab(text: 'Diskusi'), // Tab kedua dengan teks 'Project'
                 ],
               ),
             ),
@@ -445,7 +511,8 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
                 children: [
                   // Konten untuk tab 'Video'
                   videoTile(),
-                  Center(child: Text(' ${widget.idCourse}'))
+                  TaskView('${widget.idCourse}', flickManager: flickManager),
+                  Center(child: Text('diskusi')),
                   // Konten untuk tab 'Project' bisa Anda tambahkan di sini
                 ],
               ),

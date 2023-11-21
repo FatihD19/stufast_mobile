@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stufast_mobile/models/user_model.dart';
 
@@ -42,15 +44,22 @@ class AuthService {
   }
 
   Future<UserModel> login({
+    bool? isGoogle,
+    String? fullname,
+    String? id,
     String? email,
     String? password,
   }) async {
-    var url = Uri.parse('$baseUrl/login');
+    var url = isGoogle == true
+        ? Uri.parse('$baseUrl/login/google')
+        : Uri.parse('$baseUrl/login');
     var headers = {'Content-Type': 'application/json'};
-    var body = jsonEncode({
-      'email': email,
-      'password': password,
-    });
+    var body = isGoogle == true
+        ? jsonEncode({"email": email, "fullname": fullname, "id": id})
+        : jsonEncode({
+            'email': email,
+            'password': password,
+          });
 
     var response = await http.post(url, headers: headers, body: body);
 
@@ -69,30 +78,68 @@ class AuthService {
     }
   }
 
-  Future<String> editProfil(
-    String? id,
-    String? nama,
-    String? dateBirth,
-    String? address,
-    String? phoneNumber,
-    File? profilePicture,
-  ) async {
+  Future<bool> uploadProfilePicture(String id, File imageFile) async {
+    var url = Uri.parse('$baseUrl/users/update/profile-picture/$id');
+    final prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var headers = {
+      'Content-Type': 'multipart/form-data',
+      'Authorization': 'Bearer $token',
+    };
+    var response = await http.post(url,
+        headers: headers, body: imageFile.readAsBytesSync());
+    print('UPLOAD IMAGE' + response.body);
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> editProfil(
+      {String? id,
+      String? nama,
+      String? dateBirth,
+      String? address,
+      String? phoneNumber,
+      XFile? profilePicture}) async {
     var url = Uri.parse('$baseUrl/users/update/$id');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
-      'Content-Type': 'application/json',
+      'Content-Type': 'multipart/form-data',
       'Authorization': 'Bearer $token',
     };
-    // var body = jsonEncode({
+    // Dio dio = Dio();
+    // FormData formData = FormData.fromMap({
     //   'fullname': nama,
     //   'phone_number': phoneNumber,
     //   'address': address,
     //   'date_birth': dateBirth,
+    //   // 'profile_picture': await MultipartFile.fromFile(profilePicture!.path,
+    //   //     filename: profilePicture.path.split('/').last),
     // });
-    // var response = await http.post(url, headers: headers, body: body);
-
-    // print(response.body);
+    // if (profilePicture != null) {
+    //   // Periksa apakah profilePicture tidak null
+    //   final bytes = await profilePicture.readAsBytes();
+    //   formData.files.add(MapEntry(
+    //     'profile_picture',
+    //     await MultipartFile.fromFileSync(
+    //       profilePicture.path,
+    //       filename: profilePicture.path.split('/').last,
+    //     ),
+    //   ));
+    // }
+    // Response response = await dio.post(url.toString(),
+    //     data: formData, options: Options(headers: headers));
+    // var map = response.data as Map;
+    // print(map);
+    // if (response.statusCode == 201) {
+    //   return true;
+    // } else {
+    //   print(map);
+    //   return false;
+    // }
     var request = http.MultipartRequest('POST', url)
       ..headers.addAll(headers)
       ..fields['fullname'] = nama!
@@ -100,35 +147,30 @@ class AuthService {
       ..fields['address'] = address!
       ..fields['date_birth'] = dateBirth!;
 
-    // Cek apakah profile_picture tidak null, jika tidak, tambahkan gambar ke permintaan
-    // if (profilePicture != null) {
-    //   var pic = await http.MultipartFile.fromPath(
-    //       'profile_picture', profilePicture.path);
-    //   request.files.add(pic);
-    //   print(pic.filename);
-    // }
     if (profilePicture != null) {
+      final bytes = await profilePicture.readAsBytes();
       // Jika profile_picture tidak kosong, tambahkan gambar ke dalam request
-      request.files.add(await http.MultipartFile.fromPath(
+      request.files.add(http.MultipartFile.fromBytes(
         'profile_picture',
-        profilePicture.path,
+        bytes,
+        filename: profilePicture.name,
       ));
     }
 
     // Kirim permintaan dengan file gambar jika ada
-    var response = await request.send();
+    http.StreamedResponse response = await request.send();
     var responseData = await response.stream.toBytes();
     var responseString = utf8.decode(responseData);
 
     print(responseString);
     if (response.statusCode == 201) {
-      final responseData = await response.stream.bytesToString();
-      final data = jsonDecode(responseData);
-      String status = data['status'].toString();
-      return status;
+      // final responseData = await response.stream.bytesToString();
+      // final data = jsonDecode(responseData);
+      // // String status = data['status'].toString();
+      return true;
     } else {
       print(response);
-      throw Exception('Gagal Edit Profile');
+      return false;
     }
   }
 

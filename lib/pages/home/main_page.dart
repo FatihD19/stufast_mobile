@@ -49,7 +49,7 @@ class _MainPageState extends State<MainPage> {
               'NOTIF_MESS' + "${notification.title}" + "${channel?.id}",
             );
           });
-        } else {
+        } else if ("${notification.title}" == 'Pembayaran berhasil!') {
           setState(() {
             print(
               'NOTIF_MESS' + "${notification.title}" + "${channel?.id}",
@@ -63,6 +63,10 @@ class _MainPageState extends State<MainPage> {
                           pay: true,
                         )));
           });
+        } else {
+          print(
+            'NOTIF_MESS' + "${notification.title}" + "${channel?.id}",
+          );
         }
       }
     });

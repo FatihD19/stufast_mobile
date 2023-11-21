@@ -94,7 +94,7 @@ class _OrderPageState extends State<OrderPage> {
           icon: Icon(Icons.arrow_back),
           color: Colors.black,
           onPressed: () {
-            Navigator.pushNamed(context, 'home');
+            Navigator.pushNamed(context, '/home');
           },
         ),
         backgroundColor: Colors.white,

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:stufast_mobile/models/user_model.dart';
 import 'package:stufast_mobile/services/Auth/auth_service.dart';
 
@@ -40,6 +41,9 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<bool> login({
+    bool? isGoogle,
+    String? fullname,
+    String? id,
     String? email,
     String? password,
   }) async {
@@ -47,6 +51,9 @@ class AuthProvider with ChangeNotifier {
       UserModel user = await AuthService().login(
         email: email,
         password: password,
+        isGoogle: isGoogle,
+        fullname: fullname,
+        id: id,
       );
       _user = user;
       return true;
@@ -66,19 +73,39 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  Future<bool> uploadProfilePicture(
+    String id,
+    File profilePicture,
+  ) async {
+    try {
+      final result =
+          await AuthService().uploadProfilePicture(id, profilePicture);
+
+      return result;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
   Future<bool> editProfile({
     String? id,
     String? nama,
     String? dateBirth,
     String? address,
     String? phoneNumber,
-    File? profilePicture,
+    XFile? profilePicture,
   }) async {
     try {
-      await AuthService().editProfil(
-          id, nama, dateBirth, address, phoneNumber, profilePicture);
+      final result = await AuthService().editProfil(
+          id: id,
+          nama: nama,
+          dateBirth: dateBirth,
+          address: address,
+          phoneNumber: phoneNumber,
+          profilePicture: profilePicture);
 
-      return true;
+      return result;
     } catch (e) {
       print(e);
       return false;
