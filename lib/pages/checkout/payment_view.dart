@@ -35,7 +35,7 @@ class _PaymentViewState extends State<PaymentView> {
             actions: [
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/home');
+                  Navigator.pushNamed(context, '/order-page');
                 },
                 //return false when click on "NO"
                 child: Text('Nanti'),
@@ -69,14 +69,14 @@ class _PaymentViewState extends State<PaymentView> {
         body: SafeArea(
           child: WebView(
             initialUrl:
-                'https://dev.stufast.id/api/order/web-view?token=${widget.tokenPay}',
+                'https://stufast.id/public/dev2/public/api/order/web-view?token=${widget.tokenPay}',
             // onWebViewCreated: (WebViewController webViewController) {
             //   _controller.complete(webViewController);
             // },
             javascriptMode: JavascriptMode.unrestricted,
             navigationDelegate: (NavigationRequest request) {
-              if (request.url
-                  .startsWith('https://dev.stufast.id/snap/sukses')) {
+              if (request.url.startsWith(
+                  'https://stufast.id/public/dev2/public/snap/sukses')) {
                 // Navigasi ke halaman SuccessPage jika URL sesuai
                 Navigator.pushNamed(context, '/user-course');
                 // Navigator.push(
@@ -89,8 +89,8 @@ class _PaymentViewState extends State<PaymentView> {
                 //           )),
                 // );
                 return NavigationDecision.prevent;
-              } else if (request.url
-                  .startsWith('https://dev.stufast.id/snap/batal')) {
+              } else if (request.url.startsWith(
+                  'https://stufast.id/public/dev2/public/snap/batal')) {
                 showExitPopup();
                 return NavigationDecision.prevent;
               }

@@ -27,6 +27,7 @@ class CourseModel {
   List<VideoModel>? video;
   // VideoDurationModel? totalVideoDuration;
   String? total_video_duration;
+  bool? is_review;
   // double? ratingCourse;
   // CategoryModel? category;
   String? category;
@@ -56,6 +57,7 @@ class CourseModel {
     this.video,
     this.total_video_duration,
     // this.ratingCourse,
+    this.is_review,
     this.category,
     this.review,
   });
@@ -100,10 +102,11 @@ class CourseModel {
         // category: json["category"] == null
         //     ? null
         //     : CategoryModel.fromJson(json["category"]),
+        is_review: json["is_review"],
         category: json["category"],
-        review: json["review"] == null
+        review: json["review"] == null || json["review"] is String
             ? []
-            : List<Review>.from(json["review"]!.map((x) => Review.fromJson(x))),
+            : List<Review>.from(json["review"].map((x) => Review.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -135,6 +138,7 @@ class CourseModel {
         // "total_video_duration": totalVideoDuration?.toJson(),
         // "rating_course": ratingCourse,
         // "category": category?.toJson(),
+        "is_review": is_review,
         "category": category,
         "review": review == null
             ? []

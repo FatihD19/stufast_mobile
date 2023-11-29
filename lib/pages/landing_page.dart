@@ -62,7 +62,7 @@ class LandingPage extends StatelessWidget {
           child: Center(
             child: Column(
               children: [
-                SizedBox(height: 25),
+                SizedBox(height: 15),
                 Text(
                   'Selamat Datang',
                   style: primaryTextStyle.copyWith(
@@ -77,7 +77,7 @@ class LandingPage extends StatelessWidget {
                     style: secondaryTextStyle,
                   ),
                 ),
-                SizedBox(height: 46),
+                SizedBox(height: 20),
                 Container(
                     width: double.infinity,
                     height: 54,
@@ -89,7 +89,15 @@ class LandingPage extends StatelessWidget {
                 SizedBox(
                   height: 16,
                 ),
-                toLoginButton()
+                toLoginButton(),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/home');
+                    },
+                    child: Text(
+                      'Lewati',
+                      style: secondaryTextStyle.copyWith(fontSize: 16),
+                    ))
               ],
             ),
           ),

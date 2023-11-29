@@ -5,6 +5,7 @@ import 'package:stufast_mobile/models/webinar_model.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/price_text_widget.dart';
 
+import '../../providers/auth_provider.dart';
 import '../../providers/chart_provider.dart';
 import '../../widget/description_widget.dart';
 import '../../widget/primary_button.dart';
@@ -118,39 +119,6 @@ class _DetailWebinarPageState extends State<DetailWebinarPage> {
         padding: EdgeInsets.symmetric(horizontal: 24),
         child: Column(
           children: [
-            Card(
-                clipBehavior: Clip.antiAlias,
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${widget.detailWebinar.title}',
-                        style: secondaryTextStyle.copyWith(fontWeight: bold),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('  • Online Webiner', style: secondaryTextStyle),
-                          NewPrice('${widget.detailWebinar.newPrice}')
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('  • Recording', style: secondaryTextStyle),
-                          Text('  FREE', style: secondaryTextStyle),
-                        ],
-                      )
-                    ],
-                  ),
-                )),
-            SizedBox(height: 16),
             Column(
               children: [
                 Container(
@@ -225,7 +193,81 @@ class _DetailWebinarPageState extends State<DetailWebinarPage> {
           keterangan(),
           SizedBox(height: 16),
           widget.detailWebinar.owned == true ? joinWebinar() : SizedBox(),
-          widget.detailWebinar.owned == true ? SizedBox() : pricing()
+          widget.detailWebinar.owned == true
+              ? SizedBox()
+              : Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Card(
+                      clipBehavior: Clip.antiAlias,
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${widget.detailWebinar.title}',
+                              style:
+                                  secondaryTextStyle.copyWith(fontWeight: bold),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('  • Online Webiner',
+                                    style: secondaryTextStyle),
+                                NewPrice('${widget.detailWebinar.newPrice}')
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('  • Recording',
+                                    style: secondaryTextStyle),
+                                Text('  FREE', style: secondaryTextStyle),
+                              ],
+                            )
+                          ],
+                        ),
+                      )),
+                ),
+          SizedBox(height: 16),
+          widget.detailWebinar.owned == true
+              ? SizedBox()
+              : context.read<AuthProvider>().user?.fullname == null
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            height: 46,
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      primaryColor, // Warna teks saat di atas latar hijau
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        10), // Border radius 10
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/landing-page');
+                                },
+                                child: Text(
+                                  'Login untuk membeli Bundling',
+                                  style: buttonTextStyle.copyWith(
+                                      fontSize: 14, fontWeight: bold),
+                                )),
+                          ),
+                          SizedBox(height: 12)
+                        ],
+                      ),
+                    )
+                  : pricing()
         ],
       )),
     );

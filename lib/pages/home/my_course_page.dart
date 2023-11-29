@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:stufast_mobile/pages/DetailPage/detail_bundle_user.dart';
 import 'package:stufast_mobile/pages/course_page.dart';
 import 'package:stufast_mobile/pages/home/main_page.dart';
+import 'package:stufast_mobile/providers/auth_provider.dart';
 import 'package:stufast_mobile/providers/bundle_provider.dart';
 import 'package:stufast_mobile/providers/user_course_provider.dart';
 import 'package:stufast_mobile/theme.dart';
@@ -310,26 +311,28 @@ class _MyCoursePageState extends State<MyCoursePage> {
         ),
         body: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              SizedBox(height: 24),
-              filterTag(),
-              SizedBox(height: 24),
-              selectedTag == 'Semua'
-                  ?
-                  // userCourseProvider.userCourses.length == 0 &&
-                  //         userBundleProvider.userBundle.length == 0
-                  //     ? nullCourse()
-                  //     :
-                  Column(
-                      children: [userBundleTile(), userCourseTile()],
-                    )
-                  : selectedTag == 'Course'
-                      ? userCourseTile()
-                      : userBundleTile()
-            ],
-          ),
+          child: context.read<AuthProvider>().user?.fullname == null
+              ? nullCourse()
+              : ListView(
+                  shrinkWrap: true,
+                  children: [
+                    SizedBox(height: 24),
+                    filterTag(),
+                    SizedBox(height: 24),
+                    selectedTag == 'Semua'
+                        ?
+                        // userCourseProvider.userCourses.length == 0 &&
+                        //         userBundleProvider.userBundle.length == 0
+                        //     ? nullCourse()
+                        //     :
+                        Column(
+                            children: [userBundleTile(), userCourseTile()],
+                          )
+                        : selectedTag == 'Course'
+                            ? userCourseTile()
+                            : userBundleTile()
+                  ],
+                ),
         ),
       ),
     );

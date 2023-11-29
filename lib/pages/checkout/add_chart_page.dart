@@ -333,7 +333,7 @@ class _AddToChartPageState extends State<AddToChartPage> {
                 children: [
                   ListView(
                     children: [
-                      Row(children: selectedIds.map((e) => Text(e)).toList()),
+                      // Row(children: selectedIds.map((e) => Text(e)).toList()),
                       chartTile(), // Widget chartTile
                     ],
                   ),

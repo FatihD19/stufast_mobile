@@ -332,51 +332,94 @@ class ProfilePage extends StatelessWidget {
       ),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        child: ListView(
-          children: [
-            header(),
-            SizedBox(height: 28),
-            learnProgress(),
-            navCv(),
-            orderBtn(),
-            SizedBox(height: 12),
-            // inviteFriend(),
-            settings(),
-            SizedBox(height: 25),
-            Container(
-                width: double.infinity,
-                height: 54,
-                child: PrimaryButton(
-                  text: 'Keluar',
-                  onPressed: () async {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('Konfirmasi Logout'),
-                          content: Text('Anda yakin ingin keluar?'),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop(); // Tutup dialog
-                              },
-                              child: Text('Batal'),
+        child: user?.fullname == null
+            ? Center(
+                child: Column(
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+                    Text(
+                      'Selamat datang di Stufast',
+                      style: primaryTextStyle.copyWith(
+                          fontWeight: bold, fontSize: 18),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      child: Text(
+                        'Silahkan login untuk mengakses lebih banyak fitur',
+                        style: secondaryTextStyle.copyWith(fontSize: 14),
+                      ),
+                    ),
+                    SizedBox(height: 12),
+                    Container(
+                      width: double.infinity,
+                      height: 46,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                primaryColor, // Warna teks saat di atas latar hijau
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(10), // Border radius 10
                             ),
-                            TextButton(
-                              onPressed: () async {
-                                logout();
-                                // Hapus token atau lakukan tindakan logout lainnya
-                              },
-                              child: Text('Ya, Keluar'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                )),
-          ],
-        ),
+                          ),
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/landing-page');
+                          },
+                          child: Text(
+                            'Login',
+                            style: buttonTextStyle.copyWith(
+                                fontSize: 18, fontWeight: bold),
+                          )),
+                    )
+                  ],
+                ),
+              )
+            : ListView(
+                children: [
+                  header(),
+                  SizedBox(height: 28),
+                  learnProgress(),
+                  navCv(),
+                  orderBtn(),
+                  SizedBox(height: 12),
+                  // inviteFriend(),
+                  settings(),
+                  SizedBox(height: 25),
+                  Container(
+                      width: double.infinity,
+                      height: 54,
+                      child: PrimaryButton(
+                        text: 'Keluar',
+                        onPressed: () async {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Konfirmasi Logout'),
+                                content: Text('Anda yakin ingin keluar?'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pop(); // Tutup dialog
+                                    },
+                                    child: Text('Batal'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      logout();
+                                      // Hapus token atau lakukan tindakan logout lainnya
+                                    },
+                                    child: Text('Ya, Keluar'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      )),
+                ],
+              ),
       ),
     );
   }

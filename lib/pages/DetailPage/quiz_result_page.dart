@@ -168,8 +168,9 @@ class _QuizResultPageState extends State<QuizResultPage> {
           ? Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      DetailCoursePage(idUserCourse: "${widget.idCourse}")),
+                  builder: (context) => DetailCoursePage(
+                      fromResumeOrQuiz: true,
+                      idUserCourse: "${widget.idCourse}")),
             )
           : await showDialog(
                 //show confirm dialogue
@@ -193,6 +194,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => DetailCoursePage(
+                                  fromResumeOrQuiz: true,
                                   idUserCourse: "${widget.idCourse}")),
                         );
                       },

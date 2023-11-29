@@ -11,7 +11,7 @@ class WebinarService {
     var token = prefs.getString('token');
     var headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token',
+      // 'Authorization': 'Bearer $token',
     };
     var response = await http.get(url, headers: headers);
     print('Webinar ' + response.body);
@@ -35,6 +35,28 @@ class WebinarService {
       return owned == false ? webinar : userWebinar;
     } else {
       throw Exception('failed load webinar');
+    }
+  }
+
+  Future<List<String>> getBanner() async {
+    var url = Uri.parse(AuthService.baseUrl + '/banner');
+    final prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var headers = {
+      'Content-Type': 'application/json',
+      // 'Authorization': 'Bearer $token',
+    };
+    var response = await http.get(url, headers: headers);
+    print('BANNER ' + response.body);
+    if (response.statusCode == 200) {
+      List data = jsonDecode(response.body);
+      List<String> banner = [];
+      for (var item in data) {
+        banner.add(item['thumbnail']);
+      }
+      return banner;
+    } else {
+      throw Exception('failed load banner');
     }
   }
 }

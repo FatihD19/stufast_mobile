@@ -79,6 +79,7 @@ class _ResumePageState extends State<ResumePage> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => DetailCoursePage(
+                                fromResumeOrQuiz: true,
                                 idUserCourse: "${widget.courseId}")),
                       );
                     } catch (e) {
@@ -137,14 +138,15 @@ class _ResumePageState extends State<ResumePage> {
               ),
             ),
           );
-          widget.isDetail == true
-              ? Navigator.pop(context)
-              : Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          DetailCoursePage(idUserCourse: '${widget.courseId}')),
-                );
+          // widget.isDetail == true
+          //     ? Navigator.pop(context)
+          //     :
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    DetailCoursePage(idUserCourse: '${widget.courseId}')),
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -170,7 +172,8 @@ class _ResumePageState extends State<ResumePage> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: Text(
-            'Resume ${widget.detail?.resumeId} ${widget.videoId}',
+            'Resume ',
+            //${widget.detail?.resumeId} ${widget.videoId}
             style: primaryTextStyle.copyWith(fontWeight: semiBold),
           ),
           elevation: 0, // Menghilangkan shadow

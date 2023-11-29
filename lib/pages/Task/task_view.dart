@@ -40,7 +40,9 @@ class _TaskViewState extends State<TaskView> {
               itemCount: taskState.tasks.length,
               itemBuilder: (context, index) {
                 final isLocked = index > 0 &&
-                    int.parse(taskState.tasks[(index) - 1].quizScore) < 60;
+                    int.parse(
+                            taskState.tasks[(index) - 1].quizScore.toString()) <
+                        60;
 
                 return TaksTile(
                   taskState.tasks[index],

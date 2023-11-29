@@ -34,7 +34,8 @@ class QuizService {
 
   Future<Map<String, dynamic>> submitQuiz(
       String id, List selectedQuizId, List selectedAnswer) async {
-    var url = Uri.parse('https://dev.stufast.id/api/course/video_2/$id');
+    var url = Uri.parse(
+        'https://stufast.id/public/dev2/public/api/course/video_2/$id');
 
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');

@@ -110,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
         email: emailController.text,
         password: passwordController.text,
       )) {
-        // await sendDeviceToken();
+        await sendDeviceToken();
         await authProvider.getProfileUser();
         Navigator.pushNamed(context, '/home');
       } else {

@@ -43,4 +43,20 @@ class UserCourseProvider with ChangeNotifier {
       print(e);
     }
   }
+
+  Future<bool> createCourseReview(String id, String review, int rating) async {
+    try {
+      bool result = await UserCourseService().createReview(id, review, rating);
+      notifyListeners();
+      return result;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  void clearDetailCourse() {
+    detailCourse = null;
+    notifyListeners();
+  }
 }

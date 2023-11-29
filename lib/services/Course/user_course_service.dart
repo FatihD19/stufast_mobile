@@ -5,12 +5,13 @@ import 'package:stufast_mobile/models/bundling_model.dart';
 import 'package:stufast_mobile/models/course_model.dart';
 
 import 'package:stufast_mobile/models/user_model.dart';
+import 'package:stufast_mobile/services/Auth/auth_service.dart';
 
 class UserCourseService {
-  String baseUrl = 'https://dev.stufast.id/api';
+  String baseUrl = 'https://stufast.id/public/dev2/public/api';
 
   Future<List<CourseModel>> getUserCourse() async {
-    var url = Uri.parse('$baseUrl/profile/course');
+    var url = Uri.parse(AuthService.baseUrl + '/profile/course');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -33,7 +34,7 @@ class UserCourseService {
   }
 
   Future<List<BundlingModel>> getUserBundle() async {
-    var url = Uri.parse('$baseUrl/profile/course');
+    var url = Uri.parse(AuthService.baseUrl + '/profile/course');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -56,12 +57,12 @@ class UserCourseService {
   }
 
   Future<CourseModel> getDetailUserCourse(String id) async {
-    var url = Uri.parse('$baseUrl/course/detail/$id');
+    var url = Uri.parse(AuthService.baseUrl + '/course/detail/$id');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token',
+      'Authorization': token == null ? '' : 'Bearer $token',
     };
     var response = await http.get(url, headers: headers);
     print('DETAIL_COURSE ' + response.body);
@@ -72,6 +73,35 @@ class UserCourseService {
       return course;
     } else {
       throw Exception('failed load detail course');
+    }
+  }
+
+  Future<bool> createReview(String courseId, String feedback, int score,
+      {bool? isBundling}) async {
+    var url = Uri.parse(AuthService.baseUrl + '/review/create_2');
+    final prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+    var body = isBundling == true
+        ? jsonEncode({
+            'feedback': feedback,
+            'score': score,
+            'bundling_id': courseId,
+          })
+        : jsonEncode({
+            'feedback': feedback,
+            'score': score,
+            'course_id': courseId,
+          });
+    var response = await http.post(url, headers: headers, body: body);
+    print('CREATE_REVIEW ' + response.body);
+    if (response.statusCode == 201) {
+      return true;
+    } else {
+      throw Exception('failed create review');
     }
   }
 }

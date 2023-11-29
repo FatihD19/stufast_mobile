@@ -68,6 +68,4 @@ class BundlingModel {
             ? []
             : List<dynamic>.from(courseBundling!.map((x) => x.toJson())),
       };
-
-  map(CourseTile Function(dynamic course) param0) {}
 }

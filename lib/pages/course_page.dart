@@ -475,8 +475,8 @@ class _CoursePageState extends State<CoursePage> {
               shrinkWrap: true,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 13,
+                crossAxisSpacing: 1,
+                mainAxisSpacing: 3,
                 childAspectRatio: showBundle ? 0.62 : 0.72,
               ),
               children: showBundle

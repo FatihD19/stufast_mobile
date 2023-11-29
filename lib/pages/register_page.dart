@@ -391,7 +391,8 @@ class _RegisterPageState extends State<RegisterPage> {
               SizedBox(height: 35),
               lineToregis(),
               SizedBox(height: 35),
-              registerButton()
+              registerButton(),
+              SizedBox(height: 35),
             ],
           ),
         ));

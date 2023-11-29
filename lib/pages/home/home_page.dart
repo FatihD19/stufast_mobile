@@ -11,6 +11,7 @@ import 'package:stufast_mobile/models/user_model.dart';
 import 'package:stufast_mobile/providers/auth_provider.dart';
 import 'package:stufast_mobile/providers/chart_provider.dart';
 import 'package:stufast_mobile/providers/course_provider.dart';
+import 'package:stufast_mobile/providers/notif_provider.dart';
 import 'package:stufast_mobile/providers/user_course_provider.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/course_card.dart';
@@ -35,6 +36,7 @@ class _HomePageState extends State<HomePage> {
     getInit();
     Provider.of<WebinarProvider>(context, listen: false).getWebinar(false);
     Provider.of<UserCourseProvider>(context, listen: false).getUserCourses();
+    Provider.of<NotificationProvider>(context, listen: false).getNotification();
     // jumlahCart =
     //     Provider.of<ChartProvider>(context, listen: false).chart?.item?.length;
 
@@ -47,29 +49,25 @@ class _HomePageState extends State<HomePage> {
     });
     Provider.of<ChartProvider>(context, listen: false).getChart();
     await Provider.of<CourseProvider>(context, listen: false).getCourses('all');
-    setState(() {
-      jumlahCart = Provider.of<ChartProvider>(context, listen: false)
-          .chart
-          ?.item
-          ?.length;
-    });
+    // setState(() {
+    //   jumlahCart = Provider.of<ChartProvider>(context, listen: false)
+    //       .chart
+    //       ?.item
+    //       ?.length;
+    // });
 
     setState(() {
       loading = false;
     });
   }
 
-  List images = [
-    'assets/banner-slide.png',
-    'assets/banner-slide.png',
-    'assets/banner-slide.png',
-  ];
-
   int currentIndex = 0;
   TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    List banner = context.watch<WebinarProvider>().banner;
+
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
     UserModel? user = authProvider.user;
     CourseProvider courseProvider = Provider.of<CourseProvider>(context);
@@ -111,37 +109,85 @@ class _HomePageState extends State<HomePage> {
         fullName = fullName.substring(
             0, 13); // Memotong teks jika lebih dari 15 karakter
       }
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text.rich(
-            TextSpan(
+      return fullName == null
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                TextSpan(
-                  text: 'Welcome, ',
-                  style: primaryTextStyle.copyWith(fontSize: 18),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Selamat datang di Stufast',
+                      style: primaryTextStyle.copyWith(
+                          fontWeight: bold, fontSize: 18),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      child: Text(
+                        'Silahkan login untuk mengakses lebih banyak fitur',
+                        style: secondaryTextStyle.copyWith(fontSize: 14),
+                      ),
+                    ),
+                    SizedBox(height: 12)
+                  ],
                 ),
-                TextSpan(
-                  text: '$fullName',
-                  style: primaryTextStyle.copyWith(
-                      fontWeight: FontWeight.bold, fontSize: 18),
+                IconButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/landing-page');
+                    },
+                    icon: Icon(Icons.login, size: 35, color: primaryColor)),
+              ],
+            )
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Welcome, ',
+                        style: primaryTextStyle.copyWith(fontSize: 18),
+                      ),
+                      TextSpan(
+                        text: '${fullName ?? ''}',
+                        style: primaryTextStyle.copyWith(
+                            fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                    ],
+                  ),
+                ),
+                Row(
+                  children: [
+                    cartItem(),
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/notif-page');
+                          },
+                          icon: Image.asset('assets/icon_notification.png'),
+                        ),
+                        Positioned(
+                          right: 0,
+                          bottom: 25,
+                          child: CircleAvatar(
+                            radius:
+                                8, // Sesuaikan dengan ukuran yang Anda inginkan
+                            backgroundColor: Colors
+                                .yellow.shade700, // Warna latar belakang angka
+                            child: Text(
+                                '${context.watch<NotificationProvider>().notification?.unread}', // Angka yang ingin ditampilkan
+                                style: primaryTextStyle.copyWith(
+                                    fontSize: 9, fontWeight: bold)),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
                 ),
               ],
-            ),
-          ),
-          Row(
-            children: [
-              cartItem(),
-              IconButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/notif-page');
-                },
-                icon: Image.asset('assets/icon_notification.png'),
-              ),
-            ],
-          ),
-        ],
-      );
+            );
     }
 
     Widget searchInput() {
@@ -211,20 +257,22 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.symmetric(horizontal: 2),
         child: Column(
           children: [
+            SizedBox(height: 10),
             CarouselSlider(
-              items: images
+              items: banner
                   .map(
-                    (image) => Image.asset(
-                      image,
-                      width: MediaQuery.of(context).size.width,
-                      height: 40,
+                    (image) => ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        image,
+                        width: MediaQuery.of(context).size.width,
+                        height: 40,
+                      ),
                     ),
                   )
                   .toList(),
               options: CarouselOptions(
-                enlargeCenterPage: true,
-                aspectRatio: 2,
-                initialPage: 1,
+                viewportFraction: 1,
                 onPageChanged: (index, reason) {
                   setState(() {
                     currentIndex = index;
@@ -232,9 +280,10 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
             ),
+            SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: images.map((e) {
+              children: banner.map((e) {
                 index++;
                 return indicator(index);
               }).toList(),

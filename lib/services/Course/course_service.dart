@@ -4,7 +4,7 @@ import 'package:stufast_mobile/models/course_model.dart';
 import 'package:stufast_mobile/models/tag_model.dart';
 
 class CourseService {
-  String baseUrl = 'https://dev.stufast.id/api';
+  String baseUrl = 'https://stufast.id/public/dev2/public/api';
 
   Future<List<CourseModel>> getCourse([String? typeCourse]) async {
     var url = typeCourse == 'all'

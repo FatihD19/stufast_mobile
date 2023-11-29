@@ -71,8 +71,11 @@ class _DataPersonalViewState extends State<DataPersonalView> {
     _instagramController.text = '${widget.cv.instagram}';
     _facebookController.text = '${widget.cv.facebook}';
     _linkedinController.text = '${widget.cv.linkedin}';
-    selectedJobType = '${widget.cv.status}';
-    selectedWorkMethod = '${widget.cv.method}';
+    selectedJobType = widget.cv.status == ""
+        ? 'Pegawai Tetap atau Freelance'
+        : widget.cv.status;
+    selectedWorkMethod =
+        widget.cv.method == "" ? 'Remote atau WFO' : widget.cv.method;
     super.initState();
   }
 
@@ -242,24 +245,27 @@ class _DataPersonalViewState extends State<DataPersonalView> {
                       textAlign: TextAlign.center,
                       style: primaryTextStyle.copyWith(
                           fontWeight: bold, fontSize: 18)),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                FileView('${widget.cv.portofolio}')),
-                      );
-                    },
-                    child: Row(
-                      children: [
-                        Icon(Icons.remove_red_eye, color: primaryColor),
-                        SizedBox(width: 5),
-                        Text('lihat',
-                            style: thirdTextStyle.copyWith(fontWeight: bold)),
-                      ],
-                    ),
-                  )
+                  widget.cv.portofolio == ""
+                      ? SizedBox()
+                      : InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      FileView('${widget.cv.portofolio}')),
+                            );
+                          },
+                          child: Row(
+                            children: [
+                              Icon(Icons.remove_red_eye, color: primaryColor),
+                              SizedBox(width: 5),
+                              Text('lihat',
+                                  style: thirdTextStyle.copyWith(
+                                      fontWeight: bold)),
+                            ],
+                          ),
+                        )
                 ],
               ),
             ),

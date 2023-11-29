@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stufast_mobile/models/user_model.dart';
 
 class AuthService {
-  static String baseUrl = 'https://dev.stufast.id/api';
+  static String baseUrl = 'https://stufast.id/public/dev2/public/api';
 
   Future<UserModel> register(
       {String? email,

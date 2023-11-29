@@ -5,7 +5,7 @@ import 'package:stufast_mobile/models/bundling_model.dart';
 import 'package:http/http.dart' as http;
 
 class BundleService {
-  String baseUrl = 'https://dev.stufast.id/api';
+  String baseUrl = 'https://stufast.id/public/dev2/public/api';
 
   Future<List<BundlingModel>> getBundle() async {
     var url = Uri.parse('$baseUrl/bundling/all');
@@ -13,7 +13,7 @@ class BundleService {
     var token = prefs.getString('token');
     var headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token',
+      // 'Authorization': 'Bearer $token',
     };
 
     var response = await http.get(url, headers: headers);
@@ -39,7 +39,7 @@ class BundleService {
     var token = prefs.getString('token');
     var headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token',
+      'Authorization': token == null ? '' : 'Bearer $token',
     };
     var response = await http.get(url, headers: headers);
     print('DETAIL_BUNDLE ' + response.body);

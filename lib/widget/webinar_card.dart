@@ -82,70 +82,73 @@ class WebinarCard extends StatelessWidget {
                   ),
                 )),
           )
-        : InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => DetailWebinarPage(webinar)),
-              );
-            },
-            child: Card(
-                clipBehavior: Clip.antiAlias,
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Container(
-                  width: 185,
-                  height: 205,
-                  decoration: BoxDecoration(
+        : Container(
+            margin: EdgeInsets.only(right: 8),
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => DetailWebinarPage(webinar)),
+                );
+              },
+              child: Card(
+                  clipBehavior: Clip.antiAlias,
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
-                    color: Color(0xffF3F3F3),
                   ),
-                  child: Column(
-                    children: [
-                      FadeInImage(
-                        placeholder: AssetImage(
-                            'assets/image_course.png'), // Gambar placeholder
-                        image: NetworkImage('${webinar.thumbnail}'),
-                        width: 185,
-                        height: 96,
-                        fit: BoxFit.cover,
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 8),
-                            Text('${webinar.title}',
-                                overflow: TextOverflow.ellipsis,
-                                style: primaryTextStyle.copyWith(
-                                    fontWeight: bold, fontSize: 16)),
-                            SizedBox(height: 8),
-                            Row(
-                              children: [
-                                Image.asset('assets/ic_date.png'),
-                                SizedBox(width: 4),
-                                Text('${webinar.date}',
-                                    style: secondaryTextStyle.copyWith(
-                                        fontSize: 13))
-                              ],
-                            ),
-                            SizedBox(height: 8),
-                            Row(
-                              children: [
-                                OldPrice('${webinar.oldPrice}'),
-                                NewPrice('${webinar.newPrice}')
-                              ],
-                            )
-                          ],
+                  child: Container(
+                    width: 185,
+                    height: 205,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Color(0xffF3F3F3),
+                    ),
+                    child: Column(
+                      children: [
+                        FadeInImage(
+                          placeholder: AssetImage(
+                              'assets/image_course.png'), // Gambar placeholder
+                          image: NetworkImage('${webinar.thumbnail}'),
+                          width: 185,
+                          height: 96,
+                          fit: BoxFit.cover,
                         ),
-                      )
-                    ],
-                  ),
-                )),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 8),
+                              Text('${webinar.title}',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: primaryTextStyle.copyWith(
+                                      fontWeight: bold, fontSize: 16)),
+                              SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  Image.asset('assets/ic_date.png'),
+                                  SizedBox(width: 4),
+                                  Text('${webinar.date}',
+                                      style: secondaryTextStyle.copyWith(
+                                          fontSize: 13))
+                                ],
+                              ),
+                              SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  OldPrice('${webinar.oldPrice}'),
+                                  NewPrice('${webinar.newPrice}')
+                                ],
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  )),
+            ),
           );
   }
 }

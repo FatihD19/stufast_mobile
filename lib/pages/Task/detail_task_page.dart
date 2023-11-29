@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:stufast_mobile/models/task_model.dart';
 import 'package:stufast_mobile/pages/Task/file_view.dart';
 import 'package:stufast_mobile/providers/task_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../theme.dart';
 
@@ -156,13 +157,15 @@ class _DetailTaskPageState extends State<DetailTaskPage> {
                 subtitle: Text('${widget.task.date}',
                     style: secondaryTextStyle.copyWith(fontWeight: medium)),
                 trailing: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                FileView('${widget.task.taskFile}')),
-                      );
+                    onTap: () async {
+                      final Uri _url = Uri.parse('${widget.task.taskFile}');
+                      await launchUrl(_url);
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //       builder: (context) =>
+                      //           FileView('${widget.task.taskFile}')),
+                      // );
                     },
                     child: Icon(Icons.remove_red_eye_outlined,
                         color: primaryColor)),

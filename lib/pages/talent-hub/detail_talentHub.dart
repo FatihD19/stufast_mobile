@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:stufast_mobile/models/talent_hub_model.dart';
 import 'package:stufast_mobile/providers/talentHub_provider.dart';
 import 'package:stufast_mobile/widget/achievment_tile.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../theme.dart';
 
@@ -16,6 +17,7 @@ class DetailTalentHubPage extends StatefulWidget {
 
 class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
   bool? loading;
+  final Uri _url = Uri.parse('https://flutter.dev');
   @override
   void initState() {
     // TODO: implement initState
@@ -32,6 +34,12 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
     setState(() {
       loading = false;
     });
+  }
+
+  Future<void> _launchUrl() async {
+    if (!await launchUrl(_url)) {
+      throw Exception('Could not launch $_url');
+    }
   }
 
   @override
@@ -88,7 +96,7 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
                       shape: BoxShape.circle,
                       image: DecorationImage(
                         image: NetworkImage(
-                            "https://dev.stufast.id/public/upload/users/${detailTalent?.user?.profilePicture}"),
+                            "https://stufast.id/public/dev2/public/public/upload/users/${detailTalent?.user?.profilePicture}"),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -141,7 +149,9 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                actionButton(() {}, 'assets/ic_hire.png', 'Hire'),
+                actionButton(() {
+                  _launchUrl();
+                }, 'assets/ic_hire.png', 'Hire'),
                 actionButton(() {}, 'assets/ic_lin.png', 'Linkedin'),
               ],
             ),

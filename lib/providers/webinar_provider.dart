@@ -19,6 +19,14 @@ class WebinarProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  List<String> _banner = [];
+  List<String> get banner => _banner;
+
+  set banner(List<String> banner) {
+    _banner = banner;
+    notifyListeners();
+  }
+
   bool loading = true;
 
   Future<void> getWebinar(bool owned) async {
@@ -26,6 +34,17 @@ class WebinarProvider with ChangeNotifier {
       List<WebinarModel> webinar = await WebinarService().getWebinar(owned);
       loading = false;
       owned == true ? _userWebinar = webinar : _webinar = webinar;
+      notifyListeners();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> getBanner() async {
+    try {
+      List<String> banner = await WebinarService().getBanner();
+      loading = false;
+      _banner = banner;
       notifyListeners();
     } catch (e) {
       print(e);

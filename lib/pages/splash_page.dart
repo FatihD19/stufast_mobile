@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stufast_mobile/providers/auth_provider.dart';
 import 'package:stufast_mobile/providers/course_provider.dart';
+import 'package:stufast_mobile/providers/webinar_provider.dart';
 import 'package:stufast_mobile/theme.dart';
 
 class SplashPage extends StatefulWidget {
@@ -24,13 +25,17 @@ class _SplashPageState extends State<SplashPage> {
   getInit() async {
     // await Provider.of<CourseProvider>(context, listen: false).getCourses('all');
     Provider.of<CourseProvider>(context, listen: false).loadTags();
+    Provider.of<WebinarProvider>(context, listen: false).getBanner();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     var saveLogin = prefs.getBool('saveLogin');
+    var onBoarding = prefs.getBool('saveOnboard');
     if (saveLogin == true) {
       await Provider.of<AuthProvider>(context, listen: false).getProfileUser();
       Navigator.pushNamed(context, '/home');
     } else {
-      Navigator.pushNamed(context, '/landing-page');
+      onBoarding == true
+          ? Navigator.pushNamed(context, '/landing-page')
+          : Navigator.pushNamed(context, '/onboarding-page');
     }
   }
 

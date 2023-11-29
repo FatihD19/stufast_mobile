@@ -268,6 +268,7 @@ class _QuizPageState extends State<QuizPage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => DetailCoursePage(
+                              fromResumeOrQuiz: true,
                               idUserCourse: '${widget.idCourse}')),
                     );
                   },
@@ -303,20 +304,20 @@ class _QuizPageState extends State<QuizPage> {
               progress(),
               SizedBox(height: 24),
               question(),
-              Row(
-                children: quizProvider.selectedQuizId
-                    .map((e) => Text(e + ', '))
-                    .toList(),
-              ),
-              Row(
-                children: quizProvider.selectedAnswers
-                    .map((e) => Text(e + ', '))
-                    .toList(),
-              ),
+              // Row(
+              //   children: quizProvider.selectedQuizId
+              //       .map((e) => Text(e + ', '))
+              //       .toList(),
+              // ),
+              // Row(
+              //   children: quizProvider.selectedAnswers
+              //       .map((e) => Text(e + ', '))
+              //       .toList(),
+              // ),
               SizedBox(height: 24),
               Text(
                   "valid answer ${widget.detailQuiz![currentIndex].validAnswer}"),
-              Text('${widget.idCourse}'),
+              // Text('${widget.idCourse}'),
               answer(),
               SizedBox(height: 94),
             ]),

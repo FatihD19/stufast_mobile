@@ -10,6 +10,7 @@ import 'package:stufast_mobile/widget/course_tile.dart';
 import 'package:stufast_mobile/widget/description_widget.dart';
 import 'package:stufast_mobile/widget/primary_button.dart';
 
+import '../../providers/auth_provider.dart';
 import '../../providers/chart_provider.dart';
 import '../../providers/user_course_provider.dart';
 
@@ -288,52 +289,80 @@ class _DetailBundleState extends State<DetailBundle> {
             SizedBox(height: 14),
             detail.owned == true
                 ? SizedBox()
-                : Column(
-                    children: [
-                      Container(
-                          width: double.infinity,
-                          height: 54,
-                          child: PrimaryButton(
-                              text: 'Beli Sekarang',
-                              onPressed: () {
-                                selectedIds.add(detail.bundlingId);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => CheckOutPage(
-                                            selectedIds,
-                                            type: 'bundling',
-                                          )),
-                                );
-                              })),
-                      SizedBox(height: 18),
-                      Container(
-                        width: double.infinity,
-                        height: 54,
-                        child: ElevatedButton(
-                          onPressed: handleAddChart,
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.white, // Latar belakang putih
-                            onPrimary: Color(
-                                0xFF248043), // Warna teks saat di atas latar putih
-                            side: BorderSide(
-                                color: Color(0xFF248043),
-                                width:
-                                    2), // Border berwarna 248043 dengan lebar 2
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(10), // Border radius 10
+                : context.read<AuthProvider>().user?.fullname == null
+                    ? Column(
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            height: 46,
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      primaryColor, // Warna teks saat di atas latar hijau
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        10), // Border radius 10
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/landing-page');
+                                },
+                                child: Text(
+                                  'Login untuk membeli Bundling',
+                                  style: buttonTextStyle.copyWith(
+                                      fontSize: 14, fontWeight: bold),
+                                )),
+                          ),
+                          SizedBox(height: 12)
+                        ],
+                      )
+                    : Column(
+                        children: [
+                          Container(
+                              width: double.infinity,
+                              height: 54,
+                              child: PrimaryButton(
+                                  text: 'Beli Sekarang',
+                                  onPressed: () {
+                                    selectedIds.add(detail.bundlingId);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => CheckOutPage(
+                                                selectedIds,
+                                                type: 'bundling',
+                                              )),
+                                    );
+                                  })),
+                          SizedBox(height: 18),
+                          Container(
+                            width: double.infinity,
+                            height: 54,
+                            child: ElevatedButton(
+                              onPressed: handleAddChart,
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.white, // Latar belakang putih
+                                onPrimary: Color(
+                                    0xFF248043), // Warna teks saat di atas latar putih
+                                side: BorderSide(
+                                    color: Color(0xFF248043),
+                                    width:
+                                        2), // Border berwarna 248043 dengan lebar 2
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10), // Border radius 10
+                                ),
+                              ),
+                              child: Text(
+                                'Masukan ke Keranjang',
+                                style:
+                                    thirdTextStyle.copyWith(fontWeight: bold),
+                              ),
                             ),
                           ),
-                          child: Text(
-                            'Masukan ke Keranjang',
-                            style: thirdTextStyle.copyWith(fontWeight: bold),
-                          ),
-                        ),
+                          SizedBox(height: 24),
+                        ],
                       ),
-                      SizedBox(height: 24),
-                    ],
-                  ),
           ],
         ),
       );

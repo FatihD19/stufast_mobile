@@ -20,6 +20,7 @@ import 'package:stufast_mobile/pages/home/my_course_page.dart';
 import 'package:stufast_mobile/pages/landing_page.dart';
 import 'package:stufast_mobile/pages/login_page.dart';
 import 'package:stufast_mobile/pages/notifikasi_page.dart';
+import 'package:stufast_mobile/pages/on_boarding_page.dart';
 import 'package:stufast_mobile/pages/register_page.dart';
 import 'package:stufast_mobile/pages/splash_page.dart';
 import 'package:stufast_mobile/providers/auth_provider.dart';
@@ -29,6 +30,7 @@ import 'package:stufast_mobile/providers/checkout_provider.dart';
 import 'package:stufast_mobile/providers/course_provider.dart';
 import 'package:stufast_mobile/providers/cv_provider.dart';
 import 'package:stufast_mobile/providers/faq_provider.dart';
+import 'package:stufast_mobile/providers/notif_provider.dart';
 import 'package:stufast_mobile/providers/order_provider.dart';
 import 'package:stufast_mobile/providers/quiz_provider.dart';
 import 'package:stufast_mobile/providers/resume_provider.dart';
@@ -47,17 +49,17 @@ AndroidNotificationChannel? channel;
 
 FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin;
 
-class MyHttpOverrides extends HttpOverrides {
-  @override
-  HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
-  }
-}
+// class MyHttpOverrides extends HttpOverrides {
+//   @override
+//   HttpClient createHttpClient(SecurityContext? context) {
+//     return super.createHttpClient(context)
+//       ..badCertificateCallback =
+//           (X509Certificate cert, String host, int port) => true;
+//   }
+// }
 
 void main() async {
-  HttpOverrides.global = MyHttpOverrides();
+  // HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
@@ -110,6 +112,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => ResumeProvider()),
         ChangeNotifierProvider(create: (context) => TaskProvider()),
         ChangeNotifierProvider(create: (context) => CvProvider()),
+        ChangeNotifierProvider(create: (context) => NotificationProvider()),
       ],
       child: MaterialApp(
         theme: ThemeData(
@@ -121,6 +124,7 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (context) => SplashPage(),
           '/landing-page': (context) => LandingPage(),
+          '/onboarding-page': (context) => OnboardingPage(),
           '/login-page': (context) => LoginPage(),
           '/register-page': (context) => RegisterPage(),
           '/forgotpass-page': (context) => ForgotPasswordPage(),

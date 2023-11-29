@@ -9,8 +9,10 @@ import 'package:stufast_mobile/pages/DetailPage/detail_course_page.dart';
 import 'package:stufast_mobile/pages/DetailPage/quiz_page.dart';
 import 'package:stufast_mobile/pages/DetailPage/resume_page.dart';
 import 'package:stufast_mobile/pages/Task/task_view.dart';
+import 'package:stufast_mobile/providers/auth_provider.dart';
 import 'package:stufast_mobile/providers/quiz_provider.dart';
 import 'package:stufast_mobile/theme.dart';
+import 'package:stufast_mobile/widget/primary_button.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../models/quiz_model.dart';
@@ -64,31 +66,33 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
     flickManager = FlickManager(
         videoPlayerController: VideoPlayerController.networkUrl(
             Uri.parse("${widget.video.video}")), // Video awal
-        onVideoEnd: () async {
-          setState(() {
-            widget.viewedVideoIndex = widget.viewedVideoIndex! + 1;
-          });
-          int.parse(widget.video.score!) > 60
-              ? _changeVideo(
-                  '${widget.detailCourse.video?[widget.viewedVideoIndex!].video}',
-                  widget.detailCourse.video![widget.viewedVideoIndex!])
-              : await Provider.of<QuizProvider>(context, listen: false)
-                  .getQuiz("${widget.video.videoId}")
-                  .then((value) {
-                  quiz = Provider.of<QuizProvider>(context, listen: false)
-                      .quizList;
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => QuizPage(
-                              widget.video.videoId,
-                              detailQuiz: quiz,
-                              title: widget.video.title,
-                              idCourse: '${widget.idCourse}',
-                            )),
-                  );
+        onVideoEnd: widget.detailCourse.owned == false
+            ? null
+            : () async {
+                setState(() {
+                  widget.viewedVideoIndex = widget.viewedVideoIndex! + 1;
                 });
-        });
+                int.parse(widget.video.score!) > 60
+                    ? _changeVideo(
+                        '${widget.detailCourse.video?[widget.viewedVideoIndex!].video}',
+                        widget.detailCourse.video![widget.viewedVideoIndex!])
+                    : await Provider.of<QuizProvider>(context, listen: false)
+                        .getQuiz("${widget.video.videoId}")
+                        .then((value) {
+                        quiz = Provider.of<QuizProvider>(context, listen: false)
+                            .quizList;
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => QuizPage(
+                                    widget.video.videoId,
+                                    detailQuiz: quiz,
+                                    title: widget.video.title,
+                                    idCourse: '${widget.idCourse}',
+                                  )),
+                        );
+                      });
+              });
     isVideoViewed =
         List.generate(widget.detailCourse.video?.length ?? 0, (index) => false);
   }
@@ -150,126 +154,140 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
                       ? SizedBox()
                       : Column(
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                InkWell(
-                                  onTap: () async {
-                                    // flickManager.dispose();
-                                    // _changeVideo("${video.video}", video);
-                                    setState(() {
-                                      widget.viewedVideoIndex = index;
-                                    });
-                                    await Provider.of<QuizProvider>(context,
-                                            listen: false)
-                                        .getQuiz("${video.videoId}");
-                                    quiz = Provider.of<QuizProvider>(context,
-                                            listen: false)
-                                        .quizList;
-
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => QuizPage(
-                                                video.videoId,
-                                                detailQuiz: quiz,
-                                                title: video.title,
-                                                idCourse: '${widget.idCourse}',
-                                              )),
-                                    );
-                                  },
-                                  child: Container(
-                                    height: 60,
-                                    width: 135,
-                                    child: Card(
-                                      clipBehavior: Clip.antiAlias,
-                                      elevation: 3,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 6, horizontal: 10),
-                                        child: Row(
-                                          children: [
-                                            video.isViewed == "true"
-                                                ? Image.asset(
-                                                    'assets/ic_quiz.png',
-                                                    width: 40,
-                                                    height: 40,
-                                                  )
-                                                : Icon(Icons.lock),
-                                            SizedBox(width: 10),
-                                            Text(
-                                              "Quiz",
-                                              style:
-                                                  secondaryTextStyle.copyWith(
-                                                      fontWeight: semiBold),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                InkWell(
-                                  onTap: video.resume == null
-                                      ? null
-                                      : () {
+                            widget.detailCourse.owned == false
+                                ? SizedBox()
+                                : Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      InkWell(
+                                        onTap: () async {
                                           // flickManager.dispose();
+                                          // _changeVideo("${video.video}", video);
+                                          setState(() {
+                                            widget.viewedVideoIndex = index;
+                                          });
+                                          await Provider.of<QuizProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .getQuiz("${video.videoId}");
+                                          quiz = Provider.of<QuizProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .quizList;
 
-                                          flickManager.flickControlManager
-                                              ?.togglePlay();
-                                          Navigator.push(
+                                          Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ResumePage(
-                                                      '${video.videoId}',
-                                                      isDetail: true,
-                                                      idResume: video
-                                                          .resume?.resumeId,
-                                                      detail: video.resume,
-                                                      courseId: widget.idCourse,
+                                                builder: (context) => QuizPage(
+                                                      video.videoId,
+                                                      detailQuiz: quiz,
+                                                      title: video.title,
+                                                      idCourse:
+                                                          '${widget.idCourse}',
                                                     )),
                                           );
                                         },
-                                  child: Container(
-                                    height: 60,
-                                    width: 135,
-                                    child: Card(
-                                      clipBehavior: Clip.antiAlias,
-                                      elevation: 3,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 6, horizontal: 10),
-                                        child: Row(
-                                          children: [
-                                            video.resume == null
-                                                ? Icon(Icons.lock)
-                                                : Image.asset(
-                                                    'assets/ic_quiz.png',
-                                                    width: 40,
-                                                    height: 40,
-                                                  ),
-                                            SizedBox(width: 10),
-                                            Text(
-                                              'Resume',
-                                              style:
-                                                  secondaryTextStyle.copyWith(
-                                                      fontWeight: semiBold),
-                                            )
-                                          ],
+                                        child: Container(
+                                          height: 60,
+                                          width: 135,
+                                          child: Card(
+                                            clipBehavior: Clip.antiAlias,
+                                            elevation: 3,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 6, horizontal: 10),
+                                              child: Row(
+                                                children: [
+                                                  video.isViewed == "true"
+                                                      ? Image.asset(
+                                                          'assets/ic_quiz.png',
+                                                          width: 40,
+                                                          height: 40,
+                                                        )
+                                                      : Icon(Icons.lock),
+                                                  SizedBox(width: 10),
+                                                  Text(
+                                                    "Quiz",
+                                                    style: secondaryTextStyle
+                                                        .copyWith(
+                                                            fontWeight:
+                                                                semiBold),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                    ),
+                                      InkWell(
+                                        onTap: video.resume == null
+                                            ? null
+                                            : () {
+                                                // flickManager.dispose();
+
+                                                flickManager
+                                                    .flickControlManager!
+                                                    .pause();
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ResumePage(
+                                                            '${video.videoId}',
+                                                            isDetail: true,
+                                                            idResume: video
+                                                                .resume
+                                                                ?.resumeId,
+                                                            detail:
+                                                                video.resume,
+                                                            courseId:
+                                                                widget.idCourse,
+                                                          )),
+                                                );
+                                              },
+                                        child: Container(
+                                          height: 60,
+                                          width: 135,
+                                          child: Card(
+                                            clipBehavior: Clip.antiAlias,
+                                            elevation: 3,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 6, horizontal: 10),
+                                              child: Row(
+                                                children: [
+                                                  video.resume == null
+                                                      ? Icon(Icons.lock)
+                                                      : Image.asset(
+                                                          'assets/ic_quiz.png',
+                                                          width: 40,
+                                                          height: 40,
+                                                        ),
+                                                  SizedBox(width: 10),
+                                                  Text(
+                                                    'Resume',
+                                                    style: secondaryTextStyle
+                                                        .copyWith(
+                                                            fontWeight:
+                                                                semiBold),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    ],
                                   ),
-                                )
-                              ],
-                            ),
                             Container(
                               margin: EdgeInsets.all(16),
                               width: double.infinity,
@@ -340,7 +358,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
     Widget keterangan() {
       bool resumeUndone = widget.video.resume?.resume == "" ||
           widget.video.resume?.resume == null;
-      int passScore = int.parse(widget.video.score);
+      int passScore = int.parse(widget.video.score ?? '0');
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
@@ -448,78 +466,146 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
     //   ]),
     // );
 
-    return DefaultTabController(
-      length: 3, // Jumlah tab
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            '${widget.video.title} ',
-            style: primaryTextStyle.copyWith(fontWeight: semiBold),
-          ),
-          elevation: 0, // Menghilangkan shadow
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            color: Colors.black,
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => DetailCoursePage(
-                          idUserCourse: "${widget.detailCourse.courseId}",
-                        )),
-              );
-            },
-          ),
-          backgroundColor: Colors.white,
-          centerTitle: false,
-        ),
-        resizeToAvoidBottomInset: false,
-        body: Column(
-          children: [
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: FlickVideoPlayer(flickManager: flickManager),
-            ), // Video di atas tab bar
-            keterangan(),
-            Container(
-              color: Colors.white,
-              child: TabBar(
-                labelColor: Color(0xFF248043), // Warna teks saat aktif
-                unselectedLabelColor:
-                    Color(0xFF7D7D7D), // Warna teks saat tidak aktif
-                indicatorWeight: 4, // Ketebalan garis tepi bawah saat aktif
-                indicator: BoxDecoration(
-                  color:
-                      Color(0xFFE9F2EC), // Warna latar belakang saat tab aktif
-                  border: Border(
-                    bottom: BorderSide(
-                      color: Color(
-                          0xFF248043), // Warna garis tepi bawah saat aktif
-                      width: 4, // Ketebalan garis tepi bawah saat aktif
+    return widget.detailCourse.owned == false ||
+            context.read<AuthProvider>().user?.fullname == null
+        ? Scaffold(
+            appBar: AppBar(
+              title: Text(
+                '${widget.video.title} ',
+                style: primaryTextStyle.copyWith(fontWeight: semiBold),
+              ),
+              elevation: 0, // Menghilangkan shadow
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back),
+                color: Colors.black,
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DetailCoursePage(
+                              idUserCourse: "${widget.detailCourse.courseId}",
+                            )),
+                  );
+                },
+              ),
+              backgroundColor: Colors.white,
+              centerTitle: false,
+            ),
+            body: Column(
+              children: [
+                AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: FlickVideoPlayer(flickManager: flickManager),
+                ), // Video d
+                SizedBox(height: 24),
+                Container(
+                  height: 50,
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: PrimaryButton(
+                      text: 'Beli Kursus untuk Akses video berikutnya',
+                      onPressed: () {
+                        context.read<AuthProvider>().user?.fullname == null
+                            ? Navigator.pushNamed(context, '/login')
+                            : Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DetailCoursePage(
+                                          idUserCourse:
+                                              "${widget.detailCourse.courseId}",
+                                        )),
+                              );
+                      }),
+                )
+              ],
+            ))
+        : DefaultTabController(
+            length: 2, // Jumlah tab
+            child: Scaffold(
+              appBar: AppBar(
+                title: Text(
+                  '${widget.video.title} ',
+                  style: primaryTextStyle.copyWith(fontWeight: semiBold),
+                ),
+                elevation: 0, // Menghilangkan shadow
+                leading: IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  color: Colors.black,
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DetailCoursePage(
+                                idUserCourse: "${widget.detailCourse.courseId}",
+                              )),
+                    );
+                  },
+                ),
+                backgroundColor: Colors.white,
+                centerTitle: false,
+              ),
+              resizeToAvoidBottomInset: false,
+              body: Column(
+                children: [
+                  AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: FlickVideoPlayer(
+                      flickManager: flickManager,
+                      flickVideoWithControls: FlickVideoWithControls(
+                        controls: IconTheme(
+                            data: IconThemeData(color: Colors.red),
+                            child: FlickPortraitControls(
+                              progressBarSettings: FlickProgressBarSettings(
+                                bufferedColor: Colors.red.withOpacity(0.2),
+                                playedColor: Colors.red,
+                                handleColor: Colors.red,
+                                backgroundColor: Colors.grey,
+                              ),
+                            )),
+                      ),
+                    ),
+                  ), // Video di atas tab bar
+                  keterangan(),
+                  Container(
+                    color: Colors.white,
+                    child: TabBar(
+                      labelColor: Color(0xFF248043), // Warna teks saat aktif
+                      unselectedLabelColor:
+                          Color(0xFF7D7D7D), // Warna teks saat tidak aktif
+                      indicatorWeight:
+                          4, // Ketebalan garis tepi bawah saat aktif
+                      indicator: BoxDecoration(
+                        color: Color(
+                            0xFFE9F2EC), // Warna latar belakang saat tab aktif
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Color(
+                                0xFF248043), // Warna garis tepi bawah saat aktif
+                            width: 4, // Ketebalan garis tepi bawah saat aktif
+                          ),
+                        ),
+                      ), // W
+                      tabs: [
+                        Tab(text: 'Video'), // Tab pertama dengan teks 'Video'
+                        Tab(text: 'Tugas'),
+                        // Tab(text: 'Diskusi'), // Tab kedua dengan teks 'Project'
+                      ],
                     ),
                   ),
-                ), // W
-                tabs: [
-                  Tab(text: 'Video'), // Tab pertama dengan teks 'Video'
-                  Tab(text: 'Tugas'),
-                  Tab(text: 'Diskusi'), // Tab kedua dengan teks 'Project'
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        // Konten untuk tab 'Video'
+                        videoTile(),
+                        TaskView('${widget.idCourse}',
+                            flickManager: flickManager),
+                        Center(child: Text('diskusi')),
+                        // Konten untuk tab 'Project' bisa Anda tambahkan di sini
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  // Konten untuk tab 'Video'
-                  videoTile(),
-                  TaskView('${widget.idCourse}', flickManager: flickManager),
-                  Center(child: Text('diskusi')),
-                  // Konten untuk tab 'Project' bisa Anda tambahkan di sini
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+          );
   }
 }

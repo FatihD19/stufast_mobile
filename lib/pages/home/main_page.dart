@@ -4,6 +4,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stufast_mobile/main.dart';
 import 'package:stufast_mobile/pages/home/home_page.dart';
 import 'package:stufast_mobile/pages/home/my_course_page.dart';
@@ -23,8 +25,32 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  PermissionStatus _status = PermissionStatus.denied;
+
+  Future<void> _checkPermissionStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isFirstTime = prefs.getBool('isFirstTime') ?? true;
+
+    if (isFirstTime) {
+      PermissionStatus status = await Permission.notification.request();
+      setState(() {
+        _status = status;
+      });
+
+      if (status == PermissionStatus.granted) {
+        prefs.setBool('isFirstTime', false);
+      }
+    } else {
+      PermissionStatus status = await Permission.notification.status;
+      setState(() {
+        _status = status;
+      });
+    }
+  }
+
   @override
   void initState() {
+    _checkPermissionStatus();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification!;
       AndroidNotification? android = message.notification?.android;
