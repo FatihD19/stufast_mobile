@@ -11,6 +11,14 @@ class TalentHubProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  List<TalentHubModel> _talentPage = [];
+  List<TalentHubModel> get talentPage => _talentPage;
+
+  set talentPage(List<TalentHubModel> talentPage) {
+    _talentPage = talentPage;
+    notifyListeners();
+  }
+
   DetailTalentHubModel? _detailTalent;
   DetailTalentHubModel? get detailTalent => _detailTalent;
 
@@ -21,35 +29,54 @@ class TalentHubProvider with ChangeNotifier {
 
   bool loading = true;
   bool error = false;
-  Future<void> getTalentHub(
-      {String? sortBy, String? searchQuery, int? index}) async {
+
+  Future<void> getTalentFilter(
+      {bool? userFilter,
+      String? sortBy,
+      String? searchQuery,
+      int? index}) async {
     try {
-      List<TalentHubModel> talent =
-          await TalentService().getTalentHub(index: index);
-      // Melakukan sorting berdasarkan kriteria tertentu jika sortBy ditentukan
+      List<TalentHubModel> talentPage = await TalentService()
+          .getTalentHub(useFilter: userFilter, index: index);
+
       if (sortBy != null) {
         if (sortBy == 'average_score') {
-          talent.sort((a, b) => b.averageScore.compareTo(a.averageScore));
-          _talent = talent;
+          talentPage.sort((a, b) => b.averageScore.compareTo(a.averageScore));
+          _talentPage = talentPage;
           notifyListeners();
         } else if (sortBy == 'total_course') {
-          talent.sort((a, b) => b.totalCourse.compareTo(a.totalCourse));
-          _talent = talent;
+          talentPage.sort((a, b) => b.totalCourse.compareTo(a.totalCourse));
+          _talentPage = talentPage;
           notifyListeners();
         }
-        _talent = talent;
+        _talentPage = talentPage;
         notifyListeners();
       }
 
       // Melakukan pencarian jika searchQuery ditentukan
       if (searchQuery != null && searchQuery.isNotEmpty) {
-        talent = talent
+        talentPage = talentPage
             .where((t) =>
                 t.fullname!.toLowerCase().contains(searchQuery.toLowerCase()))
             .toList();
-        _talent = talent;
+        _talentPage = talentPage;
         notifyListeners();
       }
+      _talentPage = talentPage;
+
+      loading = false;
+      notifyListeners();
+    } catch (e) {
+      error = true;
+      print(e);
+    }
+  }
+
+  Future<void> getTalentHub({int? index}) async {
+    try {
+      List<TalentHubModel> talent =
+          await TalentService().getTalentHub(index: index);
+
       _talent.addAll(talent);
       loading = false;
       notifyListeners();

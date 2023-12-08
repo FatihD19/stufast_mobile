@@ -73,151 +73,174 @@ class _AddToChartPageState extends State<AddToChartPage> {
     //           .toList());
     // }
     Widget chartTile() {
-      return Container(
-        padding: EdgeInsets.fromLTRB(16, 16, 16, 96),
-        height: MediaQuery.of(context).size.height - 190,
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: chartProvider.chart?.item?.length,
-          itemBuilder: (context, index) {
-            ItemChartModel item = chartProvider.chart!.item![index];
-
-            return Card(
-              clipBehavior: Clip.antiAlias,
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Container(
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Color(0xffF3F3F3),
-                ),
-                child: Row(
-                  children: [
-                    Checkbox(
-                      value: selectedIds.contains(item.cartId),
-                      onChanged: (bool? isChecked) {
-                        setState(() {
-                          if (isChecked != null && isChecked) {
-                            selectedIds.add(item.cartId);
-                            totalPrice += int.parse('${item.newPrice}');
-                          } else {
-                            selectedIds.remove(item.cartId);
-                            totalPrice -= int.parse('${item.newPrice}');
-                          }
-                          // Periksa apakah semua item dipilih atau tidak
-                          selectAll = chartProvider.chart!.item!.every(
-                              (item) => selectedIds.contains(item.cartId));
-                          if (selectAll) {
-                            totalPrice = chartProvider.chart!.item!.fold<int>(
-                                0,
-                                (total, item) =>
-                                    total + int.parse('${item.newPrice}'));
-                          }
-                          //else {
-                          //   totalPrice = 0;
-                          // }
-                        });
-                      },
+      return chartProvider.chart?.item?.isEmpty ?? true
+          ? Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Center(
+                  child: Column(
+                children: [
+                  SizedBox(height: MediaQuery.of(context).size.height / 5),
+                  Image.asset('assets/img_empty_cart.png'),
+                  SizedBox(height: 20),
+                  Text('Keranjang Kamu Kosong',
+                      style: primaryTextStyle.copyWith(
+                          fontWeight: bold, fontSize: 18)),
+                  Text(
+                      'Yuk pilih course kamu dengan beragam pilihan paket yang menarik',
+                      textAlign: TextAlign.center,
+                      style: primaryTextStyle)
+                ],
+              )),
+            )
+          : Container(
+              padding: EdgeInsets.fromLTRB(16, 16, 16, 96),
+              height: MediaQuery.of(context).size.height - 190,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: chartProvider.chart?.item?.length,
+                itemBuilder: (context, index) {
+                  ItemChartModel item = chartProvider.chart!.item![index];
+                  return Card(
+                    clipBehavior: Clip.antiAlias,
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    Image.network(
-                      '${item.thumbnail}',
-                      fit: BoxFit.cover,
-                      width: 63,
-                      height: 61,
-                    ),
-                    SizedBox(width: 24),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Container(
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Color(0xffF3F3F3),
+                      ),
+                      child: Row(
                         children: [
-                          Text(
-                            '${item.title}',
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
-                            style: primaryTextStyle.copyWith(fontWeight: bold),
+                          Checkbox(
+                            value: selectedIds.contains(item.cartId),
+                            onChanged: (bool? isChecked) {
+                              setState(() {
+                                if (isChecked != null && isChecked) {
+                                  selectedIds.add(item.cartId);
+                                  totalPrice += int.parse('${item.newPrice}');
+                                } else {
+                                  selectedIds.remove(item.cartId);
+                                  totalPrice -= int.parse('${item.newPrice}');
+                                }
+                                // Periksa apakah semua item dipilih atau tidak
+                                selectAll = chartProvider.chart!.item!.every(
+                                    (item) =>
+                                        selectedIds.contains(item.cartId));
+                                if (selectAll) {
+                                  totalPrice = chartProvider.chart!.item!
+                                      .fold<int>(
+                                          0,
+                                          (total,
+                                                  item) =>
+                                              total +
+                                              int.parse('${item.newPrice}'));
+                                }
+                                //else {
+                                //   totalPrice = 0;
+                                // }
+                              });
+                            },
                           ),
-                          Text(
-                              item.type == 'webinar'
-                                  ? '${item.webinarTag}'
-                                  : item.type == 'bundling'
-                                      ? '${item.totalItem} course'
-                                      : '${item.totalItem} video',
-                              style: secondaryTextStyle),
-                          SizedBox(height: 4),
+                          Image.network(
+                            '${item.thumbnail}',
+                            fit: BoxFit.cover,
+                            width: 63,
+                            height: 61,
+                          ),
+                          SizedBox(width: 24),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${item.title}',
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                  style: primaryTextStyle.copyWith(
+                                      fontWeight: bold),
+                                ),
+                                Text(
+                                    item.type == 'webinar'
+                                        ? '${item.webinarTag}'
+                                        : item.type == 'bundling'
+                                            ? '${item.totalItem} course'
+                                            : '${item.totalItem} video',
+                                    style: secondaryTextStyle),
+                                SizedBox(height: 4),
+                                Container(
+                                  padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(3),
+                                    color: getColorForItemType('${item.type}'),
+                                  ),
+                                  child: Text(
+                                    '${item.type}',
+                                    style: buttonTextStyle.copyWith(
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                NewPrice(item.newPrice),
+                                OldPrice(item.oldPrice),
+                              ],
+                            ),
+                          ),
                           Container(
-                            padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(3),
-                              color: getColorForItemType('${item.type}'),
-                            ),
-                            child: Text(
-                              '${item.type}',
-                              style: buttonTextStyle.copyWith(
-                                  fontWeight: FontWeight.bold),
+                            margin: EdgeInsets.only(bottom: 90),
+                            child: IconButton(
+                              onPressed: () async {
+                                if (await context
+                                    .read<ChartProvider>()
+                                    .deleteToChart('${item.cartId}')) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: Colors.green,
+                                      content: Text(
+                                        'berhasil hapus',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  );
+                                  getInit();
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: Colors.red,
+                                      content: Text(
+                                        'Gagal!',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                              icon: Icon(Icons.cancel_outlined),
                             ),
                           ),
-                          NewPrice(item.newPrice),
-                          OldPrice(item.oldPrice),
                         ],
                       ),
                     ),
-                    Container(
-                      margin: EdgeInsets.only(bottom: 90),
-                      child: IconButton(
-                        onPressed: () async {
-                          if (await context
-                              .read<ChartProvider>()
-                              .deleteToChart('${item.cartId}')) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: Colors.green,
-                                content: Text(
-                                  'berhasil hapus',
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            );
-                            getInit();
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: Colors.red,
-                                content: Text(
-                                  'Gagal!',
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                        icon: Icon(Icons.cancel_outlined),
-                      ),
-                    ),
-                  ],
-                ),
+                  );
+                  // ListTile(
+                  //   title: Text('${item.title}'),
+                  //   leading: Checkbox(
+                  //     value: selectedIds.contains(item.cartId),
+                  //     onChanged: (bool? isChecked) {
+                  //       setState(() {
+                  //         if (isChecked != null && isChecked) {
+                  //           selectedIds.add(item.cartId);
+                  //         } else {
+                  //           selectedIds.remove(item.cartId);
+                  //         }
+                  //       });
+                  //     },
+                  //   ),
+                  // );
+                },
               ),
             );
-            // ListTile(
-            //   title: Text('${item.title}'),
-            //   leading: Checkbox(
-            //     value: selectedIds.contains(item.cartId),
-            //     onChanged: (bool? isChecked) {
-            //       setState(() {
-            //         if (isChecked != null && isChecked) {
-            //           selectedIds.add(item.cartId);
-            //         } else {
-            //           selectedIds.remove(item.cartId);
-            //         }
-            //       });
-            //     },
-            //   ),
-            // );
-          },
-        ),
-      );
     }
 
     Widget checkOut() {

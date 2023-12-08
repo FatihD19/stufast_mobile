@@ -175,67 +175,70 @@ class _EducationFormState extends State<EducationForm> {
 
     Widget listEducation(String status) {
       return cvProvider.educations.isEmpty
-          ? Card(
-              clipBehavior: Clip.antiAlias,
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Container(
-                padding: EdgeInsets.all(12),
-                child: Shimmer.fromColors(
-                    baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.grey[100]!,
-                    child: ListTile(
-                      leading: Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          color: Colors.grey,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      title: Container(
-                        height: 20,
-                        width: 100,
-                        decoration: BoxDecoration(
-                          color: Colors.grey,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: 20,
-                            width: 100,
-                            decoration: BoxDecoration(
-                              color: Colors.grey,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Container(
-                            height: 20,
-                            width: 100,
-                            decoration: BoxDecoration(
-                              color: Colors.grey,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                        ],
-                      ),
-                      trailing: Container(
-                        height: 20,
-                        width: 20,
-                        decoration: BoxDecoration(
-                          color: Colors.grey,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    )),
-              ),
+          ? Center(
+              child: Text('Tidak ada data Pendidikan', style: primaryTextStyle),
             )
+          // Card(
+          //     clipBehavior: Clip.antiAlias,
+          //     elevation: 5,
+          //     shape: RoundedRectangleBorder(
+          //       borderRadius: BorderRadius.circular(10),
+          //     ),
+          //     child: Container(
+          //       padding: EdgeInsets.all(12),
+          //       child: Shimmer.fromColors(
+          //           baseColor: Colors.grey[300]!,
+          //           highlightColor: Colors.grey[100]!,
+          //           child: ListTile(
+          //             leading: Container(
+          //               height: 50,
+          //               width: 50,
+          //               decoration: BoxDecoration(
+          //                 color: Colors.grey,
+          //                 borderRadius: BorderRadius.circular(10),
+          //               ),
+          //             ),
+          //             title: Container(
+          //               height: 20,
+          //               width: 100,
+          //               decoration: BoxDecoration(
+          //                 color: Colors.grey,
+          //                 borderRadius: BorderRadius.circular(10),
+          //               ),
+          //             ),
+          //             subtitle: Column(
+          //               crossAxisAlignment: CrossAxisAlignment.start,
+          //               children: [
+          //                 Container(
+          //                   height: 20,
+          //                   width: 100,
+          //                   decoration: BoxDecoration(
+          //                     color: Colors.grey,
+          //                     borderRadius: BorderRadius.circular(10),
+          //                   ),
+          //                 ),
+          //                 SizedBox(height: 4),
+          //                 Container(
+          //                   height: 20,
+          //                   width: 100,
+          //                   decoration: BoxDecoration(
+          //                     color: Colors.grey,
+          //                     borderRadius: BorderRadius.circular(10),
+          //                   ),
+          //                 ),
+          //               ],
+          //             ),
+          //             trailing: Container(
+          //               height: 20,
+          //               width: 20,
+          //               decoration: BoxDecoration(
+          //                 color: Colors.grey,
+          //                 borderRadius: BorderRadius.circular(10),
+          //               ),
+          //             ),
+          //           )),
+          //     ),
+          //   )
           : ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),

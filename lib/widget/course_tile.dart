@@ -139,36 +139,40 @@ class _CourseTileState extends State<CourseTile> {
                     SizedBox(width: 5),
                     Container(
                       alignment: Alignment.centerRight,
-                      child: Column(
-                        children: [
-                          Text('Nilai', style: primaryTextStyle),
-                          Container(
-                            child: Stack(
-                              alignment: Alignment.center,
+                      child: widget.showProgress == false
+                          ? Container()
+                          : Column(
                               children: [
-                                SizedBox(
-                                    width: 34,
-                                    height: 34,
-                                    child: CircularProgressIndicator(
-                                      value: scoreCourse,
-                                      strokeWidth: 3,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        scoreCourse == 1.0
-                                            ? primaryColor
-                                            : Color(0xFFfec202),
+                                Text('Nilai', style: primaryTextStyle),
+                                Container(
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      SizedBox(
+                                          width: 34,
+                                          height: 34,
+                                          child: CircularProgressIndicator(
+                                            value: scoreCourse,
+                                            strokeWidth: 3,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                              scoreCourse == 1.0
+                                                  ? primaryColor
+                                                  : Color(0xFFfec202),
+                                            ),
+                                            backgroundColor: Colors.grey[300],
+                                          )),
+                                      Center(
+                                        child: Text(
+                                            '${widget.userCourse.score ?? 0}',
+                                            style: primaryTextStyle.copyWith(
+                                                fontWeight: bold)),
                                       ),
-                                      backgroundColor: Colors.grey[300],
-                                    )),
-                                Center(
-                                  child: Text('${widget.userCourse.score ?? 0}',
-                                      style: primaryTextStyle.copyWith(
-                                          fontWeight: bold)),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
                     )
                   ]),
             )),

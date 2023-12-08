@@ -1,8 +1,13 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stufast_mobile/models/invoice_model.dart';
+import 'package:stufast_mobile/pages/checkout/order_page.dart';
+import 'package:stufast_mobile/pages/checkout/payment_view.dart';
 import 'package:stufast_mobile/providers/order_provider.dart';
 import 'package:stufast_mobile/widget/price_text_widget.dart';
+import 'package:stufast_mobile/widget/primary_button.dart';
 
 import '../../theme.dart';
 
@@ -198,7 +203,7 @@ class _InvoicePageState extends State<InvoicePage> {
                       fontSize: 12, fontWeight: bold)),
             ),
             SizedBox(width: 40),
-            InvoicePrice('${invoice?.subTotal}'),
+            InvoicePrice('${invoice?.grossAmount}'),
           ],
         ),
       );
@@ -230,9 +235,86 @@ class _InvoicePageState extends State<InvoicePage> {
       );
     }
 
-    // Widget pricing(){
-    //   return
-    // }
+    Widget actionBtn() {
+      return status == 'pending'
+          ? Column(
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: 50,
+                  child: PrimaryButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  PaymentView("${invoice?.snapToken}")));
+                    },
+                    text: 'Bayar Sekarang',
+                  ),
+                ),
+                SizedBox(height: 16),
+                Container(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Exit App'),
+                          content: Text('Batalkan Pesanan ?'),
+                          actions: [
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              //return false when click on "NO"
+                              child: Text('Tidak'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () async {
+                                if (await context
+                                    .read<OrderProvider>()
+                                    .cancelOrder('${invoice?.orderId}')) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: Colors.green,
+                                      content: Text(
+                                        'Pesanan dibatalkan',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  );
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              OrderPage(orderType: 'cancel')));
+                                }
+                              },
+                              child: Text('Batalkan'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.red,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      'Batalkan Pesanan',
+                      style: buttonTextStyle.copyWith(fontWeight: semiBold),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          : SizedBox();
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -272,6 +354,7 @@ class _InvoicePageState extends State<InvoicePage> {
                   content(),
                   total(),
                   SizedBox(height: 20),
+                  actionBtn()
                 ],
               ),
       ),

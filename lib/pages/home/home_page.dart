@@ -12,10 +12,12 @@ import 'package:stufast_mobile/providers/auth_provider.dart';
 import 'package:stufast_mobile/providers/chart_provider.dart';
 import 'package:stufast_mobile/providers/course_provider.dart';
 import 'package:stufast_mobile/providers/notif_provider.dart';
+import 'package:stufast_mobile/providers/talentHub_provider.dart';
 import 'package:stufast_mobile/providers/user_course_provider.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/course_card.dart';
 import 'package:stufast_mobile/widget/course_tile.dart';
+import 'package:stufast_mobile/widget/talent_card.dart';
 import 'package:stufast_mobile/widget/webinar_card.dart';
 
 import '../../providers/webinar_provider.dart';
@@ -34,9 +36,11 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     getInit();
+
     Provider.of<WebinarProvider>(context, listen: false).getWebinar(false);
     Provider.of<UserCourseProvider>(context, listen: false).getUserCourses();
     Provider.of<NotificationProvider>(context, listen: false).getNotification();
+
     // jumlahCart =
     //     Provider.of<ChartProvider>(context, listen: false).chart?.item?.length;
 
@@ -48,6 +52,8 @@ class _HomePageState extends State<HomePage> {
       loading = true;
     });
     Provider.of<ChartProvider>(context, listen: false).getChart();
+    await Provider.of<TalentHubProvider>(context, listen: false)
+        .getTalentHub(index: 1);
     await Provider.of<CourseProvider>(context, listen: false).getCourses('all');
     // setState(() {
     //   jumlahCart = Provider.of<ChartProvider>(context, listen: false)
@@ -295,7 +301,13 @@ class _HomePageState extends State<HomePage> {
 
     Widget userCourseTile() {
       return userCourseProvider.loading
-          ? CircularProgressIndicator()
+          ? ListView.builder(
+              physics: ClampingScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: 2,
+              itemBuilder: (context, index) {
+                return CourseTileShimer();
+              })
           : ListView(
               physics: ClampingScrollPhysics(),
               shrinkWrap: true,
@@ -446,6 +458,48 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
+    Widget previewTalentHub() {
+      return Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Talen Hub',
+                style: primaryTextStyle.copyWith(fontWeight: bold),
+              ),
+              TextButton(
+                onPressed: () {
+                  // Navigator.pushNamed(context, '/course-page');
+                },
+                child: Text(
+                  'Liat Semua',
+                  style: secondaryTextStyle.copyWith(
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              )
+            ],
+          ),
+          Consumer<TalentHubProvider>(
+            builder: (context, talentHubProvider, _) {
+              return talentHubProvider.loading == true
+                  ? CircularProgressIndicator()
+                  : SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: talentHubProvider.talent
+                            .map((talent) => TalentCard(talent))
+                            .take(10)
+                            .toList(),
+                      ),
+                    );
+            },
+          ),
+        ],
+      );
+    }
+
     return Container(
       padding: EdgeInsets.all(24),
       child:
@@ -460,7 +514,8 @@ class _HomePageState extends State<HomePage> {
           carousel(),
           continueCourse(),
           popularCourse(),
-          webinar()
+          webinar(),
+          previewTalentHub()
         ],
       ),
     );

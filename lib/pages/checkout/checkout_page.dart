@@ -467,7 +467,8 @@ class _CheckOutPageState extends State<CheckOutPage> {
                               await Provider.of<CheckoutProvider>(context,
                                       listen: false)
                                   .orderItem(widget.selectedItem,
-                                      kupon: _voucherController.text);
+                                      kupon: _voucherController.text,
+                                      type: widget.type);
                               setState(() {
                                 token = "${checkOutProvider.order?.token}";
                               });

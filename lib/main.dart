@@ -4,10 +4,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
+
 import 'package:stufast_mobile/pages/Faq-Support/contact_us_page.dart';
 import 'package:stufast_mobile/pages/Faq-Support/faq_page.dart';
+import 'package:stufast_mobile/pages/change_password_page.dart';
 import 'package:stufast_mobile/pages/checkout/add_chart_page.dart';
 import 'package:stufast_mobile/pages/checkout/checkout_page.dart';
 import 'package:stufast_mobile/pages/checkout/order_page.dart';
@@ -15,6 +18,7 @@ import 'package:stufast_mobile/pages/course_page.dart';
 import 'package:stufast_mobile/pages/cv/create_cv_page.dart';
 import 'package:stufast_mobile/pages/edit_profile.dart';
 import 'package:stufast_mobile/pages/forgot_password_page.dart';
+
 import 'package:stufast_mobile/pages/home/main_page.dart';
 import 'package:stufast_mobile/pages/home/my_course_page.dart';
 import 'package:stufast_mobile/pages/landing_page.dart';
@@ -62,6 +66,12 @@ void main() async {
   // HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  // Plugin must be initialized before using
+  await FlutterDownloader.initialize(
+    debug:
+        true, // optional: set to false to disable printing logs to console (default: true)
+    // option: set to false to disable working with http links (default: false)
+  );
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
@@ -137,6 +147,7 @@ class MyApp extends StatelessWidget {
           '/contact-page': (context) => ContactUsPage(),
           '/notif-page': (context) => NotifikasiPage(),
           '/order-page': (context) => OrderPage(),
+          '/change-password-page': (context) => ChangePasswordPage(),
         },
       ),
     );

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:stufast_mobile/pages/checkout/order_page.dart';
 import 'package:stufast_mobile/pages/succsess_page.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -91,7 +92,9 @@ class _PaymentViewState extends State<PaymentView> {
                 return NavigationDecision.prevent;
               } else if (request.url.startsWith(
                   'https://stufast.id/public/dev2/public/snap/batal')) {
-                showExitPopup();
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return OrderPage();
+                }));
                 return NavigationDecision.prevent;
               }
               return NavigationDecision.navigate;

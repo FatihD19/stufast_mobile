@@ -1,3 +1,5 @@
+import 'package:carousel_slider/carousel_options.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +20,9 @@ class _TalentHubPageState extends State<TalentHubPage> {
   int totalTalentCount = 10;
   int _currentPage = 1;
   bool error = false;
+  int currentIndex = 0;
+
+  bool? useFilter;
 
   void _loadMore() {
     if (_scrollController.position.pixels ==
@@ -40,12 +45,16 @@ class _TalentHubPageState extends State<TalentHubPage> {
     }
   }
 
+  List item = [
+    'assets/img_promo_talent2.png',
+    'assets/img_promo_talent.png',
+  ];
+
   @override
   void initState() {
     // TODO: implement initState\
     _scrollController.addListener(_loadMore);
-    Provider.of<TalentHubProvider>(context, listen: false)
-        .getTalentHub(searchQuery: _searchQuery, index: _currentPage);
+    getTalentByIndex();
     // Provider.of<TalentHubProvider>(context, listen: false).fetchTalentData();
 
     // _scrollController.addListener(() {
@@ -82,13 +91,20 @@ class _TalentHubPageState extends State<TalentHubPage> {
 
   bool loading = false;
 
+  getTalentByIndex() async {
+    await Provider.of<TalentHubProvider>(context, listen: false)
+        .getTalentHub(index: _currentPage);
+  }
+
   getInit() async {
     setState(() {
       loading = true;
+      useFilter = true;
     });
 
     await Provider.of<TalentHubProvider>(context, listen: false)
-        .getTalentHub(searchQuery: _searchQuery, sortBy: _sortBy);
+        .getTalentFilter(
+            userFilter: true, searchQuery: _searchQuery, sortBy: _sortBy);
     setState(() {
       loading = false;
     });
@@ -109,9 +125,27 @@ class _TalentHubPageState extends State<TalentHubPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Urutkan berdasarkan',
-                    style: primaryTextStyle.copyWith(
-                        fontWeight: bold, fontSize: 18)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Urutkan berdasarkan',
+                        style: primaryTextStyle.copyWith(
+                            fontWeight: bold, fontSize: 18)),
+                    InkWell(
+                        onTap: () {
+                          setState(() {
+                            _searchController.text = '';
+                            _searchQuery = '';
+                            _sortBy = '';
+                            useFilter = false;
+                            getTalentByIndex();
+                            Navigator.pop(context);
+                          });
+                        },
+                        child: Text('Reset',
+                            style: thirdTextStyle.copyWith(fontSize: 14)))
+                  ],
+                ),
                 SizedBox(height: 24),
                 Container(
                   child: Column(
@@ -209,27 +243,27 @@ class _TalentHubPageState extends State<TalentHubPage> {
                         hintText: 'Cari Talent',
                         border: InputBorder.none,
                       ),
-                      onChanged: (value) {
-                        setState(() {
-                          _sortBy = '';
-                          _searchQuery = value;
-                          getInit();
-                        });
-                      },
+                      // onChanged: (value) {
+                      //   setState(() {
+                      //     _sortBy = '';
+                      //     _searchQuery = value;
+                      //     getInit();
+                      //   });
+                      // },
                     ),
                   ),
-                  // InkWell(
-                  //   onTap: () {
-                  //     setState(() {
-                  //       _searchQuery = _searchController.text;
-                  //       getInit();
-                  //     });
-                  //   },
-                  //   child: Padding(
-                  //     padding: EdgeInsets.all(8),
-                  //     child: Image.asset('assets/icon_search.png'),
-                  //   ),
-                  // ),
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        _searchQuery = _searchController.text;
+                        getInit();
+                      });
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.all(8),
+                      child: Image.asset('assets/icon_search.png'),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -261,27 +295,71 @@ class _TalentHubPageState extends State<TalentHubPage> {
               ),
             ),
           ),
+          SizedBox(height: 72),
         ],
       );
     }
 
+    Widget indicator(int index) {
+      return Container(
+        width: 10,
+        height: 10,
+        margin: EdgeInsets.symmetric(
+          horizontal: 2,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: currentIndex == index ? primaryColor : Color(0xffC4C4C4),
+        ),
+      );
+    }
+
+    Widget promoTalent() {
+      int index = -1;
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 2),
+        child: Column(
+          children: [
+            SizedBox(height: 10),
+            CarouselSlider(
+              items: item.map((e) {
+                index++;
+                return Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    image: DecorationImage(
+                      image: AssetImage(e),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                );
+              }).toList(),
+              options: CarouselOptions(
+                viewportFraction: 1,
+                onPageChanged: (index, reason) {
+                  setState(() {
+                    currentIndex = index;
+                  });
+                },
+              ),
+            ),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: item.map((e) {
+                index++;
+                return indicator(index);
+              }).toList(),
+            ),
+            SizedBox(height: 10),
+          ],
+        ),
+      );
+    }
+
     Widget gridTalent() {
-      // return PagedGridView<int, TalentHubModel>(
-      //   pagingController: talentHubProvider.pagingController,
-      //   physics: ClampingScrollPhysics(),
-      //   shrinkWrap: true,
-      //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-      //                    crossAxisCount: 2,
-      //                 crossAxisSpacing: 4,
-      //                 mainAxisSpacing: 8,
-      //                 childAspectRatio: 0.5893,
-      //   ),
-      //   builderDelegate: PagedChildBuilderDelegate<TalentHubModel>(
-      //     itemBuilder: (context, talent, index) {
-      //       return TalentCard(talent);
-      //     },
-      //   ),
-      // );
       return talentHubProvider.loading == true
           ? Center(child: CircularProgressIndicator())
           : GridView.builder(
@@ -299,37 +377,42 @@ class _TalentHubPageState extends State<TalentHubPage> {
                   return TalentCard(talent);
                 }
               },
-              // controller: _scrollController,
-              // physics: ClampingScrollPhysics(),
-              // shrinkWrap: true,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                crossAxisSpacing: 4,
-                mainAxisSpacing: 8,
-                childAspectRatio: 0.5893,
+                crossAxisSpacing: 1,
+                mainAxisSpacing: 4,
+                childAspectRatio: 0.655,
               ));
       // children: talentHubProvider.talent
       //     .map((talent) => TalentCard(talent))
       //     .take(totalTalentCount)
       //     .toList());
     }
-    // Widget gridTalent() {
-    //   return GridView.builder(
-    //     shrinkWrap: true,
-    //     physics: ScrollPhysics(),
-    //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-    //       crossAxisCount: 2,
-    //       crossAxisSpacing: 4,
-    //       mainAxisSpacing: 8,
-    //       childAspectRatio: 0.5893,
-    //     ),
-    //     itemCount: talentList.length,
-    //     itemBuilder: (context, index) {
-    //       final talent = talentList[index];
-    //       return TalentCard(talent);
-    //     },
-    //   );
-    // }
+
+    Widget gridTalentFilter() {
+      return loading == true
+          ? Column(
+              children: [
+                SizedBox(height: 50),
+                Center(child: CircularProgressIndicator()),
+              ],
+            )
+          : GridView.builder(
+              shrinkWrap: true,
+              physics: ScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 4,
+                mainAxisSpacing: 8,
+                childAspectRatio: 0.5893,
+              ),
+              itemCount: talentHubProvider.talentPage.length,
+              itemBuilder: (context, index) {
+                final talent = talentHubProvider.talentPage[index];
+                return TalentCard(talent);
+              },
+            );
+    }
 
     return
         // TalentHubScreen();
@@ -353,14 +436,19 @@ class _TalentHubPageState extends State<TalentHubPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   searchBar(),
-                  SizedBox(height: 16),
                   Expanded(
-                    child: ListView(
-                      controller: _scrollController,
-                      physics: ScrollPhysics(),
-                      shrinkWrap: true,
-                      children: [gridTalent()],
-                    ),
+                    child: useFilter == true
+                        ? ListView(
+                            physics: ScrollPhysics(),
+                            shrinkWrap: true,
+                            children: [promoTalent(), gridTalentFilter()],
+                          )
+                        : ListView(
+                            controller: _scrollController,
+                            physics: ScrollPhysics(),
+                            shrinkWrap: true,
+                            children: [promoTalent(), gridTalent()],
+                          ),
                   ),
                 ],
               ),

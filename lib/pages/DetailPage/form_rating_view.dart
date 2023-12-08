@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
+import 'package:stufast_mobile/providers/bundle_provider.dart';
 import 'package:stufast_mobile/providers/user_course_provider.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/primary_button.dart';
 
 class RatingFormDialog extends StatefulWidget {
   final String courseId;
-  RatingFormDialog(this.courseId, {Key? key}) : super(key: key);
+  bool? isBundle;
+  RatingFormDialog(this.courseId, {this.isBundle, Key? key}) : super(key: key);
   @override
   _RatingFormDialogState createState() => _RatingFormDialogState();
 }
@@ -45,7 +47,9 @@ class _RatingFormDialogState extends State<RatingFormDialog> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  'Berikan Rating Kursus untuk mendapatkan sertifikat',
+                  widget.isBundle == true
+                      ? 'Berikan Rating Bundling untuk mendapatkan sertifikat'
+                      : 'Berikan Rating Kursus untuk mendapatkan sertifikat',
                   style: primaryTextStyle.copyWith(
                       fontWeight: semiBold, fontSize: 15),
                   textAlign: TextAlign.center,
@@ -102,6 +106,9 @@ class _RatingFormDialogState extends State<RatingFormDialog> {
                         border: InputBorder
                             .none, // Tidak menampilkan border bawaan TextField
                       ),
+                      onChanged: (value) {
+                        setState(() {});
+                      },
                     ),
                   ),
                 ),
@@ -110,7 +117,8 @@ class _RatingFormDialogState extends State<RatingFormDialog> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(' * Minimal 100 karakter', style: secondaryTextStyle),
-                    SizedBox()
+                    Text('${_feedbackController.text.length}/100',
+                        style: secondaryTextStyle)
                   ],
                 ),
                 PrimaryButton(
@@ -120,13 +128,21 @@ class _RatingFormDialogState extends State<RatingFormDialog> {
                         if (await context
                             .read<UserCourseProvider>()
                             .createCourseReview(widget.courseId,
-                                _feedbackController.text, _rating.toInt())) {
+                                _feedbackController.text, _rating.toInt(),
+                                isBundle: widget.isBundle ?? false)) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               backgroundColor: Colors.green,
                               content: Text('Berhasil memberikan penilaian'),
                             ),
                           );
+                          widget.isBundle == true
+                              ? await Provider.of<BundleProvider>(context,
+                                      listen: false)
+                                  .getDetailBundle(widget.courseId)
+                              : await Provider.of<UserCourseProvider>(context,
+                                      listen: false)
+                                  .getDetailUserCourse(widget.courseId);
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(

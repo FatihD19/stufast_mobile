@@ -195,10 +195,22 @@ class _MainPageState extends State<MainPage> {
                   ),
                   label: '',
                 ),
+                // BottomNavigationBarItem(
+                //   icon: Container(
+                //     child: Image.asset(
+                //       'assets/icon_webinar.png',
+                //       width: 81,
+                //       height: 69,
+                //       color:
+                //           currentIndex == 2 ? buttonTextColor : Colors.white70,
+                //     ),
+                //   ),
+                //   label: '',
+                // ),
                 BottomNavigationBarItem(
                   icon: Container(
                     child: Image.asset(
-                      'assets/icon_webinar.png',
+                      'assets/ic_talent.png',
                       width: 81,
                       height: 69,
                       color:
@@ -210,23 +222,11 @@ class _MainPageState extends State<MainPage> {
                 BottomNavigationBarItem(
                   icon: Container(
                     child: Image.asset(
-                      'assets/ic_talent.png',
-                      width: 81,
-                      height: 69,
-                      color:
-                          currentIndex == 3 ? buttonTextColor : Colors.white70,
-                    ),
-                  ),
-                  label: '',
-                ),
-                BottomNavigationBarItem(
-                  icon: Container(
-                    child: Image.asset(
                       'assets/icon_profile.png',
                       width: 81,
                       height: 69,
                       color:
-                          currentIndex == 4 ? buttonTextColor : Colors.white70,
+                          currentIndex == 3 ? buttonTextColor : Colors.white70,
                     ),
                   ),
                   label: '',
@@ -244,13 +244,13 @@ class _MainPageState extends State<MainPage> {
         case 1:
           return MyCoursePage();
           break;
+        // case 2:
+        //   return WebinarPage();
+        //   break;
         case 2:
-          return WebinarPage();
-          break;
-        case 3:
           return TalentHubPage();
           break;
-        case 4:
+        case 3:
           return ProfilePage();
           break;
         default:

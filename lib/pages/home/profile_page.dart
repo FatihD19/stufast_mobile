@@ -5,6 +5,8 @@ import 'package:stufast_mobile/models/cv_model.dart';
 import 'package:stufast_mobile/models/user_model.dart';
 import 'package:stufast_mobile/pages/login_page.dart';
 import 'package:stufast_mobile/providers/auth_provider.dart';
+import 'package:stufast_mobile/providers/bundle_provider.dart';
+import 'package:stufast_mobile/providers/user_course_provider.dart';
 import 'package:stufast_mobile/services/Auth/login_google_service.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/primary_button.dart';
@@ -22,9 +24,11 @@ class ProfilePage extends StatelessWidget {
 
     logout() async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.remove('token');
+      await prefs.remove('token');
+      context.read<UserCourseProvider>().userCourses = [];
+      context.read<BundleProvider>().userBundle = [];
       prefs.remove('saveLogin');
-      // await LoginApi.logout().then((value) => print('suksesLogout'));
+      await LoginApi.logout().then((value) => print('suksesLogout'));
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => LoginPage()),
@@ -272,11 +276,16 @@ class ProfilePage extends StatelessWidget {
                         fontWeight: bold, fontSize: 16),
                   ),
                 ),
-                ListTile(
-                  leading: Image.asset('assets/icon_secure.png'),
-                  title: Text(
-                    'Keamanan',
-                    style: secondaryTextStyle,
+                InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/change-password-page');
+                  },
+                  child: ListTile(
+                    leading: Image.asset('assets/icon_secure.png'),
+                    title: Text(
+                      'Keamanan',
+                      style: secondaryTextStyle,
+                    ),
                   ),
                 ),
                 InkWell(

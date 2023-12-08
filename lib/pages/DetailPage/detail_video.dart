@@ -551,14 +551,23 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
                     child: FlickVideoPlayer(
                       flickManager: flickManager,
                       flickVideoWithControls: FlickVideoWithControls(
+                        playerLoadingFallback:
+                            Stack(alignment: Alignment.center, children: [
+                          Image.network(widget.video.thumbnail!),
+                          CircularProgressIndicator(
+                            color: secondaryTextColor,
+                          ),
+                        ]),
+                        textStyle: secondaryTextStyle.copyWith(
+                            fontSize: 18, fontWeight: bold),
                         controls: IconTheme(
-                            data: IconThemeData(color: Colors.red),
+                            data: IconThemeData(color: primaryColor),
                             child: FlickPortraitControls(
                               progressBarSettings: FlickProgressBarSettings(
-                                bufferedColor: Colors.red.withOpacity(0.2),
-                                playedColor: Colors.red,
-                                handleColor: Colors.red,
-                                backgroundColor: Colors.grey,
+                                bufferedColor: primaryColor.withOpacity(0.2),
+                                playedColor: primaryColor,
+                                handleColor: primaryColor,
+                                backgroundColor: secondaryTextColor,
                               ),
                             )),
                       ),

@@ -40,13 +40,20 @@ class NotifikasiPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget notifTile(String img, String tite, String time) {
+    Widget notifTile(String img, String tite, String time, String id) {
       String apiTimeString = time;
       String timeAgo = calculateTimeDifference(apiTimeString);
 
       return Column(
         children: [
           ListTile(
+            onTap: () {
+              id == '1' || id == '2'
+                  ? Navigator.pushNamed(context, '/order-page')
+                  : id == '3'
+                      ? Navigator.pushNamed(context, '/edit-profile')
+                      : null;
+            },
             leading: Image.network('$img', width: 40, height: 40),
             title: Text(
               '$tite',
@@ -105,7 +112,8 @@ class NotifikasiPage extends StatelessWidget {
                     return notifTile(
                         '${notifState.notification!.notification![index].thumbnail}',
                         '${notifState.notification!.notification![index].message}',
-                        '${notifState.notification!.notification![index].createdAt}');
+                        '${notifState.notification!.notification![index].createdAt}',
+                        '${notifState.notification!.notification![index].notificationCategoryId}');
                   },
                 );
               } else {
@@ -113,7 +121,7 @@ class NotifikasiPage extends StatelessWidget {
                   child: Column(
                     children: [
                       SizedBox(height: 50),
-                      Image.asset('assets/img_null_notif.png'),
+                      // Image.asset('assets/img_null_notif.png'),
                       SizedBox(height: 20),
                       Text('Kamu tidak punya notifikasi',
                           style: primaryTextStyle.copyWith(fontWeight: bold)),

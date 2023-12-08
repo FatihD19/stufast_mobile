@@ -9,8 +9,7 @@ import 'package:stufast_mobile/providers/auth_provider.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/loading_button.dart';
 import 'package:stufast_mobile/widget/primary_button.dart';
-
-import '../widget/username_textfield.dart';
+import 'package:stufast_mobile/widget/username_textfield.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});

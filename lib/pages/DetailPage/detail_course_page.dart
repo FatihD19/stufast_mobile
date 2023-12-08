@@ -1,14 +1,20 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
 import 'dart:io';
+import 'dart:isolate';
+import 'dart:ui';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stufast_mobile/models/course_model.dart';
 import 'package:stufast_mobile/pages/DetailPage/detail_video.dart';
 import 'package:stufast_mobile/pages/DetailPage/form_rating_view.dart';
@@ -47,12 +53,55 @@ class DetailCoursePage extends StatefulWidget {
 class _DetailCoursePageState extends State<DetailCoursePage> {
   bool? loading;
   List selectedIds = [];
+  ReceivePort _port = ReceivePort();
+
+  PermissionStatus _status = PermissionStatus.denied;
+
+  Future<void> _checkPermissionStatus() async {
+    await Permission.storage.request();
+  }
 
   @override
   void initState() {
+    // _checkPermissionStatus();
+    super.initState();
     getInit();
 
-    super.initState();
+    IsolateNameServer.registerPortWithName(
+        _port.sendPort, 'downloader_send_port');
+    _port.listen((dynamic data) {
+      // String id = data[0];
+      DownloadTaskStatus status = data[1];
+      // int progress = data[2];
+      if (status == DownloadTaskStatus.complete) {
+        print('BERHASIL UNDUH');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.green,
+            content: Text(
+              'Sertifikat berhasil diunduh',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      }
+
+      setState(() {});
+    });
+    FlutterDownloader.registerCallback(downloadCallback);
+  }
+
+  @override
+  void dispose() {
+    IsolateNameServer.removePortNameMapping('downloader_send_port');
+    super.dispose();
+  }
+
+  @pragma('vm:entry-point')
+  static void downloadCallback(String id, int status, int progress) {
+    final SendPort? send =
+        IsolateNameServer.lookupPortByName('downloader_send_port');
+    send?.send([id, status, progress]);
   }
 
   checkFinishcourse() {
@@ -123,27 +172,6 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
       );
     }
   }
-
-  // Future<void> downloadPdf() async {
-  //   const url =
-  //       'http://dev.stufast.id/certificates/?type=bundling&id=2&user_id=39';
-
-  //   final response = await http.get(Uri.parse(url));
-
-  //   if (response.statusCode == 200) {
-  //     final bytes = response.bodyBytes;
-
-  //     final directory = await getDownloadsDirectory();
-  //     final filePath = '${directory!.path}/certificate.pdf';
-
-  //     File file = File(filePath);
-  //     await file.writeAsBytes(bytes);
-
-  //     print('File downloaded to: $filePath');
-  //   } else {
-  //     print('Failed to download file. Status code: ${response.statusCode}');
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -309,11 +337,21 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
                     ? SizedBox()
                     : InkWell(
                         onTap: () {
-                          String userId =
-                              context.read<AuthProvider>().user?.id ?? '';
                           detail?.is_review == true
-                              ? launchUrl(Uri.parse(
-                                  'https://stufast.id/public/dev2/certificates?type=course&id=${widget.idUserCourse}&user_id=$userId'))
+                              ? userDetailCourseProvider
+                                  .downloadSertif(
+                                    idCourse: widget.idUserCourse,
+                                  )
+                                  .then((value) => ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          backgroundColor: Colors.green,
+                                          content: Text(
+                                            'berhasil unduh sertifikar',
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ))
                               : showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
@@ -517,12 +555,25 @@ class _DetailCoursePageState extends State<DetailCoursePage> {
     }
 
     Widget infoReview() {
-      return Container(
-          padding: EdgeInsets.symmetric(horizontal: 24),
-          child: ListView(
-              children: detail!.review!
-                  .map((review) => ReviewTile(review))
-                  .toList()));
+      return detail!.review!.isEmpty
+          ? Column(
+              children: [
+                SizedBox(height: 50),
+                Image.asset('assets/img_empty_review.png'),
+                SizedBox(height: 24),
+                Text(
+                  'Belum ada review',
+                  style:
+                      primaryTextStyle.copyWith(fontWeight: bold, fontSize: 18),
+                ),
+              ],
+            )
+          : Container(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: ListView(
+                  children: detail!.review!
+                      .map((review) => ReviewTile(review))
+                      .toList()));
     }
 
     Widget content() {

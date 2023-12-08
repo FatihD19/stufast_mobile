@@ -103,7 +103,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
                   width: double.infinity,
                   height: 54,
                   child: PrimaryButton(
-                      text: 'Lanjut',
+                      text: 'Lanjut Kerjakan Resume',
                       onPressed: () {
                         Navigator.pushReplacement(
                           context,
@@ -159,6 +159,17 @@ class _QuizResultPageState extends State<QuizResultPage> {
               ),
             ),
           ),
+          TextButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DetailCoursePage(
+                              idUserCourse: "${widget.idCourse}",
+                              fromResumeOrQuiz: true,
+                            )));
+              },
+              child: Text('Kembali', style: secondaryTextStyle))
         ],
       );
     }
@@ -211,7 +222,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            'Hasil Quiz "${widget.idCourse}"',
+            'Hasil Quiz ',
             style: primaryTextStyle.copyWith(fontWeight: semiBold),
           ),
           elevation: 0, // Menghilangkan shadow
@@ -228,7 +239,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
                 Column(
                   children: [
                     score(),
-                    SizedBox(height: 40),
+                    SizedBox(height: 15),
                     rincian(),
                   ],
                 ),

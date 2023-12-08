@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stufast_mobile/models/user_model.dart';
@@ -57,6 +58,7 @@ class _EditProfileState extends State<EditProfile> {
     // }
 
     Future<void> _pickProfilePicture() async {
+      // await Permission.storage.request();
       final ImagePicker _picker = ImagePicker();
 // Pick an image
       final XFile? image = await _picker.pickImage(source: ImageSource.gallery);

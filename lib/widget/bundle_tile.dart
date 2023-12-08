@@ -223,6 +223,15 @@ class _BundlingTileState extends State<BundlingTile> {
                       setState(() {
                         isExpanded =
                             false; // Close the expansion when button is pressed
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DetailBundle(
+                                    idBundle: '${widget.userBundle.bundlingId}',
+                                    progressCourse: progressPercentage,
+                                    persen: persen,
+                                  )),
+                        );
                       });
                       // Add your action here
                     },

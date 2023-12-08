@@ -14,6 +14,7 @@ class BundlingModel {
   double? score;
   String? category_name;
   bool? owned;
+  bool? is_review;
   List<CourseModel>? courseBundling;
 
   BundlingModel({
@@ -29,6 +30,7 @@ class BundlingModel {
     this.score,
     this.category_name,
     this.owned,
+    this.is_review,
     this.courseBundling,
   });
 
@@ -45,6 +47,7 @@ class BundlingModel {
         score: json["score"]?.toDouble(),
         category_name: json["category_name"],
         owned: json["owned"],
+        is_review: json["is_review"],
         courseBundling: json["course_bundling"] == null
             ? []
             : List<CourseModel>.from(
@@ -64,6 +67,7 @@ class BundlingModel {
         "score": score,
         "category_name": category_name,
         "owned": owned,
+        "is_review": is_review,
         "course_bundling": courseBundling == null
             ? []
             : List<dynamic>.from(courseBundling!.map((x) => x.toJson())),

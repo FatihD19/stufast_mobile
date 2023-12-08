@@ -35,7 +35,7 @@ class _MyCoursePageState extends State<MyCoursePage> {
     await Provider.of<BundleProvider>(context, listen: false).getUserBundle();
   }
 
-  String selectedTag = 'Semua';
+  String selectedTag = 'Course';
   @override
   Widget build(BuildContext context) {
     UserCourseProvider userCourseProvider =
@@ -72,16 +72,26 @@ class _MyCoursePageState extends State<MyCoursePage> {
       );
     }
 
-    Widget nullCourse() {
+    Widget nullCourse({bool? isBundle}) {
       return Center(
           child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Image.asset('assets/img_nullCourse.png'),
-          Text(
-              'Belum ada Course yang kamu ambil, Yuk mulai cari course pilihanmu!',
-              textAlign: TextAlign.center,
-              style: primaryTextStyle.copyWith(fontWeight: bold)),
+          isBundle == true
+              ? Image.asset(
+                  'assets/img_empty_bundle.png',
+                  width: 200,
+                )
+              : Image.asset('assets/img_nullCourse.png'),
+          isBundle == true
+              ? Text(
+                  'Belum ada Bundling yang kamu ambil, Yuk mulai cari bundling pilihanmu!',
+                  textAlign: TextAlign.center,
+                  style: primaryTextStyle.copyWith(fontWeight: bold))
+              : Text(
+                  'Belum ada Course yang kamu ambil, Yuk mulai cari course pilihanmu!',
+                  textAlign: TextAlign.center,
+                  style: primaryTextStyle.copyWith(fontWeight: bold)),
           SizedBox(height: 12),
           Container(
               width: double.infinity,
@@ -101,7 +111,7 @@ class _MyCoursePageState extends State<MyCoursePage> {
     Widget filterTag() {
       return Row(
         children: [
-          tagView('Semua'),
+          // tagView('Semua'),
           tagView('Course'),
           tagView('Bundling'),
         ],
@@ -127,7 +137,7 @@ class _MyCoursePageState extends State<MyCoursePage> {
     // }
 
     Widget userCourseTile() {
-      return userBundleProvider.loading
+      return userCourseProvider.loading
           ? ListView.builder(
               physics: ClampingScrollPhysics(),
               shrinkWrap: true,
@@ -184,7 +194,7 @@ class _MyCoursePageState extends State<MyCoursePage> {
                     itemBuilder: (context, index) {
                       return CourseTileShimer();
                     })
-                : nullCourse();
+                : nullCourse(isBundle: true);
           }
         },
       );
@@ -295,18 +305,44 @@ class _MyCoursePageState extends State<MyCoursePage> {
           child: Container(
             // margin: EdgeInsets.only(top: 24),
             child: AppBar(
-                elevation: 0,
-                backgroundColor: Colors.white,
-                centerTitle: false,
-                leadingWidth: 0,
-                title: Container(
-                  padding: const EdgeInsets.only(left: 5.0),
-                  child: Text(
-                    'My Course',
-                    style: primaryTextStyle.copyWith(
-                        fontWeight: bold, fontSize: 18),
-                  ),
-                )),
+              elevation: 0,
+              backgroundColor: Colors.white,
+              centerTitle: false,
+              leadingWidth: 0,
+              title: Container(
+                padding: const EdgeInsets.only(left: 5.0),
+                child: Text(
+                  'Kursus Saya',
+                  style:
+                      primaryTextStyle.copyWith(fontWeight: bold, fontSize: 18),
+                ),
+              ),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return CoursePage();
+                        },
+                      ));
+                    },
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.search,
+                          color: Colors.black,
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          'Cari Course',
+                          style: thirdTextStyle.copyWith(fontWeight: bold),
+                        )
+                      ],
+                    ))
+              ],
+            ),
           ),
         ),
         body: Container(
@@ -316,9 +352,9 @@ class _MyCoursePageState extends State<MyCoursePage> {
               : ListView(
                   shrinkWrap: true,
                   children: [
-                    SizedBox(height: 24),
+                    SizedBox(height: 10),
                     filterTag(),
-                    SizedBox(height: 24),
+                    SizedBox(height: 14),
                     selectedTag == 'Semua'
                         ?
                         // userCourseProvider.userCourses.length == 0 &&

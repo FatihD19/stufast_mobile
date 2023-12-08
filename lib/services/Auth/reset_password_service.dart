@@ -64,4 +64,24 @@ class ResetPasswordService {
       throw Exception("Failed to send reset email");
     }
   }
+
+  Future<bool> changePassword(
+      String email, String oldPass, String newPass) async {
+    var headers = {'Content-Type': 'application/json'};
+    var url = Uri.parse('$baseurl/changePassword');
+    var body = jsonEncode({
+      'xemail': email,
+      'xpassword': oldPass,
+      'xnew-password': newPass,
+    });
+    var response = await http.post(url, headers: headers, body: body);
+
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

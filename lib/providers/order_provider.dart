@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:stufast_mobile/models/invoice_model.dart';
 import 'package:stufast_mobile/models/orderHistoryModel.dart';
+import 'package:stufast_mobile/services/checkout_services.dart';
 import 'package:stufast_mobile/services/order_service.dart';
 
 class OrderProvider with ChangeNotifier {
@@ -37,6 +38,16 @@ class OrderProvider with ChangeNotifier {
       loading = false;
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future<bool> cancelOrder(String orderID) async {
+    try {
+      bool cancel = await CheckOutService().cancelOrder(orderID);
+      return cancel;
+    } catch (e) {
+      print(e);
+      return false;
     }
   }
 }

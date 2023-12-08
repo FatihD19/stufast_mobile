@@ -34,7 +34,7 @@ class CheckOutService {
     }
   }
 
-  Future<OrderModel> orderItem(List id, {String? kupon}) async {
+  Future<OrderModel> orderItem(List id, {String? kupon, String? type}) async {
     var url = Uri.parse(AuthService.baseUrl + '/order/generatesnap-2');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
@@ -43,7 +43,7 @@ class CheckOutService {
       'Authorization': 'Bearer $token',
     };
     var body = jsonEncode({
-      "item_id": id, "type": "cart", //langsung course/bundling
+      "item_id": id, "type": "$type", //langsung course/bundling
       "code": '$kupon'
     });
 
@@ -57,6 +57,29 @@ class CheckOutService {
       return order;
     } else {
       throw Exception('Gagal get chart');
+    }
+  }
+
+  Future<bool> cancelOrder(String orderID) async {
+    var url = Uri.parse(AuthService.baseUrl + '/order/cancel');
+    final prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+    var body = jsonEncode({
+      "order_id": orderID,
+    });
+
+    var response = await http.post(url, headers: headers, body: body);
+
+    print('CANCEL ORDER' + response.body);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
     }
   }
 

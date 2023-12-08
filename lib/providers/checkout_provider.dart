@@ -40,9 +40,10 @@ class CheckoutProvider with ChangeNotifier {
     }
   }
 
-  Future<void> orderItem(List id, {String? kupon}) async {
+  Future<void> orderItem(List id, {String? kupon, String? type}) async {
     try {
-      OrderModel order = await CheckOutService().orderItem(id, kupon: kupon);
+      OrderModel order =
+          await CheckOutService().orderItem(id, kupon: kupon, type: type);
       _order = order;
     } catch (e) {
       print(e);

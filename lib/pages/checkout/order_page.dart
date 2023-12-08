@@ -7,16 +7,19 @@ import 'package:stufast_mobile/widget/orderTile.dart';
 import '../../theme.dart';
 
 class OrderPage extends StatefulWidget {
-  const OrderPage({super.key});
+  String? orderType;
+  OrderPage({this.orderType, super.key});
 
   @override
   State<OrderPage> createState() => _OrderPageState();
 }
 
 class _OrderPageState extends State<OrderPage> {
+  String selectedTag = '';
   @override
   void initState() {
     // TODO: implement initState
+    selectedTag = widget.orderType ?? 'pending';
     getOrder();
     super.initState();
   }
@@ -26,7 +29,6 @@ class _OrderPageState extends State<OrderPage> {
         .getorderHistory(selectedTag);
   }
 
-  String selectedTag = 'pending';
   @override
   Widget build(BuildContext context) {
     OrderProvider orderProvider = Provider.of<OrderProvider>(context);
@@ -74,13 +76,29 @@ class _OrderPageState extends State<OrderPage> {
     Widget orderList() {
       return orderProvider.loading
           ? Center(child: CircularProgressIndicator())
-          : ListView(
-              physics: ClampingScrollPhysics(),
-              shrinkWrap: true,
-              children: orderProvider.orderHistoryPending
-                  .map((order) => OrderTile(order))
-                  .toList(),
-            );
+          : orderProvider.orderHistoryPending.isEmpty
+              ? Center(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.2),
+                      Image.asset('assets/img_empty_order.png'),
+                      SizedBox(height: 24),
+                      Text(
+                        'Tidak ada order',
+                        style: primaryTextStyle.copyWith(
+                            fontWeight: semiBold, fontSize: 18),
+                      ),
+                    ],
+                  ),
+                )
+              : ListView(
+                  physics: ClampingScrollPhysics(),
+                  shrinkWrap: true,
+                  children: orderProvider.orderHistoryPending
+                      .map((order) => OrderTile(order))
+                      .toList(),
+                );
     }
 
     return Scaffold(

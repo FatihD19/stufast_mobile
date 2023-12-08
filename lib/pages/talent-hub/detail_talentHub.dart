@@ -96,7 +96,7 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
                       shape: BoxShape.circle,
                       image: DecorationImage(
                         image: NetworkImage(
-                            "https://stufast.id/public/dev2/public/public/upload/users/${detailTalent?.user?.profilePicture}"),
+                            "https://stufast.id/public/dev2/upload/users/${detailTalent?.user?.profilePicture}"),
                         fit: BoxFit.cover,
                       ),
                     ),

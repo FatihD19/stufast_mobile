@@ -1,8 +1,14 @@
+import 'dart:isolate';
+import 'dart:ui';
+
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:stufast_mobile/models/bundling_model.dart';
+import 'package:stufast_mobile/pages/DetailPage/form_rating_view.dart';
 import 'package:stufast_mobile/pages/checkout/checkout_page.dart';
 import 'package:stufast_mobile/providers/bundle_provider.dart';
 import 'package:stufast_mobile/theme.dart';
@@ -33,9 +39,48 @@ class DetailBundle extends StatefulWidget {
 class _DetailBundleState extends State<DetailBundle> {
   List selectedIds = [];
   bool? loading;
+  ReceivePort _port = ReceivePort();
+
+  @override
   void initState() {
     getInit();
+    IsolateNameServer.registerPortWithName(
+        _port.sendPort, 'downloader_send_port');
+    _port.listen((dynamic data) {
+      // String id = data[0];
+      DownloadTaskStatus status = data[1];
+      // int progress = data[2];
+      if (status == DownloadTaskStatus.complete) {
+        print('BERHASIL UNDUH');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.green,
+            content: Text(
+              'Sertifikat berhasil diunduh',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      }
+      setState(() {});
+    });
+    FlutterDownloader.registerCallback(downloadCallback);
     super.initState();
+  }
+
+  checkFinishBundle() {
+    if (widget.progressCourse == 1.0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await AwesomeDialog(
+          context: context,
+          dialogType: DialogType.success,
+          animType: AnimType.rightSlide,
+          title: 'Selamat Anda telah menyelesaikan Bundling',
+          desc: 'Silahkan unduh sertifikat anda',
+          btnOkOnPress: () {},
+        ).show();
+      });
+    }
   }
 
   getInit() async {
@@ -44,10 +89,23 @@ class _DetailBundleState extends State<DetailBundle> {
     });
     await Provider.of<BundleProvider>(context, listen: false)
         .getDetailBundle(widget.idBundle);
-
+    checkFinishBundle();
     setState(() {
       loading = false;
     });
+  }
+
+  @override
+  void dispose() {
+    IsolateNameServer.removePortNameMapping('downloader_send_port');
+    super.dispose();
+  }
+
+  @pragma('vm:entry-point')
+  static void downloadCallback(String id, int status, int progress) {
+    final SendPort? send =
+        IsolateNameServer.lookupPortByName('downloader_send_port');
+    send?.send([id, status, progress]);
   }
 
   handleAddChart() async {
@@ -252,13 +310,53 @@ class _DetailBundleState extends State<DetailBundle> {
               ],
             ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Image.asset('assets/icon_tag.png'),
-                SizedBox(width: 8),
-                Text(
-                  '${detail?.category_name}',
-                  style: secondaryTextStyle,
+                Row(
+                  children: [
+                    Image.asset('assets/icon_tag.png'),
+                    SizedBox(width: 8),
+                    Text(
+                      '${detail?.category_name}',
+                      style: secondaryTextStyle,
+                    ),
+                  ],
                 ),
+                widget.progressCourse < 1.0
+                    ? SizedBox()
+                    : InkWell(
+                        onTap: () {
+                          detail?.is_review == true
+                              ? context
+                                  .read<UserCourseProvider>()
+                                  .downloadSertif(
+                                    isBundling: true,
+                                    idBundle: detail?.bundlingId,
+                                  )
+                              : showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return RatingFormDialog(
+                                      widget.idBundle,
+                                      isBundle: true,
+                                    );
+                                  },
+                                );
+                        },
+                        child: Chip(
+                          label: Row(
+                            children: [
+                              Icon(Icons.download_for_offline_outlined,
+                                  color: buttonTextColor),
+                              SizedBox(width: 4),
+                              Text('Unduh Sertifikat',
+                                  style:
+                                      buttonTextStyle.copyWith(fontSize: 12)),
+                            ],
+                          ),
+                          backgroundColor: primaryColor,
+                        ),
+                      ),
               ],
             ),
             SizedBox(height: 18),
@@ -276,7 +374,7 @@ class _DetailBundleState extends State<DetailBundle> {
               textAlign: TextAlign.justify,
             ),
             SizedBox(height: 8),
-            Text('Course List',
+            Text('Daftar Kursus',
                 style: primaryTextStyle.copyWith(fontWeight: bold)),
             Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
