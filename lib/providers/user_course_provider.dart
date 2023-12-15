@@ -6,16 +6,27 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stufast_mobile/models/bundling_model.dart';
 import 'package:stufast_mobile/models/course_model.dart';
+import 'package:stufast_mobile/models/user_course_model.dart';
 import 'package:stufast_mobile/services/Course/user_course_service.dart';
 
 class UserCourseProvider with ChangeNotifier {
   List<CourseModel> _userCourses = [];
   List<CourseModel> get userCourses => _userCourses;
 
+  bool loadingCourse = true;
+
   bool loading = true;
 
   set userCourses(List<CourseModel> userCourses) {
     _userCourses = userCourses;
+    notifyListeners();
+  }
+
+  UserCourseModel? _userCourse;
+  UserCourseModel? get userCourse => _userCourse;
+
+  set userCourse(UserCourseModel? userCourse) {
+    _userCourse = userCourse;
     notifyListeners();
   }
 
@@ -27,16 +38,27 @@ class UserCourseProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getUserCourses() async {
+  Future<void> getUserCourse() async {
     try {
-      List<CourseModel> userCourses = await UserCourseService().getUserCourse();
-      _userCourses = userCourses;
-      loading = false;
+      UserCourseModel userCourse = await UserCourseService().getUserCourse();
+      _userCourse = userCourse;
+      loadingCourse = false;
       notifyListeners();
     } catch (e) {
       print(e);
     }
   }
+
+  // Future<void> getUserCourses() async {
+  //   try {
+  //     List<CourseModel> userCourses = await UserCourseService().getUserCourse();
+  //     _userCourses = userCourses;
+  //     loading = false;
+  //     notifyListeners();
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
   Future<void> getDetailUserCourse(String id) async {
     try {
@@ -71,10 +93,10 @@ class UserCourseProvider with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var urlSertif = isBundling == true
-        ? 'https://stufast.id/public/dev2/public/certificates?type=bundling&id=${idBundle}&token=$token'
+        ? 'http://dev.stufast.id/certificates?type=bundling&id=${idBundle}&token=$token'
         : courseBundle == true
-            ? 'https://stufast.id/public/dev2/public/certificates?type=course-bundling&id=${idCourse}&bundl=${idBundle}&token=$token'
-            : 'https://stufast.id/public/dev2/public/certificates?type=course&id=${idCourse}&token=$token';
+            ? 'http://dev.stufast.id/certificates?type=course-bundling&id=${idCourse}&bundl=${idBundle}&token=$token'
+            : 'http://dev.stufast.id/certificates?type=course&id=${idCourse}&token=$token';
     await Permission.storage.request();
     final baseStorage = await getExternalStorageDirectory();
     try {
@@ -98,5 +120,12 @@ class UserCourseProvider with ChangeNotifier {
       userCourses = [];
       notifyListeners();
     }
+  }
+
+  void dispose() {
+    userCourse = null;
+    detailCourse = null;
+    loadingCourse = true;
+    notifyListeners();
   }
 }

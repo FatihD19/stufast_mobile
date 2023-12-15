@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stufast_mobile/models/talent_hub_model.dart';
+import 'package:stufast_mobile/pages/talent-hub/cv_preview.dart';
 import 'package:stufast_mobile/providers/talentHub_provider.dart';
 import 'package:stufast_mobile/widget/achievment_tile.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -76,7 +77,7 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
     Widget headProfile() {
       return Container(
         width: 378,
-        height: 311,
+        height: 330,
         color: Color(0xffF2F4F6),
         child: Column(
           children: [
@@ -87,16 +88,16 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
                   child: Image.asset('assets/bg_detail_talent.png'),
                 ),
                 Positioned(
-                  top: 4, // Sesuaikan dengan posisi vertikal yang Anda inginkan
+                  top: 6, // Sesuaikan dengan posisi vertikal yang Anda inginkan
                   left: (MediaQuery.of(context).size.width) / 3.1,
                   child: Container(
-                    width: 90,
-                    height: 90,
+                    width: 80,
+                    height: 80,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
                         image: NetworkImage(
-                            "https://stufast.id/public/dev2/upload/users/${detailTalent?.user?.profilePicture}"),
+                            "http://dev.stufast.id/public/upload/users/${detailTalent?.user?.profilePicture}"),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -104,14 +105,18 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
                 ),
               ],
             ),
+            SizedBox(height: 16),
             Text(
               '${detailTalent?.user?.fullname}',
               style: primaryTextStyle.copyWith(fontSize: 18, fontWeight: bold),
             ),
-            Text(
-              '${detailTalent?.user?.address}',
-              style: secondaryTextStyle.copyWith(
-                  fontSize: 12, fontWeight: semiBold),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                '${detailTalent?.user?.address}',
+                style: secondaryTextStyle.copyWith(
+                    fontSize: 12, fontWeight: semiBold),
+              ),
             ),
             SizedBox(height: 13),
             Row(
@@ -211,7 +216,12 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
               )
             : ListView(
                 shrinkWrap: true,
-                children: [headProfile(), SizedBox(height: 17), pencapaian()],
+                children: [
+                  headProfile(),
+                  SizedBox(height: 17),
+                  CvPreview(),
+                  pencapaian()
+                ],
               ),
       ),
     );

@@ -31,9 +31,13 @@ class _MyCoursePageState extends State<MyCoursePage> {
 
   getInit() async {
     await Provider.of<UserCourseProvider>(context, listen: false)
-        .getUserCourses();
-    await Provider.of<BundleProvider>(context, listen: false).getUserBundle();
+        .getUserCourse();
+    // await Provider.of<UserCourseProvider>(context, listen: false)
+    //     .getUserCourses();
+    // await Provider.of<BundleProvider>(context, listen: false).getUserBundle();
   }
+
+  bool loading = false;
 
   String selectedTag = 'Course';
   @override
@@ -137,23 +141,25 @@ class _MyCoursePageState extends State<MyCoursePage> {
     // }
 
     Widget userCourseTile() {
-      return userCourseProvider.loading
-          ? ListView.builder(
-              physics: ClampingScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: 2,
-              itemBuilder: (context, index) {
-                return CourseTileShimer();
-              })
-          : userCourseProvider.userCourses.length == 0
-              ? nullCourse()
-              : ListView(
-                  physics: ClampingScrollPhysics(),
-                  shrinkWrap: true,
-                  children: userCourseProvider.userCourses
-                      .map((userCourse) => CourseTile(userCourse))
-                      .toList(),
-                );
+      if (userCourseProvider.loadingCourse == true) {
+        return ListView.builder(
+            physics: ClampingScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: 2,
+            itemBuilder: (context, index) {
+              return CourseTileShimer();
+            });
+      } else {
+        return userCourseProvider.userCourse!.course.isNotEmpty
+            ? ListView(
+                physics: ClampingScrollPhysics(),
+                shrinkWrap: true,
+                children: userCourseProvider.userCourse!.course
+                    .map((userCourse) => CourseTile(userCourse))
+                    .toList(),
+              )
+            : nullCourse();
+      }
     }
 
     // Widget userBundleTile() {
@@ -167,33 +173,25 @@ class _MyCoursePageState extends State<MyCoursePage> {
     // }
 
     Widget userBundleTile() {
-      return Consumer<BundleProvider>(
+      return Consumer<UserCourseProvider>(
         builder: (context, bundleState, _) {
-          if (bundleState.userBundle.isNotEmpty) {
-            return userBundleProvider.loading
-                ? ListView.builder(
-                    physics: ClampingScrollPhysics(),
+          if (bundleState.loadingCourse == true) {
+            return ListView.builder(
+                physics: ClampingScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: 4,
+                itemBuilder: (context, index) {
+                  return CourseTileShimer();
+                });
+          } else {
+            return bundleState.userCourse!.bundling.isNotEmpty
+                ? ListView(
                     shrinkWrap: true,
-                    itemCount: 4,
-                    itemBuilder: (context, index) {
-                      return CourseTileShimer();
-                    })
-                : ListView(
                     physics: ClampingScrollPhysics(),
-                    shrinkWrap: true,
-                    children: userBundleProvider.userBundle
+                    children: bundleState.userCourse!.bundling
                         .map((userBundle) => BundlingTile(userBundle))
                         .toList(),
-                  );
-          } else {
-            return userBundleProvider.loading == true
-                ? ListView.builder(
-                    physics: ClampingScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: 4,
-                    itemBuilder: (context, index) {
-                      return CourseTileShimer();
-                    })
+                  )
                 : nullCourse(isBundle: true);
           }
         },
@@ -291,6 +289,57 @@ class _MyCoursePageState extends State<MyCoursePage> {
       );
     }
 
+    Widget learnProgress() {
+      int progress = userCourseProvider.userCourse?.learningProgress ?? 90;
+      double progressPercent = progress / 100;
+      int progressPercentInt = (progressPercent * 100).toInt();
+      return Container(
+        decoration: BoxDecoration(
+          color: Color(0xFAFAFA), // Warna background FAFAFA
+          border: Border.all(color: Color(0xF3F3F3)), // Warna garis tepi F3F3F3
+          borderRadius: BorderRadius.circular(8), // Sudut border radius
+        ),
+        child: Card(
+          clipBehavior: Clip.antiAlias,
+          elevation: 3,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Container(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    'Progress Belajar',
+                    style: primaryTextStyle.copyWith(
+                        fontWeight: bold, fontSize: 16),
+                  ),
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: LinearProgressIndicator(
+                        value: progressPercent,
+                        backgroundColor: progressPercent == 1.0
+                            ? primaryColor
+                            : Color(0xffF0DB96),
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(Color(0xffFEC202)),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Text(
+                      '${progressPercentInt}%',
+                      style: primaryTextStyle.copyWith(fontWeight: bold),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     return WillPopScope(
       onWillPop: () async {
         Navigator.push(
@@ -349,25 +398,38 @@ class _MyCoursePageState extends State<MyCoursePage> {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: context.read<AuthProvider>().user?.fullname == null
               ? nullCourse()
-              : ListView(
-                  shrinkWrap: true,
-                  children: [
-                    SizedBox(height: 10),
-                    filterTag(),
-                    SizedBox(height: 14),
-                    selectedTag == 'Semua'
-                        ?
-                        // userCourseProvider.userCourses.length == 0 &&
-                        //         userBundleProvider.userBundle.length == 0
-                        //     ? nullCourse()
-                        //     :
-                        Column(
-                            children: [userBundleTile(), userCourseTile()],
-                          )
-                        : selectedTag == 'Course'
-                            ? userCourseTile()
-                            : userBundleTile()
-                  ],
+              : RefreshIndicator(
+                  displacement: 10,
+                  backgroundColor: primaryColor,
+                  color: Colors.white,
+                  strokeWidth: 3,
+                  triggerMode: RefreshIndicatorTriggerMode.onEdge,
+                  onRefresh: () async {
+                    await Provider.of<BundleProvider>(context, listen: false)
+                        .getUserBundle();
+                  },
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      SizedBox(height: 10),
+                      filterTag(),
+                      SizedBox(height: 10),
+                      learnProgress(),
+                      SizedBox(height: 7),
+                      selectedTag == 'Semua'
+                          ?
+                          // userCourseProvider.userCourses.length == 0 &&
+                          //         userBundleProvider.userBundle.length == 0
+                          //     ? nullCourse()
+                          //     :
+                          Column(
+                              children: [userBundleTile(), userCourseTile()],
+                            )
+                          : selectedTag == 'Course'
+                              ? userCourseTile()
+                              : userBundleTile()
+                    ],
+                  ),
                 ),
         ),
       ),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stufast_mobile/services/Auth/auth_service.dart';
 
 class ResetPasswordService {
@@ -65,14 +66,17 @@ class ResetPasswordService {
     }
   }
 
-  Future<bool> changePassword(
-      String email, String oldPass, String newPass) async {
-    var headers = {'Content-Type': 'application/json'};
+  Future<bool> changePassword(String oldPass, String newPass) async {
     var url = Uri.parse('$baseurl/changePassword');
+    final prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
     var body = jsonEncode({
-      'xemail': email,
       'xpassword': oldPass,
-      'xnew-password': newPass,
+      'new-password': newPass,
     });
     var response = await http.post(url, headers: headers, body: body);
 

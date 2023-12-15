@@ -7,6 +7,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stufast_mobile/main.dart';
+import 'package:stufast_mobile/pages/Hire/hire_page.dart';
 import 'package:stufast_mobile/pages/home/home_page.dart';
 import 'package:stufast_mobile/pages/home/my_course_page.dart';
 import 'package:stufast_mobile/pages/home/profile_page.dart';
@@ -18,7 +19,8 @@ import 'package:stufast_mobile/theme.dart';
 import '../succsess_page.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
+  int? navIndex;
+  MainPage({this.navIndex, Key? key}) : super(key: key);
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -26,6 +28,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   PermissionStatus _status = PermissionStatus.denied;
+  String notifMessTemp = '';
 
   Future<void> _checkPermissionStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -48,8 +51,12 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
+  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  int? currentIndex;
   @override
   void initState() {
+    currentIndex = widget.navIndex ?? 0;
     _checkPermissionStatus();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification!;
@@ -69,6 +76,9 @@ class _MainPageState extends State<MainPage> {
                 icon: 'launch_background',
               ),
             ));
+        setState(() {
+          notifMessTemp = "${notification.title}";
+        });
         if ("${notification.title}" == 'Pesanan dibatalkan') {
           setState(() {
             print(
@@ -96,25 +106,32 @@ class _MainPageState extends State<MainPage> {
         }
       }
     });
-
+    _flutterLocalNotificationsPlugin.initialize(
+        InitializationSettings(
+          android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        ), onDidReceiveNotificationResponse: (payload) {
+      // handle interaction when app is active for android
+      if (notifMessTemp.contains('kabar')) {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => HirePage()));
+      } else if (notifMessTemp.contains('berhasil')) {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SuccsessPage(
+                      titleMess: "Selamat Pembayaran anda Berhasil",
+                      mess: "silahkan buka course di halaman My Course",
+                      pay: true,
+                    )));
+      }
+    });
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print(
           'A new onMessageOpenedApp event was published! ${message.messageType}');
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => SuccsessPage(
-                    titleMess: "Selamat Pembayaran anda Berhasil",
-                    mess: "silahkan buka course di halaman My Course",
-                    pay: true,
-                  )));
-      // Navigator.pushNamed(context, '/message',
-      //     arguments: MessageArguments(message, true));
     });
     super.initState();
   }
 
-  int currentIndex = 0;
   Future<bool> showExitPopup() async {
     return await showDialog(
           //show confirm dialogue
@@ -162,7 +179,7 @@ class _MainPageState extends State<MainPage> {
               showSelectedLabels: false, // <-- HERE
               showUnselectedLabels: false, // <-- AND HERE
               backgroundColor: primaryColor,
-              currentIndex: currentIndex,
+              currentIndex: currentIndex ?? 0,
               onTap: (value) {
                 print(value);
                 setState(() {

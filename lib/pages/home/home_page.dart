@@ -29,7 +29,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool? loading;
+  // bool? loading;
   int? jumlahCart;
   String? selectedCourse;
   @override
@@ -38,7 +38,8 @@ class _HomePageState extends State<HomePage> {
     getInit();
 
     Provider.of<WebinarProvider>(context, listen: false).getWebinar(false);
-    Provider.of<UserCourseProvider>(context, listen: false).getUserCourses();
+    // Provider.of<UserCourseProvider>(context, listen: false).getUserCourses();
+    Provider.of<UserCourseProvider>(context, listen: false).getUserCourse();
     Provider.of<NotificationProvider>(context, listen: false).getNotification();
 
     // jumlahCart =
@@ -48,9 +49,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   getInit() async {
-    setState(() {
-      loading = true;
-    });
+    // setState(() {
+    //   loading = true;
+    // });
     Provider.of<ChartProvider>(context, listen: false).getChart();
     await Provider.of<TalentHubProvider>(context, listen: false)
         .getTalentHub(index: 1);
@@ -62,9 +63,9 @@ class _HomePageState extends State<HomePage> {
     //       ?.length;
     // });
 
-    setState(() {
-      loading = false;
-    });
+    // setState(() {
+    //   loading = false;
+    // });
   }
 
   int currentIndex = 0;

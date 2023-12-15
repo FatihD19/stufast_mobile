@@ -5,7 +5,7 @@ import 'package:stufast_mobile/models/bundling_model.dart';
 import 'package:http/http.dart' as http;
 
 class BundleService {
-  String baseUrl = 'https://stufast.id/public/dev2/public/api';
+  String baseUrl = 'http://dev.stufast.id/api';
 
   Future<List<BundlingModel>> getBundle() async {
     var url = Uri.parse('$baseUrl/bundling/all');

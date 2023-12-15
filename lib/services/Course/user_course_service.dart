@@ -3,15 +3,16 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stufast_mobile/models/bundling_model.dart';
 import 'package:stufast_mobile/models/course_model.dart';
+import 'package:stufast_mobile/models/user_course_model.dart';
 
 import 'package:stufast_mobile/models/user_model.dart';
 import 'package:stufast_mobile/services/Auth/auth_service.dart';
 
 class UserCourseService {
-  String baseUrl = 'https://stufast.id/public/dev2/public/api';
+  String baseUrl = 'http://dev.stufast.id/api';
 
-  Future<List<CourseModel>> getUserCourse() async {
-    var url = Uri.parse(AuthService.baseUrl + '/profile/course');
+  Future<UserCourseModel> getUserCourse() async {
+    var url = Uri.parse(baseUrl + '/profile/course');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -21,17 +22,36 @@ class UserCourseService {
     var response = await http.get(url, headers: headers);
     print('USER_COURSE ' + response.body);
     if (response.statusCode == 200) {
-      List data = jsonDecode(response.body)['course'];
-      List<CourseModel> course = [];
-
-      for (var item in data) {
-        course.add(CourseModel.fromJson(item));
-      }
-      return course;
+      var data = jsonDecode(response.body);
+      UserCourseModel userCourse = UserCourseModel.fromJson(data);
+      return userCourse;
     } else {
       throw Exception('failed load usercourse');
     }
   }
+
+  // Future<List<CourseModel>> getUserCourse() async {
+  //   var url = Uri.parse(AuthService.baseUrl + '/profile/course');
+  //   final prefs = await SharedPreferences.getInstance();
+  //   var token = prefs.getString('token');
+  //   var headers = {
+  //     'Content-Type': 'application/json',
+  //     'Authorization': 'Bearer $token',
+  //   };
+  //   var response = await http.get(url, headers: headers);
+  //   print('USER_COURSE ' + response.body);
+  //   if (response.statusCode == 200) {
+  //     List data = jsonDecode(response.body)['course'];
+  //     List<CourseModel> course = [];
+
+  //     for (var item in data) {
+  //       course.add(CourseModel.fromJson(item));
+  //     }
+  //     return course;
+  //   } else {
+  //     throw Exception('failed load usercourse');
+  //   }
+  // }
 
   Future<List<BundlingModel>> getUserBundle() async {
     var url = Uri.parse(AuthService.baseUrl + '/profile/course');

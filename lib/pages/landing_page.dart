@@ -20,7 +20,7 @@ class LandingPage extends StatelessWidget {
               child: Image.asset('assets/landing_ui_head.png')),
           Container(
               width: 538,
-              height: 332,
+              height: 312,
               alignment: Alignment.centerRight,
               child: Image.asset('assets/landing_ui_body.png')),
         ],

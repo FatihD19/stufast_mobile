@@ -24,32 +24,32 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   TextEditingController _oldPasswordController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _confirmPasswordController = TextEditingController();
+  handleChangePassword() async {
+    // ResetPasswordService resetPasswordService = ResetPasswordService();
+    print('OLD' + _oldPasswordController.text);
+    print('NEW' + _passwordController.text);
+    if (await ResetPasswordService().changePassword(
+      _oldPasswordController.text,
+      _confirmPasswordController.text,
+    )) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Password diubah'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Password gagal diubah'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    handleChangePassword() async {
-      ResetPasswordService resetPasswordService = ResetPasswordService();
-      if (await resetPasswordService.changePassword(
-        context.read<AuthProvider>().user?.email ?? '',
-        _oldPasswordController.text,
-        _passwordController.text,
-      )) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => SuccsessPage(
-                    titleMess: 'Password berhasil diubah',
-                  )),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Password gagal diubah'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-
     return Scaffold(
         appBar: AppBar(
           title: Text(

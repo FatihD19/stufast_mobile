@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stufast_mobile/models/cv_model.dart';
+import 'package:stufast_mobile/models/user_course_model.dart';
 import 'package:stufast_mobile/models/user_model.dart';
 import 'package:stufast_mobile/pages/login_page.dart';
 import 'package:stufast_mobile/providers/auth_provider.dart';
@@ -25,8 +26,9 @@ class ProfilePage extends StatelessWidget {
     logout() async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.remove('token');
-      context.read<UserCourseProvider>().userCourses = [];
-      context.read<BundleProvider>().userBundle = [];
+      // context.read<UserCourseProvider>().userCourses = [];
+      // context.read<BundleProvider>().userBundle = [];
+      context.read<UserCourseProvider>().dispose();
       prefs.remove('saveLogin');
       await LoginApi.logout().then((value) => print('suksesLogout'));
       Navigator.pushAndRemoveUntil(
@@ -179,6 +181,31 @@ class ProfilePage extends StatelessWidget {
             child: ListTile(
               leading: Icon(Icons.shopping_cart_outlined),
               title: Text('Riwayat Order',
+                  style: primaryTextStyle.copyWith(fontWeight: semiBold)),
+              // trailing: Icon(Icons.arrow_forward_ios_rounded),
+            ),
+          ),
+        ),
+      );
+    }
+
+    Widget hireInfo() {
+      return InkWell(
+        onTap: () {
+          Navigator.pushNamed(context, '/hire-page');
+        },
+        child: Container(
+          decoration: BoxDecoration(
+              color: Color(0xF3F3F3), // Warna background FAFAFA
+              border:
+                  Border.all(color: Color(0xF3F3F3)), // Warna garis tepi F3F3F3
+              borderRadius: BorderRadius.circular(8)), // Sudut border radius
+          child: Card(
+            clipBehavior: Clip.antiAlias,
+            elevation: 3,
+            child: ListTile(
+              leading: Icon(Icons.business_rounded),
+              title: Text('Daftar Tawaran',
                   style: primaryTextStyle.copyWith(fontWeight: semiBold)),
               // trailing: Icon(Icons.arrow_forward_ios_rounded),
             ),
@@ -387,7 +414,7 @@ class ProfilePage extends StatelessWidget {
                 children: [
                   header(),
                   SizedBox(height: 28),
-                  learnProgress(),
+                  hireInfo(),
                   navCv(),
                   orderBtn(),
                   SizedBox(height: 12),

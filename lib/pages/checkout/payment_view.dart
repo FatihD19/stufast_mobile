@@ -70,14 +70,13 @@ class _PaymentViewState extends State<PaymentView> {
         body: SafeArea(
           child: WebView(
             initialUrl:
-                'https://stufast.id/public/dev2/public/api/order/web-view?token=${widget.tokenPay}',
+                'http://dev.stufast.id/api/order/web-view?token=${widget.tokenPay}',
             // onWebViewCreated: (WebViewController webViewController) {
             //   _controller.complete(webViewController);
             // },
             javascriptMode: JavascriptMode.unrestricted,
             navigationDelegate: (NavigationRequest request) {
-              if (request.url.startsWith(
-                  'https://stufast.id/public/dev2/public/snap/sukses')) {
+              if (request.url.startsWith('http://dev.stufast.id/snap/sukses')) {
                 // Navigasi ke halaman SuccessPage jika URL sesuai
                 Navigator.pushNamed(context, '/user-course');
                 // Navigator.push(
@@ -90,8 +89,8 @@ class _PaymentViewState extends State<PaymentView> {
                 //           )),
                 // );
                 return NavigationDecision.prevent;
-              } else if (request.url.startsWith(
-                  'https://stufast.id/public/dev2/public/snap/batal')) {
+              } else if (request.url
+                  .startsWith('http://dev.stufast.id/snap/batal')) {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return OrderPage();
                 }));

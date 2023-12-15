@@ -354,7 +354,8 @@ class _InvoicePageState extends State<InvoicePage> {
                   content(),
                   total(),
                   SizedBox(height: 20),
-                  actionBtn()
+                  actionBtn(),
+                  SizedBox(height: 20),
                 ],
               ),
       ),

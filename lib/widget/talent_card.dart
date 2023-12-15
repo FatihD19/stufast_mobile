@@ -33,7 +33,7 @@ class TalentCard extends StatelessWidget {
                   shape: BoxShape.circle,
                   image: DecorationImage(
                     image: NetworkImage(
-                        "https://stufast.id/public/dev2/public/upload/users/${talent.profilePicture}"),
+                        "http://dev.stufast.id/upload/users/${talent.profilePicture}"),
                     fit: BoxFit.cover,
                   ),
                 ),

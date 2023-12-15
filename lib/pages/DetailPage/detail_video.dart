@@ -607,7 +607,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
                         videoTile(),
                         TaskView('${widget.idCourse}',
                             flickManager: flickManager),
-                        Center(child: Text('diskusi')),
+
                         // Konten untuk tab 'Project' bisa Anda tambahkan di sini
                       ],
                     ),

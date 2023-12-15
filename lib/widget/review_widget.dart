@@ -23,7 +23,7 @@ class ReviewTile extends StatelessWidget {
           leading: ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Image.network(
-              'https://stufast.id/public/dev2/public/upload/users/${review.profilePicture}',
+              'http://dev.stufast.id/upload/users/${review.profilePicture}',
               width: 70,
               height: 70,
               fit: BoxFit.cover,

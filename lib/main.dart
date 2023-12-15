@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 
 import 'package:stufast_mobile/pages/Faq-Support/contact_us_page.dart';
 import 'package:stufast_mobile/pages/Faq-Support/faq_page.dart';
+import 'package:stufast_mobile/pages/Hire/hire_page.dart';
 import 'package:stufast_mobile/pages/change_password_page.dart';
 import 'package:stufast_mobile/pages/checkout/add_chart_page.dart';
 import 'package:stufast_mobile/pages/checkout/checkout_page.dart';
@@ -34,6 +35,7 @@ import 'package:stufast_mobile/providers/checkout_provider.dart';
 import 'package:stufast_mobile/providers/course_provider.dart';
 import 'package:stufast_mobile/providers/cv_provider.dart';
 import 'package:stufast_mobile/providers/faq_provider.dart';
+import 'package:stufast_mobile/providers/hire_provider.dart';
 import 'package:stufast_mobile/providers/notif_provider.dart';
 import 'package:stufast_mobile/providers/order_provider.dart';
 import 'package:stufast_mobile/providers/quiz_provider.dart';
@@ -123,6 +125,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => TaskProvider()),
         ChangeNotifierProvider(create: (context) => CvProvider()),
         ChangeNotifierProvider(create: (context) => NotificationProvider()),
+        ChangeNotifierProvider(create: (context) => HireProvider()),
       ],
       child: MaterialApp(
         theme: ThemeData(
@@ -148,6 +151,7 @@ class MyApp extends StatelessWidget {
           '/notif-page': (context) => NotifikasiPage(),
           '/order-page': (context) => OrderPage(),
           '/change-password-page': (context) => ChangePasswordPage(),
+          '/hire-page': (context) => HirePage(),
         },
       ),
     );
