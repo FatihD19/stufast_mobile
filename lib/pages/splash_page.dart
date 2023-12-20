@@ -26,6 +26,7 @@ class _SplashPageState extends State<SplashPage> {
     // await Provider.of<CourseProvider>(context, listen: false).getCourses('all');
     Provider.of<CourseProvider>(context, listen: false).loadTags();
     Provider.of<WebinarProvider>(context, listen: false).getBanner();
+    Provider.of<AuthProvider>(context, listen: false).getJob();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     var saveLogin = prefs.getBool('saveLogin');
     var onBoarding = prefs.getBool('saveOnboard');

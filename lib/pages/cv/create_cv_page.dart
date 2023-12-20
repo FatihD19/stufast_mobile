@@ -7,6 +7,7 @@ import 'package:stufast_mobile/pages/cv/data_personal_view.dart';
 import 'package:stufast_mobile/pages/cv/form_achievement_view.dart';
 import 'package:stufast_mobile/pages/cv/form_education_view.dart';
 import 'package:stufast_mobile/pages/cv/form_exp_view.dart';
+import 'package:stufast_mobile/providers/user_course_provider.dart';
 
 import '../../providers/cv_provider.dart';
 import '../../theme.dart';
@@ -58,6 +59,58 @@ class _CreateCvPageState extends State<CreateCvPage> {
               dispose();
             },
           ),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  showDialog(
+                    //show confirm dialogue
+                    //the return value will be from "Yes" or "No" options
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(
+                        'Generate CV ?',
+                        style: primaryTextStyle.copyWith(fontWeight: bold),
+                      ),
+                      content: Text(
+                        'Pastikan data yang anda masukkan sudah benar',
+                        style: primaryTextStyle,
+                      ),
+                      actions: [
+                        ElevatedButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          //return false when click on "NO"
+                          child: Text('Tidak'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Provider.of<UserCourseProvider>(context,
+                                    listen: false)
+                                .downloadSertif(
+                                    isCv: true, idUser: widget.cv?.id)
+                                .then((value) =>
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        backgroundColor: Colors.green,
+                                        content: Text(
+                                          'berhasil unduh sertifikar',
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ));
+                            Navigator.of(context).pop(false);
+                          },
+                          child: Text('Generate'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                child: Text(
+                  'Generate CV',
+                  style: thirdTextStyle.copyWith(
+                      fontWeight: semiBold, fontSize: 14),
+                ))
+          ],
           backgroundColor: Colors.white,
           centerTitle: false,
         ),

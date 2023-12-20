@@ -8,8 +8,18 @@ class CourseProvider with ChangeNotifier {
   List<CourseModel> get courses => _courses;
   bool loading = true;
 
-  List<CourseModel> _coursesFilter = [];
-  List<CourseModel> get coursesFilter => _coursesFilter;
+  CoursePaginationModel? _coursesFilter;
+  CoursePaginationModel? get coursesFilter => _coursesFilter;
+
+  List<CourseModel> _coursesList = [];
+  List<CourseModel> get coursesList => _coursesList;
+
+  int totalItemCourse = 0;
+
+  set coursesFilter(CoursePaginationModel? coursesFilter) {
+    _coursesFilter = coursesFilter;
+    notifyListeners();
+  }
 
   List<TagModel> _tags = [];
 
@@ -21,6 +31,44 @@ class CourseProvider with ChangeNotifier {
 
   set courses(List<CourseModel> courses) {
     _courses = courses;
+    notifyListeners();
+  }
+
+  bool isEmpty = false;
+
+  bool loadingPagination = true;
+
+  Future<void> getFilterCourses(
+      {int? index,
+      String? tag,
+      String? category,
+      String? sort,
+      String? search}) async {
+    try {
+      isEmpty = false;
+      CoursePaginationModel courses = await CourseService().getCourseFilter(
+          index: index,
+          tag: tag,
+          category: category,
+          sort: sort,
+          search: search);
+      if (courses.course!.isEmpty) {
+        isEmpty = true;
+      }
+      _coursesList.addAll(courses.course!);
+      totalItemCourse = courses.totalItem!;
+      loadingPagination = false;
+      notifyListeners();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  resetCoursePagination() {
+    _coursesFilter = null;
+    _coursesList = [];
+    totalItemCourse = 0;
+    loadingPagination = true;
     notifyListeners();
   }
 

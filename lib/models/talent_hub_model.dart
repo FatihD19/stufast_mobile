@@ -1,49 +1,93 @@
 import 'package:stufast_mobile/models/course_model.dart';
+import 'package:stufast_mobile/models/cv_model.dart';
 import 'package:stufast_mobile/models/user_model.dart';
 
 class TalentHubModel {
-  String? fullname;
-  String? id;
-  String? profilePicture;
-  dynamic averageScore;
-  dynamic totalCourse;
-  List<CourseModel>? courses;
+  int? currentPage;
+  int? totalPage;
+  int? totalItem;
+  List<Talent>? talent;
 
   TalentHubModel({
-    this.fullname,
-    this.id,
-    this.profilePicture,
-    this.averageScore,
-    this.totalCourse,
-    this.courses,
+    this.currentPage,
+    this.totalPage,
+    this.totalItem,
+    this.talent,
   });
 
   factory TalentHubModel.fromJson(Map<String, dynamic> json) => TalentHubModel(
+        currentPage: json["current_page"],
+        totalPage: json["total_page"],
+        totalItem: json["total_item"],
+        talent: json["talent"] == null
+            ? []
+            : List<Talent>.from(json["talent"]!.map((x) => Talent.fromJson(x))),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "current_page": currentPage,
+        "total_page": totalPage,
+        "total_item": totalItem,
+        "talent": talent == null
+            ? []
+            : List<dynamic>.from(talent!.map((x) => x.toJson())),
+      };
+}
+
+class Talent {
+  String? fullname;
+  String? id;
+  String? profilePicture;
+  String? totalCourse;
+  String? averageScore;
+  String? profilePicture2;
+  String? status;
+  String? method;
+  int? minSalary;
+  int? maxSalary;
+
+  Talent({
+    this.fullname,
+    this.id,
+    this.profilePicture,
+    this.totalCourse,
+    this.averageScore,
+    this.profilePicture2,
+    this.status,
+    this.method,
+    this.minSalary,
+    this.maxSalary,
+  });
+
+  factory Talent.fromJson(Map<String, dynamic> json) => Talent(
         fullname: json["fullname"],
         id: json["id"],
         profilePicture: json["profile_picture"],
-        averageScore: json["average_score"],
         totalCourse: json["total_course"],
-        courses: json["courses"] == null
-            ? []
-            : List<CourseModel>.from(
-                json["courses"]!.map((x) => CourseModel.fromJson(x))),
+        averageScore: json["average_score"],
+        profilePicture2: json["profile_picture_2"],
+        status: json["status"],
+        method: json["method"],
+        minSalary: json["min_salary"],
+        maxSalary: json["max_salary"],
       );
 
   Map<String, dynamic> toJson() => {
         "fullname": fullname,
         "id": id,
         "profile_picture": profilePicture,
-        "average_score": averageScore,
         "total_course": totalCourse,
-        "courses": courses == null
-            ? []
-            : List<dynamic>.from(courses!.map((x) => x.toJson())),
+        "average_score": averageScore,
+        "profile_picture_2": profilePicture2,
+        "status": status,
+        "method": method,
+        "min_salary": minSalary,
+        "max_salary": maxSalary,
       };
 }
 
 class DetailTalentHubModel {
-  UserModel? user;
+  CVmodel? user;
   dynamic totalCourse;
   dynamic averageScore;
   List<Ach>? ach;
@@ -57,7 +101,7 @@ class DetailTalentHubModel {
 
   factory DetailTalentHubModel.fromJson(Map<String, dynamic> json) =>
       DetailTalentHubModel(
-        user: json["user"] == null ? null : UserModel.fromJson(json["user"]),
+        user: json["user"] == null ? null : CVmodel.fromJson(json["user"]),
         totalCourse: json["total_course"],
         averageScore: json["average_score"],
         ach: json["ach"] == null

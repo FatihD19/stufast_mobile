@@ -489,7 +489,7 @@ class _HomePageState extends State<HomePage> {
                   : SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
-                        children: talentHubProvider.talent
+                        children: talentHubProvider.talentList
                             .map((talent) => TalentCard(talent))
                             .take(10)
                             .toList(),

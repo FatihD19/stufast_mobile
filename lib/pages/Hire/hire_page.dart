@@ -71,18 +71,48 @@ class _HirePageState extends State<HirePage> {
     }
 
     Widget hireList() {
-      return ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: hireProvider.hires.length,
-          itemBuilder: (context, index) {
-            final hire = hireProvider.hires[index];
-            if (hire.result == selectedTag) {
-              return HireTile(hire);
-            } else {
-              return Container();
-            }
-          });
+      // if (hireProvider.hires.isEmpty ||
+      //     !hireProvider.hires.any((hire) => hire.status == 'pending')) {
+      //   // Tampilkan pesan 'tidak ada data' karena tidak ada item dengan status 'pending'
+      //   return Text('Tidak ada data');
+      // } else {
+      //   // Tampilkan item-item yang memiliki status 'pending'
+      //   return ListView.builder(
+      //     itemCount: hireProvider.hires.length,
+      //     itemBuilder: (context, index) {
+      //       final hire = hireProvider.hires[index];
+      //       // Tampilkan item hire sesuai kebutuhan
+      //       return HireTile(hire);
+      //     },
+      //   );
+      // }
+
+      return !hireProvider.hires.any((hire) => hire.result == selectedTag)
+          ? Center(
+              child: Column(
+                children: [
+                  Image.asset('assets/img_nul_hiring.png'),
+                  Text('Belum Ada Tawaran',
+                      style: primaryTextStyle.copyWith(
+                          fontWeight: bold, fontSize: 20)),
+                  Text('Proses tawaran program akan dapat dilihat disini ',
+                      textAlign: TextAlign.center,
+                      style: primaryTextStyle.copyWith(fontSize: 17))
+                ],
+              ),
+            )
+          : ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: hireProvider.hires.length,
+              itemBuilder: (context, index) {
+                final hire = hireProvider.hires[index];
+                if (hire.result == selectedTag) {
+                  return HireTile(hire);
+                } else {
+                  return Container();
+                }
+              });
     }
 
     return Scaffold(

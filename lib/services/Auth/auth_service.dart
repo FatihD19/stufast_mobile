@@ -102,6 +102,7 @@ class AuthService {
       String? dateBirth,
       String? address,
       String? phoneNumber,
+      String? job_id,
       XFile? profilePicture}) async {
     var url = Uri.parse('$baseUrl/users/update/$id');
     final prefs = await SharedPreferences.getInstance();
@@ -145,6 +146,7 @@ class AuthService {
       ..fields['fullname'] = nama!
       ..fields['phone_number'] = phoneNumber!
       ..fields['address'] = address!
+      ..fields['job_id'] = job_id!
       ..fields['date_birth'] = dateBirth!;
 
     if (profilePicture != null) {
@@ -206,6 +208,28 @@ class AuthService {
     print('sendToken ' + response.body);
     if (response.statusCode == 200) {
       return true;
+    } else {
+      throw Exception('failed load data');
+    }
+  }
+
+  Future<List<DropdownJobModel>> getDropdownJob() async {
+    var url = Uri.parse(AuthService.baseUrl + '/jobs');
+    final prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+    var response = await http.get(url, headers: headers);
+    print('JOB ' + response.body);
+    if (response.statusCode == 200) {
+      List data = jsonDecode(response.body);
+      List<DropdownJobModel> job = [];
+      for (var item in data) {
+        job.add(DropdownJobModel.fromJson(item));
+      }
+      return job;
     } else {
       throw Exception('failed load data');
     }

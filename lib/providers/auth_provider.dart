@@ -14,6 +14,14 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  List<DropdownJobModel> _listJob = [];
+  List<DropdownJobModel> get listJob => _listJob;
+
+  set listJob(List<DropdownJobModel> listJob) {
+    _listJob = listJob;
+    notifyListeners();
+  }
+
   Future<bool> register(
       {String? email,
       String? nama,
@@ -73,6 +81,15 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  Future<void> getJob() async {
+    try {
+      List<DropdownJobModel> listJob = await AuthService().getDropdownJob();
+      _listJob = listJob;
+    } catch (e) {
+      print(e);
+    }
+  }
+
   Future<bool> uploadProfilePicture(
     String id,
     File profilePicture,
@@ -94,6 +111,7 @@ class AuthProvider with ChangeNotifier {
     String? dateBirth,
     String? address,
     String? phoneNumber,
+    String? job_id,
     XFile? profilePicture,
   }) async {
     try {
@@ -103,6 +121,7 @@ class AuthProvider with ChangeNotifier {
           dateBirth: dateBirth,
           address: address,
           phoneNumber: phoneNumber,
+          job_id: job_id,
           profilePicture: profilePicture);
 
       return result;

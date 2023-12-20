@@ -5,7 +5,7 @@ import 'package:stufast_mobile/pages/talent-hub/detail_talentHub.dart';
 import '../theme.dart';
 
 class TalentCard extends StatelessWidget {
-  final TalentHubModel talent;
+  final Talent talent;
   TalentCard(this.talent);
   @override
   Widget build(BuildContext context) {
@@ -32,8 +32,11 @@ class TalentCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    image: NetworkImage(
-                        "http://dev.stufast.id/upload/users/${talent.profilePicture}"),
+                    image: FadeInImage.assetNetwork(
+                      placeholder: 'assets/placeholder.png',
+                      image:
+                          'http://dev.stufast.id/upload/users/${talent.profilePicture}',
+                    ).image,
                     fit: BoxFit.cover,
                   ),
                 ),

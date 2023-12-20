@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:date_field/date_field.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -29,6 +30,17 @@ class _EditProfileState extends State<EditProfile> {
   XFile? _image;
   bool errorImage = false;
   AuthService authService = AuthService();
+  String? _jobSelected;
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    _jobSelected =
+        Provider.of<AuthProvider>(context, listen: false).user?.jobId;
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     AuthProvider? authProvider = Provider.of<AuthProvider>(context);
@@ -43,6 +55,7 @@ class _EditProfileState extends State<EditProfile> {
         TextEditingController(text: '${user?.phoneNumber}');
     TextEditingController dateController =
         TextEditingController(text: '${user?.dateBirth}');
+
     // _pickProfilePicture() async {
     //   FilePickerResult? result = await FilePicker.platform.pickFiles(
     //     type: FileType.image,
@@ -109,6 +122,7 @@ class _EditProfileState extends State<EditProfile> {
         nama: fullNameController.text,
         address: addressController.text,
         phoneNumber: phoneNumberController.text,
+        job_id: _jobSelected,
         dateBirth: selectedDate.toString(),
       )) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -180,11 +194,65 @@ class _EditProfileState extends State<EditProfile> {
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 24),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             UsernameTextField(
               hintText: '${user?.fullname}',
               type: 'Nama',
               controller: fullNameController,
+            ),
+            SizedBox(height: 24),
+            Text(
+              'Pekerjaan',
+              style: primaryTextStyle.copyWith(fontWeight: bold),
+            ),
+            SizedBox(height: 8),
+            DropdownButtonFormField2(
+              isExpanded: true,
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: primaryColor),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+              buttonStyleData: const ButtonStyleData(
+                padding: EdgeInsets.only(right: 8),
+              ),
+              iconStyleData: const IconStyleData(
+                icon: Icon(
+                  Icons.arrow_drop_down,
+                  color: Colors.black45,
+                ),
+                iconSize: 24,
+              ),
+              dropdownStyleData: DropdownStyleData(
+                maxHeight: 400,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+              menuItemStyleData: const MenuItemStyleData(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+              ),
+              value: _jobSelected,
+              hint: Text('Pilih Pekerjaan', style: primaryTextStyle),
+              items: authProvider.listJob
+                  .map(
+                    (job) => DropdownMenuItem(
+                      child: Text('${job.jobName}', style: primaryTextStyle),
+                      value: job.jobId,
+                    ),
+                  )
+                  .toList(),
+              onChanged: (value) {
+                setState(() {
+                  _jobSelected = value;
+                });
+              },
             ),
             SizedBox(height: 24),
             UsernameTextField(

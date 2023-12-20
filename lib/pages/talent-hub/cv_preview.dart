@@ -1,9 +1,13 @@
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:stufast_mobile/models/cv_model.dart';
+import 'package:stufast_mobile/providers/user_course_provider.dart';
 import 'package:stufast_mobile/theme.dart';
 
 class CvPreview extends StatelessWidget {
-  const CvPreview({super.key});
+  final CVmodel cv;
+  CvPreview({required this.cv, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +29,7 @@ class CvPreview extends StatelessWidget {
                 endIndent: 200,
               ),
               ExpandableText(
-                'Saya adalah seorang arsitek berbakat dengan pengalaman lebih dari 3 tahun dalam industri arsitektur. Dengan latar belakang pendidikan di Universitas Harvard, saya telah terlibat dalam berbagai proyek yang berkisar dari residensial hingga Read more',
+                '${cv.about}',
                 style: primaryTextStyle,
                 maxLines: 5,
                 expandText: 'show more',
@@ -34,14 +38,41 @@ class CvPreview extends StatelessWidget {
                 textAlign: TextAlign.justify,
               ),
               SizedBox(height: 12),
-              // Text('Media Sosial',
-              //     style: primaryTextStyle.copyWith(fontWeight: bold)),
-              // Divider(
-              //   color: Color(0xffFFA500),
-              //   thickness: 1,
-              //   endIndent: 200,
-              // ),
-              // SizedBox(height: 12),
+              Text('Media Sosial',
+                  style: primaryTextStyle.copyWith(fontWeight: bold)),
+              Divider(
+                color: Color(0xffFFA500),
+                thickness: 1,
+                endIndent: 200,
+              ),
+              Row(
+                children: [
+                  Row(
+                    children: [
+                      Image.asset('assets/ic_fb.png'),
+                      SizedBox(width: 4),
+                      Text('${cv.facebook}', style: primaryTextStyle)
+                    ],
+                  ),
+                  SizedBox(width: 14),
+                  Row(
+                    children: [
+                      Image.asset('assets/ic_ig.png'),
+                      SizedBox(width: 4),
+                      Text('${cv.instagram}', style: primaryTextStyle)
+                    ],
+                  ),
+                  SizedBox(width: 14),
+                  Row(
+                    children: [
+                      Image.asset('assets/ic_ln.png'),
+                      SizedBox(width: 4),
+                      Text('${cv.instagram}', style: primaryTextStyle)
+                    ],
+                  )
+                ],
+              ),
+              SizedBox(height: 12),
               Text('CV', style: primaryTextStyle.copyWith(fontWeight: bold)),
               Divider(
                 color: Color(0xffFFA500),
@@ -54,7 +85,21 @@ class CvPreview extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: primaryColor,
                     ),
-                    onPressed: () {},
+                    onPressed: () async {
+                      await Provider.of<UserCourseProvider>(context,
+                              listen: false)
+                          .downloadSertif(isCv: true, idUser: cv.id)
+                          .then((value) =>
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  backgroundColor: Colors.green,
+                                  content: Text(
+                                    'berhasil unduh sertifikar',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ));
+                    },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -91,21 +136,21 @@ class CvPreview extends StatelessWidget {
               leading: Image.asset('assets/ic_jenis_kerja.png'),
               title: Text('Jenis Pekerjaan',
                   style: primaryTextStyle.copyWith(fontSize: 12)),
-              subtitle: Text('Full Time',
+              subtitle: Text('${cv.status}',
                   style: primaryTextStyle.copyWith(fontWeight: bold)),
             ),
             ListTile(
               leading: Image.asset('assets/ic_metod_kerja.png'),
               title: Text('Metode Pekerjaan',
                   style: primaryTextStyle.copyWith(fontSize: 12)),
-              subtitle: Text('Remote',
+              subtitle: Text('${cv.method}',
                   style: primaryTextStyle.copyWith(fontWeight: bold)),
             ),
             ListTile(
               leading: Image.asset('assets/ic_gaji_kerja.png'),
               title: Text('Range Gaji',
                   style: primaryTextStyle.copyWith(fontSize: 12)),
-              subtitle: Text('Rp. 5.000.000 - Rp. 10.000.000',
+              subtitle: Text('${cv.range}',
                   style: primaryTextStyle.copyWith(fontWeight: bold)),
             ),
           ],

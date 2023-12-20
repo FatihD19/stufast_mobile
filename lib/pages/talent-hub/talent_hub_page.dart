@@ -30,12 +30,12 @@ class _TalentHubPageState extends State<TalentHubPage> {
       _currentPage++;
       try {
         setState(() {
-          loading = false;
-        });
-        Provider.of<TalentHubProvider>(context, listen: false)
-            .getTalentHub(index: _currentPage);
-        setState(() {
           loading = true;
+        });
+
+        getTalentByIndex();
+        setState(() {
+          loading = false;
         });
       } catch (e) {
         setState(() {
@@ -55,59 +55,24 @@ class _TalentHubPageState extends State<TalentHubPage> {
     // TODO: implement initState\
     _scrollController.addListener(_loadMore);
     getTalentByIndex();
-    // Provider.of<TalentHubProvider>(context, listen: false).fetchTalentData();
 
-    // _scrollController.addListener(() {
-    //   if (_scrollController.position.pixels ==
-    //       _scrollController.position.maxScrollExtent) {
-    //     if (totalTalentCount >
-    //         Provider.of<TalentHubProvider>(context, listen: false)
-    //             .talent
-    //             .length) {
-    //       setState(() {
-    //         totalTalentCount += 10;
-    //       });
-    //       print('on bottom');
-
-    //     } else {
-    //       ScaffoldMessenger.of(context).showSnackBar(
-    //         SnackBar(
-    //           backgroundColor: Colors.green,
-    //           content: Text(
-    //             'berhasil tambah ke chart',
-    //             textAlign: TextAlign.center,
-    //           ),
-    //         ),
-    //       );
-    //     }
-    //   }
-    // });
     super.initState();
   }
 
   TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   String _sortBy = '';
+  String? filterByMethod;
+  String? filterByType;
 
   bool loading = false;
 
   getTalentByIndex() async {
-    await Provider.of<TalentHubProvider>(context, listen: false)
-        .getTalentHub(index: _currentPage);
-  }
-
-  getInit() async {
-    setState(() {
-      loading = true;
-      useFilter = true;
-    });
-
-    await Provider.of<TalentHubProvider>(context, listen: false)
-        .getTalentFilter(
-            userFilter: true, searchQuery: _searchQuery, sortBy: _sortBy);
-    setState(() {
-      loading = false;
-    });
+    await Provider.of<TalentHubProvider>(context, listen: false).getTalentHub(
+        index: _currentPage,
+        searchQuery: _searchQuery,
+        status: filterByType,
+        method: filterByMethod);
   }
 
   @override
@@ -116,186 +81,260 @@ class _TalentHubPageState extends State<TalentHubPage> {
         Provider.of<TalentHubProvider>(context);
 
     void _showBottomSheet(BuildContext context) {
-      showModalBottomSheet(
+      showModalBottomSheet<void>(
         context: context,
         builder: (BuildContext context) {
-          return Container(
-            height: 237,
-            padding: EdgeInsets.fromLTRB(24, 24, 24, 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Urutkan berdasarkan',
-                        style: primaryTextStyle.copyWith(
-                            fontWeight: bold, fontSize: 18)),
-                    InkWell(
-                        onTap: () {
-                          setState(() {
-                            _searchController.text = '';
-                            _searchQuery = '';
-                            _sortBy = '';
-                            useFilter = false;
-                            getTalentByIndex();
-                            Navigator.pop(context);
-                          });
-                        },
-                        child: Text('Reset',
-                            style: thirdTextStyle.copyWith(fontSize: 14)))
-                  ],
-                ),
-                SizedBox(height: 24),
-                Container(
-                  child: Column(
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.4,
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      Text('Urutkan berdasarkan',
+                          style: primaryTextStyle.copyWith(
+                              fontWeight: bold, fontSize: 18)),
                       InkWell(
-                        onTap: () {
-                          setState(() {
-                            _searchController.text = '';
-                            _searchQuery = '';
-                            _sortBy = '';
-                            getInit();
+                          onTap: () {
+                            setState(() {
+                              _searchController.text = '';
+                              _searchQuery = '';
+                              _sortBy = '';
+                              _currentPage = 1;
+                              filterByMethod = null;
+                              filterByType = null;
+                            });
+                            talentHubProvider.resetTalent();
+                            Provider.of<TalentHubProvider>(context,
+                                    listen: false)
+                                .getTalentHub(
+                                    index: _currentPage,
+                                    sort: _sortBy,
+                                    searchQuery: _searchQuery);
                             Navigator.pop(context);
-                          });
-
-                          // Tutup bottom sheet setelah dipilih
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Nilai Tertinggi',
+                          },
+                          child: Text('Reset',
+                              style: thirdTextStyle.copyWith(fontSize: 14)))
+                    ],
+                  ),
+                  Container(
+                    child: Column(
+                      children: [
+                        RadioListTile(
+                            title: Text('Nilai Tertinggi',
                                 style: _sortBy == 'average_score'
                                     ? thirdTextStyle.copyWith(fontSize: 18)
                                     : secondaryTextStyle.copyWith(
                                         fontSize: 18)),
-                            Divider(
-                              height: 20,
-                              thickness: 1,
-                              indent: 3,
-                              endIndent: 3,
-                              color: _sortBy == 'average_score'
-                                  ? primaryColor
-                                  : secondaryColor,
-                            ),
-                          ],
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            _searchController.text = '';
-                            _searchQuery = '';
-                            _sortBy = 'total_course';
-                            getInit();
-                            Navigator.pop(context);
-                          });
-
-                          // Tutup bottom sheet setelah dipilih
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Jumlah Course',
+                            value: 'average_score',
+                            groupValue: _sortBy,
+                            onChanged: (value) {
+                              setState(() {
+                                _sortBy = value.toString();
+                                _currentPage = 1;
+                              });
+                              talentHubProvider.resetTalent();
+                              getTalentByIndex();
+                            }),
+                        RadioListTile(
+                            title: Text('Jumlah Sertifikat',
                                 style: _sortBy == 'total_course'
                                     ? thirdTextStyle.copyWith(fontSize: 18)
                                     : secondaryTextStyle.copyWith(
                                         fontSize: 18)),
-                            Divider(
-                              height: 20,
-                              thickness: 1,
-                              indent: 3,
-                              endIndent: 3,
-                              color: _sortBy == 'total_course'
-                                  ? primaryColor
-                                  : secondaryColor,
-                            ),
-                          ],
+                            value: 'total_course',
+                            groupValue: _sortBy,
+                            onChanged: (value) {
+                              setState(() {
+                                _sortBy = value.toString();
+                                _currentPage = 1;
+                              });
+                              talentHubProvider.resetTalent();
+                              getTalentByIndex();
+                            }),
+                      ],
+                    ),
+                  ),
+                  Text('Jenis Pekerjaan',
+                      style: primaryTextStyle.copyWith(
+                          fontWeight: bold, fontSize: 18)),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: RadioListTile(
+                          title: Text('Pegawai Tetap',
+                              style: filterByType == 'Pegawai Tetap'
+                                  ? thirdTextStyle.copyWith(fontSize: 18)
+                                  : secondaryTextStyle.copyWith(fontSize: 18)),
+                          value: 'Pegawai Tetap',
+                          groupValue: filterByType,
+                          onChanged: (value) {
+                            setState(() {
+                              filterByType = value.toString();
+                              _currentPage = 1;
+                            });
+                            talentHubProvider.resetTalent();
+                            getTalentByIndex();
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: RadioListTile(
+                          title: Text('Freelance',
+                              style: filterByType == 'Freelance'
+                                  ? thirdTextStyle.copyWith(fontSize: 18)
+                                  : secondaryTextStyle.copyWith(fontSize: 18)),
+                          value: 'Freelance',
+                          groupValue: filterByType,
+                          onChanged: (value) {
+                            setState(() {
+                              filterByType = value.toString();
+                              _currentPage = 1;
+                            });
+                            talentHubProvider.resetTalent();
+                            getTalentByIndex();
+                          },
                         ),
                       ),
                     ],
                   ),
-                )
-              ],
-            ),
-          );
+                  Text('Metode Pekerjaan',
+                      style: primaryTextStyle.copyWith(
+                          fontWeight: bold, fontSize: 18)),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: RadioListTile(
+                          title: Text('Remote',
+                              style: filterByMethod == 'Remote'
+                                  ? thirdTextStyle.copyWith(fontSize: 18)
+                                  : secondaryTextStyle.copyWith(fontSize: 18)),
+                          value: 'Remote',
+                          groupValue: filterByMethod,
+                          onChanged: (value) {
+                            setState(() {
+                              filterByMethod = value.toString();
+                              _currentPage = 1;
+                            });
+                            talentHubProvider.resetTalent();
+                            getTalentByIndex();
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: RadioListTile(
+                          title: Text('WFO',
+                              style: filterByMethod == 'WFO'
+                                  ? thirdTextStyle.copyWith(fontSize: 18)
+                                  : secondaryTextStyle.copyWith(fontSize: 18)),
+                          value: 'WFO',
+                          groupValue: filterByMethod,
+                          onChanged: (value) {
+                            setState(() {
+                              filterByMethod = value.toString();
+                              _currentPage = 1;
+                            });
+                            talentHubProvider.resetTalent();
+                            getTalentByIndex();
+                          },
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            );
+          });
         },
       );
     }
 
     Widget searchBar() {
-      return Row(
+      return Column(
         children: [
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Color(0xFFD2D2D2)),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _searchController,
-                      decoration: InputDecoration(
-                        hintText: 'Cari Talent',
-                        border: InputBorder.none,
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Color(0xFFD2D2D2)),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            hintText: 'Cari Talent',
+                            border: InputBorder.none,
+                          ),
+                          // onChanged: (value) {
+                          //   setState(() {
+                          //     _sortBy = '';
+                          //     _searchQuery = value;
+                          //     getInit();
+                          //   });
+                          // },
+                        ),
                       ),
-                      // onChanged: (value) {
-                      //   setState(() {
-                      //     _sortBy = '';
-                      //     _searchQuery = value;
-                      //     getInit();
-                      //   });
-                      // },
-                    ),
+                      InkWell(
+                        onTap: () {
+                          _searchQuery = _searchController.text;
+                          _currentPage = 1;
+                          talentHubProvider.resetTalent();
+
+                          Provider.of<TalentHubProvider>(context, listen: false)
+                              .getTalentHub(
+                                  index: _currentPage,
+                                  sort: _sortBy,
+                                  searchQuery: _searchQuery);
+                          setState(() {});
+                          print('filtr');
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Image.asset('assets/icon_search.png'),
+                        ),
+                      ),
+                    ],
                   ),
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        _searchQuery = _searchController.text;
-                        getInit();
-                      });
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Image.asset('assets/icon_search.png'),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(width: 16),
-          Container(
-            height: 50,
-            child: ElevatedButton(
-              onPressed: () {
-                _showBottomSheet(context);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primaryColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.sort, size: 16),
-                  SizedBox(width: 3),
-                  Text(
-                    'Urutkan',
-                    style: buttonTextStyle.copyWith(
-                        fontWeight: bold, fontSize: 12),
+              SizedBox(width: 16),
+              Container(
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () {
+                    _showBottomSheet(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                ],
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.sort, size: 16),
+                      SizedBox(width: 3),
+                      Text(
+                        'Urutkan',
+                        style: buttonTextStyle.copyWith(
+                            fontWeight: bold, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-          SizedBox(height: 72),
         ],
       );
     }
@@ -365,12 +404,16 @@ class _TalentHubPageState extends State<TalentHubPage> {
           : GridView.builder(
               shrinkWrap: true,
               physics: ScrollPhysics(),
-              itemCount: talentHubProvider.talent.length,
+              itemCount: talentHubProvider.talentList.length,
               // + (loading ? 1 : 0),
               itemBuilder: (context, index) {
-                final talent = talentHubProvider.talent[index];
-                if (index == talentHubProvider.talent.length - 1) {
-                  return Center(child: CircularProgressIndicator());
+                final talent = talentHubProvider.talentList[index];
+                if (index == talentHubProvider.talentList.length) {
+                  return talentHubProvider.isEmpty
+                      ? Text('data')
+                      : Center(
+                          child: Text(
+                              '$index, ${talentHubProvider.talentList.length}'));
                 } else if (talentHubProvider.error == true) {
                   Center(child: Text('error'));
                 } else {
@@ -389,30 +432,30 @@ class _TalentHubPageState extends State<TalentHubPage> {
       //     .toList());
     }
 
-    Widget gridTalentFilter() {
-      return loading == true
-          ? Column(
-              children: [
-                SizedBox(height: 50),
-                Center(child: CircularProgressIndicator()),
-              ],
-            )
-          : GridView.builder(
-              shrinkWrap: true,
-              physics: ScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 4,
-                mainAxisSpacing: 8,
-                childAspectRatio: 0.5893,
-              ),
-              itemCount: talentHubProvider.talentPage.length,
-              itemBuilder: (context, index) {
-                final talent = talentHubProvider.talentPage[index];
-                return TalentCard(talent);
-              },
-            );
-    }
+    // Widget gridTalentFilter() {
+    //   return loading == true
+    //       ? Column(
+    //           children: [
+    //             SizedBox(height: 50),
+    //             Center(child: CircularProgressIndicator()),
+    //           ],
+    //         )
+    //       : GridView.builder(
+    //           shrinkWrap: true,
+    //           physics: ScrollPhysics(),
+    //           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+    //             crossAxisCount: 2,
+    //             crossAxisSpacing: 4,
+    //             mainAxisSpacing: 8,
+    //             childAspectRatio: 0.5893,
+    //           ),
+    //           itemCount: talentHubProvider.talentPage.length,
+    //           itemBuilder: (context, index) {
+    //             final talent = talentHubProvider.talentPage[index];
+    //             return TalentCard(talent);
+    //           },
+    //         );
+    // }
 
     return
         // TalentHubScreen();
@@ -437,18 +480,40 @@ class _TalentHubPageState extends State<TalentHubPage> {
                 children: [
                   searchBar(),
                   Expanded(
-                    child: useFilter == true
-                        ? ListView(
-                            physics: ScrollPhysics(),
-                            shrinkWrap: true,
-                            children: [promoTalent(), gridTalentFilter()],
-                          )
-                        : ListView(
-                            controller: _scrollController,
-                            physics: ScrollPhysics(),
-                            shrinkWrap: true,
-                            children: [promoTalent(), gridTalent()],
-                          ),
+                    child: ListView(
+                      controller: _scrollController,
+                      physics: ScrollPhysics(),
+                      shrinkWrap: true,
+                      children: [
+                        promoTalent(),
+                        gridTalent(),
+                        Text(
+                            '${talentHubProvider.talentList.length}, ${talentHubProvider.totalItemTalent}'),
+
+                        talentHubProvider.totalItemTalent == 0
+                            ? SizedBox()
+                            : Center(child: CircularProgressIndicator()),
+                        // Text('${talentHubProvider.talent.length}'),
+                        // Center(child: CircularProgressIndicator()),
+                      ],
+                    ),
+                    // child: useFilter == true
+                    //     ? ListView(
+                    //         physics: ScrollPhysics(),
+                    //         shrinkWrap: true,
+                    //         children: [promoTalent(), gridTalentFilter()],
+                    //       )
+                    //     : ListView(
+                    //         controller: _scrollController,
+                    //         physics: ScrollPhysics(),
+                    //         shrinkWrap: true,
+                    //         children: [
+                    //           promoTalent(),
+                    //           gridTalent(),
+                    //           // Text('${talentHubProvider.talent.length}'),
+                    //           // Center(child: CircularProgressIndicator()),
+                    //         ],
+                    //       ),
                   ),
                 ],
               ),

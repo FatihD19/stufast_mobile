@@ -10,6 +10,9 @@ class HireProvider with ChangeNotifier {
   bool loading = true;
   bool loadingConfirm = true;
 
+  String? _messageNotifHire;
+  String? get messageNotifHire => _messageNotifHire;
+
   set hires(List<HireModel> hires) {
     _hires = hires;
     notifyListeners();
@@ -28,9 +31,25 @@ class HireProvider with ChangeNotifier {
 
   Future<bool> confirmHire(String idHire, String confrim) async {
     try {
-      final result = await HireService().confirmHire(idHire, confrim);
+      final messageNotifConfirm =
+          await HireService().confirmHire(idHire, confrim);
+      _messageNotifHire = messageNotifConfirm;
       loadingConfirm = false;
       notifyListeners();
+      if (messageNotifConfirm.isNotEmpty) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> sendNitifconfirmHire() async {
+    try {
+      final result =
+          await HireService().sendNotifconfirmHire(messageNotifHire!);
+
       return result;
     } catch (e) {
       return false;

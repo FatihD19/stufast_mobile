@@ -6,6 +6,7 @@ import 'package:stufast_mobile/models/hire_model.dart';
 import 'package:stufast_mobile/services/Auth/auth_service.dart';
 
 class HireService {
+  String? messageNotifConfirm;
   Future<List<HireModel>> getHireOffer() async {
     var url = Uri.parse(AuthService.baseUrl + '/hire/user');
     final prefs = await SharedPreferences.getInstance();
@@ -31,7 +32,7 @@ class HireService {
     }
   }
 
-  Future<bool> confirmHire(String idHire, String confrim) async {
+  Future<String> confirmHire(String idHire, String confrim) async {
     var url = Uri.parse(AuthService.baseUrl + '/hire/confirm');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
@@ -48,6 +49,29 @@ class HireService {
     print('HireOffer' + response.body);
 
     if (response.statusCode == 200) {
+      return messageNotifConfirm = jsonDecode(response.body)['data']['message'];
+    } else {
+      throw Exception('Gagal get hire offer');
+    }
+  }
+
+  Future<bool> sendNotifconfirmHire(String message) async {
+    var url = Uri.parse(AuthService.baseUrl + '/hire/confirm-notif');
+    final prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+    var body = jsonEncode({
+      'message': message,
+    });
+    var response = await http.post(url, headers: headers, body: body);
+
+    print('HireOfferSendNotif' + response.body);
+
+    if (response.statusCode == 200) {
+      print('BERHASIL SEND NOTIF');
       return true;
     } else {
       throw Exception('Gagal get hire offer');

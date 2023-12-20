@@ -52,9 +52,11 @@ class HireTile extends StatelessWidget {
                                 fontWeight: bold, fontSize: 15),
                           ),
                           SizedBox(height: 5),
-                          Text(
-                            '${hire?.position}',
-                            style: primaryTextStyle.copyWith(fontSize: 14),
+                          Container(
+                            child: Text(
+                              '${hire?.position}',
+                              style: primaryTextStyle.copyWith(fontSize: 14),
+                            ),
                           ),
                           SizedBox(height: 5),
                           Text(
@@ -77,7 +79,8 @@ class HireTile extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text('${hire?.result}',
-                      style: buttonTextStyle.copyWith(fontWeight: bold)),
+                      style: buttonTextStyle.copyWith(
+                          fontWeight: bold, fontSize: 12)),
                 )
               ],
             )),

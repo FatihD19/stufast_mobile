@@ -42,6 +42,7 @@ class _HireDetailPageState extends State<HireDetailPage> {
           btnOkOnPress: () {},
         ).show();
       });
+      context.read<HireProvider>().sendNitifconfirmHire();
     }
   }
 
@@ -68,6 +69,7 @@ class _HireDetailPageState extends State<HireDetailPage> {
           btnOkOnPress: () {},
         ).show();
       });
+      context.read<HireProvider>().sendNitifconfirmHire();
     }
   }
 
@@ -154,16 +156,8 @@ class _HireDetailPageState extends State<HireDetailPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   accept
-                      ? Icon(
-                          Icons.check_circle_outline,
-                          color: Colors.green,
-                          size: 120,
-                        )
-                      : Icon(
-                          Icons.cancel_outlined,
-                          color: Colors.red,
-                          size: 120,
-                        ),
+                      ? Image.asset('assets/img_hire_acc.png')
+                      : Image.asset('assets/img_hire_reject.png'),
                   SizedBox(width: 5),
                   Expanded(
                     child: Text(

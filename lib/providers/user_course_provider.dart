@@ -85,6 +85,8 @@ class UserCourseProvider with ChangeNotifier {
   }
 
   Future downloadSertif({
+    bool? isCv,
+    String? idUser,
     bool? isBundling,
     String? idBundle,
     String? idCourse,
@@ -92,11 +94,13 @@ class UserCourseProvider with ChangeNotifier {
   }) async {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
-    var urlSertif = isBundling == true
-        ? 'http://dev.stufast.id/certificates?type=bundling&id=${idBundle}&token=$token'
-        : courseBundle == true
-            ? 'http://dev.stufast.id/certificates?type=course-bundling&id=${idCourse}&bundl=${idBundle}&token=$token'
-            : 'http://dev.stufast.id/certificates?type=course&id=${idCourse}&token=$token';
+    var urlSertif = isCv == true
+        ? 'http://dev.stufast.id/cv/download?user_id=$idUser&token=$token'
+        : isBundling == true
+            ? 'http://dev.stufast.id/certificates?type=bundling&id=${idBundle}&token=$token'
+            : courseBundle == true
+                ? 'http://dev.stufast.id/certificates?type=course-bundling&id=${idCourse}&bundl=${idBundle}&token=$token'
+                : 'http://dev.stufast.id/certificates?type=course&id=${idCourse}&token=$token';
     await Permission.storage.request();
     final baseStorage = await getExternalStorageDirectory();
     try {

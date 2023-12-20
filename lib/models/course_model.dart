@@ -3,6 +3,31 @@ import 'package:stufast_mobile/models/tag_model.dart';
 
 import 'package:stufast_mobile/models/video_model.dart';
 
+class CoursePaginationModel {
+  int? currentPage;
+  int? totalPage;
+  int? totalItem;
+  List<CourseModel>? course;
+
+  CoursePaginationModel({
+    this.currentPage,
+    this.totalPage,
+    this.totalItem,
+    this.course,
+  });
+
+  factory CoursePaginationModel.fromJson(Map<String, dynamic> json) =>
+      CoursePaginationModel(
+        currentPage: json["current_page"],
+        totalPage: json["total_page"],
+        totalItem: json["total_item"],
+        course: json["course"] == null
+            ? []
+            : List<CourseModel>.from(
+                json["course"]!.map((x) => CourseModel.fromJson(x))),
+      );
+}
+
 class CourseModel {
   String? courseId;
   String? title;
@@ -85,7 +110,7 @@ class CourseModel {
         score: json["score"],
         mengerjakan_video: json["mengerjakan_video"],
         owned: json["owned"],
-        tag: json["tag"] == null
+        tag: json["tag"] == null || json["tag"] is String
             ? []
             : List<TagModel>.from(
                 json["tag"]!.map((x) => TagModel.fromJson(x))),

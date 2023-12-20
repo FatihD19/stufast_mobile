@@ -10,6 +10,7 @@ class CVmodel {
   String? portofolio;
   String? status;
   String? method;
+  String? range;
   String? facebook;
   String? instagram;
   String? linkedin;
@@ -30,6 +31,7 @@ class CVmodel {
     this.portofolio,
     this.status,
     this.method,
+    this.range,
     this.facebook,
     this.instagram,
     this.linkedin,
@@ -53,6 +55,7 @@ class CVmodel {
         portofolio: json["portofolio"],
         status: json["status"],
         method: json["method"],
+        range: json["range"],
         facebook: json["facebook"],
         instagram: json["instagram"],
         linkedin: json["linkedin"],

@@ -79,3 +79,24 @@ class UserModel {
         "job_name": job_name
       };
 }
+
+class DropdownJobModel {
+  String? jobId;
+  String? jobName;
+
+  DropdownJobModel({
+    this.jobId,
+    this.jobName,
+  });
+
+  factory DropdownJobModel.fromJson(Map<String, dynamic> json) =>
+      DropdownJobModel(
+        jobId: json["job_id"],
+        jobName: json["job_name"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "job_id": jobId,
+        "job_name": jobName,
+      };
+}

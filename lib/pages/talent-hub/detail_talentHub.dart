@@ -18,7 +18,7 @@ class DetailTalentHubPage extends StatefulWidget {
 
 class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
   bool? loading;
-  final Uri _url = Uri.parse('https://flutter.dev');
+  // final Uri _url = Uri.parse('https://flutter.dev');
   @override
   void initState() {
     // TODO: implement initState
@@ -37,9 +37,9 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
     });
   }
 
-  Future<void> _launchUrl() async {
-    if (!await launchUrl(_url)) {
-      throw Exception('Could not launch $_url');
+  Future<void> _launchUrl(String url) async {
+    if (!await launchUrl(Uri.parse(url))) {
+      throw Exception('Could not launch ');
     }
   }
 
@@ -48,7 +48,8 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
     TalentHubProvider talentHubProvider =
         Provider.of<TalentHubProvider>(context);
     DetailTalentHubModel? detailTalent = talentHubProvider.detailTalent;
-    Widget actionButton(VoidCallback onPressed, String img, String title) {
+    Widget actionButton(VoidCallback onPressed, String img, String title,
+        {bool? nullPortofolio}) {
       return Container(
         width: 136,
         child: ElevatedButton(
@@ -58,9 +59,9 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
                     : title == 'CV'
                         ? Colors.red
                         : title == 'Portofolio'
-                            ? Colors.yellow
+                            ? Color(0xffFFCB42)
                             : Colors.blue),
-            onPressed: onPressed,
+            onPressed: nullPortofolio == true ? null : onPressed,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -77,7 +78,7 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
     Widget headProfile() {
       return Container(
         width: 378,
-        height: 330,
+        height: 290,
         color: Color(0xffF2F4F6),
         child: Column(
           children: [
@@ -97,7 +98,7 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
                       shape: BoxShape.circle,
                       image: DecorationImage(
                         image: NetworkImage(
-                            "http://dev.stufast.id/public/upload/users/${detailTalent?.user?.profilePicture}"),
+                            "http://dev.stufast.id/upload/users/${detailTalent?.user?.profilePicture}"),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -123,48 +124,63 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               mainAxisSize: MainAxisSize.max,
               children: [
-                Column(
-                  children: [
-                    Text(
-                      'Total Sertifikat',
-                      style: secondaryTextStyle.copyWith(fontWeight: bold),
-                      textAlign: TextAlign.center,
-                    ),
-                    Text(
-                      '${detailTalent?.totalCourse}',
-                      style: primaryTextStyle.copyWith(fontWeight: bold),
-                    ),
-                  ],
+                Container(
+                  width: 120,
+                  padding: EdgeInsets.all(7),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: primaryColor)),
+                  child: Row(
+                    children: [
+                      Image.asset('assets/ic_sum_sertif.png'),
+                      SizedBox(width: 4),
+                      Text('${detailTalent?.totalCourse} Sertifikat',
+                          style: thirdTextStyle.copyWith(
+                              fontSize: 14, fontWeight: semiBold))
+                    ],
+                  ),
                 ),
-                Column(
-                  children: [
-                    Text(
-                      'Total Score',
-                      style: secondaryTextStyle.copyWith(fontWeight: bold),
-                      textAlign: TextAlign.center,
-                    ),
-                    Text(
-                      '${detailTalent?.averageScore}',
-                      style: primaryTextStyle.copyWith(fontWeight: bold),
-                    ),
-                  ],
+                Container(
+                  width: 120,
+                  padding: EdgeInsets.all(7),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: primaryColor)),
+                  child: Row(
+                    children: [
+                      Image.asset('assets/ic_sum_skor.png'),
+                      SizedBox(width: 4),
+                      Text('${detailTalent?.totalCourse} Skor',
+                          style: thirdTextStyle.copyWith(
+                              fontSize: 14, fontWeight: semiBold))
+                    ],
+                  ),
                 ),
               ],
             ),
+            SizedBox(height: 18),
+
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //   children: [
+            //     actionButton(() {
+            //       _launchUrl();
+            //     }, 'assets/ic_hire.png', 'Hire'),
+            //     actionButton(() {}, 'assets/ic_lin.png', 'Linkedin'),
+            //   ],
+            // ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 actionButton(() {
-                  _launchUrl();
+                  _launchUrl(
+                      'http://dev.stufast.id/talent/detail/${detailTalent?.user?.id}');
                 }, 'assets/ic_hire.png', 'Hire'),
-                actionButton(() {}, 'assets/ic_lin.png', 'Linkedin'),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                actionButton(() {}, 'assets/ic_cv.png', 'CV'),
-                actionButton(() {}, 'assets/ic_portofolio.png', 'Portofolio'),
+                actionButton(() {
+                  _launchUrl(detailTalent?.user?.portofolio ?? '');
+                }, 'assets/ic_portofolio.png', 'Portofolio',
+                    nullPortofolio:
+                        detailTalent?.user?.portofolio == '-' ? true : false),
               ],
             )
           ],
@@ -176,10 +192,23 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
       return Container(
         color: Color(0xffF2F4F6),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Pencapaian',
-              style: primaryTextStyle.copyWith(fontSize: 18, fontWeight: bold),
+            Container(
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Pencapaian',
+                        style: primaryTextStyle.copyWith(
+                            fontSize: 18, fontWeight: bold)),
+                    Divider(
+                      color: Color(0xffFFA500),
+                      thickness: 1,
+                      endIndent: 220,
+                    ),
+                  ]),
             ),
             Column(
               children: talentHubProvider.detailTalent!.ach!
@@ -219,8 +248,9 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
                 children: [
                   headProfile(),
                   SizedBox(height: 17),
-                  CvPreview(),
-                  pencapaian()
+                  CvPreview(cv: detailTalent!.user!),
+                  pencapaian(),
+                  SizedBox(height: 24),
                 ],
               ),
       ),

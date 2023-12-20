@@ -28,6 +28,36 @@ class CourseService {
     }
   }
 
+  Future<CoursePaginationModel> getCourseFilter(
+      {int? index,
+      String? tag,
+      String? category,
+      String? sort,
+      String? search}) async {
+    var url = Uri.parse('$baseUrl/course/pagination');
+    var body = jsonEncode({
+      "page": index,
+      "tag": tag != null ? [tag] : [],
+      "category": category != null ? [category] : [],
+      "sort": sort != null
+          ? {"value": "new_price", "order": sort}
+          : {"value": "updated_at", "order": "desc"},
+      "search": search ?? ""
+    });
+
+    var response = await http.post(url, body: body);
+    print(body);
+    print('FILTER COURSE ' + response.body);
+
+    if (response.statusCode == 200) {
+      CoursePaginationModel coursePagination =
+          CoursePaginationModel.fromJson(jsonDecode(response.body));
+      return coursePagination;
+    } else {
+      throw Exception('Gagal get Products');
+    }
+  }
+
   Future<List<CourseModel>> searchCourse(String query) async {
     var url = Uri.parse('$baseUrl/course/find/$query');
     var response = await http.get(url);
