@@ -2,12 +2,13 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stufast_mobile/api/api_url.dart';
 import 'package:stufast_mobile/models/faq_model.dart';
 import 'package:stufast_mobile/services/Auth/auth_service.dart';
 
 class FaqService {
   Future<List<FaqModel>> getFaq() async {
-    var url = Uri.parse(AuthService.baseUrl + '/faq');
+    var url = Uri.parse(ApiUrl.api_url + '/faq');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {

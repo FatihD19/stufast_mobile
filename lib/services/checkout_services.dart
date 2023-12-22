@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stufast_mobile/api/api_url.dart';
 import 'package:stufast_mobile/models/order_model.dart';
 import 'package:stufast_mobile/models/voucher_model.dart';
 import 'package:stufast_mobile/services/Auth/auth_service.dart';
@@ -9,7 +10,7 @@ import '../models/chart_model.dart';
 
 class CheckOutService {
   Future<ChartModel> checkoutCourse(List id, {String? type}) async {
-    var url = Uri.parse(AuthService.baseUrl + '/cart/process');
+    var url = Uri.parse(ApiUrl.api_url + '/cart/process');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -35,7 +36,7 @@ class CheckOutService {
   }
 
   Future<OrderModel> orderItem(List id, {String? kupon, String? type}) async {
-    var url = Uri.parse(AuthService.baseUrl + '/order/generatesnap-2');
+    var url = Uri.parse(ApiUrl.api_url + '/order/generatesnap-2');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -61,7 +62,7 @@ class CheckOutService {
   }
 
   Future<bool> cancelOrder(String orderID) async {
-    var url = Uri.parse(AuthService.baseUrl + '/order/cancel');
+    var url = Uri.parse(ApiUrl.api_url + '/order/cancel');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -84,8 +85,7 @@ class CheckOutService {
   }
 
   Future<VoucherModel> useVoucher(String code) async {
-    var url =
-        Uri.parse(AuthService.baseUrl + '/voucher/code-detail?code=$code');
+    var url = Uri.parse(ApiUrl.api_url + '/voucher/code-detail?code=$code');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {

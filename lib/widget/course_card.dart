@@ -123,7 +123,7 @@ class _CardCourseState extends State<CardCourse> {
                               : RatingBarIndicator(
                                   unratedColor: Color(0xffF0DB96),
                                   rating: double.parse(
-                                      '${widget.course!.rating_course}'),
+                                      '${widget.course?.rating_course}'),
                                   itemBuilder: (context, index) => Icon(
                                     Icons.star,
                                     color: Color(0xffFFCB42),

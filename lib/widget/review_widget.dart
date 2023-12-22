@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:stufast_mobile/api/api_url.dart';
 import 'package:stufast_mobile/models/review_model.dart';
 import 'package:stufast_mobile/theme.dart';
 
@@ -23,7 +24,7 @@ class ReviewTile extends StatelessWidget {
           leading: ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Image.network(
-              'http://dev.stufast.id/upload/users/${review.profilePicture}',
+              '${ApiUrl.url}/upload/users/${review.profilePicture}',
               width: 70,
               height: 70,
               fit: BoxFit.cover,

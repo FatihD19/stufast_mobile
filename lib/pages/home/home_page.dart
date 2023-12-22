@@ -38,34 +38,17 @@ class _HomePageState extends State<HomePage> {
     getInit();
 
     Provider.of<WebinarProvider>(context, listen: false).getWebinar(false);
-    // Provider.of<UserCourseProvider>(context, listen: false).getUserCourses();
     Provider.of<UserCourseProvider>(context, listen: false).getUserCourse();
     Provider.of<NotificationProvider>(context, listen: false).getNotification();
-
-    // jumlahCart =
-    //     Provider.of<ChartProvider>(context, listen: false).chart?.item?.length;
 
     super.initState();
   }
 
   getInit() async {
-    // setState(() {
-    //   loading = true;
-    // });
     Provider.of<ChartProvider>(context, listen: false).getChart();
     await Provider.of<TalentHubProvider>(context, listen: false)
         .getTalentHub(index: 1);
     await Provider.of<CourseProvider>(context, listen: false).getCourses('all');
-    // setState(() {
-    //   jumlahCart = Provider.of<ChartProvider>(context, listen: false)
-    //       .chart
-    //       ?.item
-    //       ?.length;
-    // });
-
-    // setState(() {
-    //   loading = false;
-    // });
   }
 
   int currentIndex = 0;
@@ -389,17 +372,30 @@ class _HomePageState extends State<HomePage> {
               )
             ],
           ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: courseProvider.courses
-                  .take(10) // Hanya ambil 10 data
-                  .map((course) => CardCourse(
-                        course: course,
-                      ))
-                  .toList(),
-            ),
-          )
+          courseProvider.loading == true
+              ? SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      CardCourseShimmer(),
+                      SizedBox(width: 5),
+                      CardCourseShimmer(),
+                      SizedBox(width: 5),
+                      CardCourseShimmer(),
+                    ],
+                  ),
+                )
+              : SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: courseProvider.courses
+                        .take(10) // Hanya ambil 10 data
+                        .map((course) => CardCourse(
+                              course: course,
+                            ))
+                        .toList(),
+                  ),
+                )
           // FutureBuilder(
           //     future: courseProvider.getCourses('all'),
           //     builder: (context, snapshot) {
@@ -515,7 +511,7 @@ class _HomePageState extends State<HomePage> {
           carousel(),
           continueCourse(),
           popularCourse(),
-          webinar(),
+          // webinar(),
           previewTalentHub()
         ],
       ),

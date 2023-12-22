@@ -405,8 +405,7 @@ class _MyCoursePageState extends State<MyCoursePage> {
                   strokeWidth: 3,
                   triggerMode: RefreshIndicatorTriggerMode.onEdge,
                   onRefresh: () async {
-                    await Provider.of<BundleProvider>(context, listen: false)
-                        .getUserBundle();
+                    await getInit();
                   },
                   child: ListView(
                     shrinkWrap: true,
@@ -414,7 +413,11 @@ class _MyCoursePageState extends State<MyCoursePage> {
                       SizedBox(height: 10),
                       filterTag(),
                       SizedBox(height: 10),
-                      learnProgress(),
+                      userCourseProvider.userCourse?.course.length == 0 &&
+                              userCourseProvider.userCourse?.bundling.length ==
+                                  0
+                          ? SizedBox()
+                          : learnProgress(),
                       SizedBox(height: 7),
                       selectedTag == 'Semua'
                           ?
@@ -427,7 +430,8 @@ class _MyCoursePageState extends State<MyCoursePage> {
                             )
                           : selectedTag == 'Course'
                               ? userCourseTile()
-                              : userBundleTile()
+                              : userBundleTile(),
+                      SizedBox(height: 24),
                     ],
                   ),
                 ),

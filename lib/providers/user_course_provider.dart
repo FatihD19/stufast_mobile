@@ -4,6 +4,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stufast_mobile/api/api_url.dart';
 import 'package:stufast_mobile/models/bundling_model.dart';
 import 'package:stufast_mobile/models/course_model.dart';
 import 'package:stufast_mobile/models/user_course_model.dart';
@@ -95,12 +96,12 @@ class UserCourseProvider with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var urlSertif = isCv == true
-        ? 'http://dev.stufast.id/cv/download?user_id=$idUser&token=$token'
+        ? '${ApiUrl.url}/cv/download?user_id=$idUser&token=$token'
         : isBundling == true
-            ? 'http://dev.stufast.id/certificates?type=bundling&id=${idBundle}&token=$token'
+            ? '${ApiUrl.url}/certificates?type=bundling&id=${idBundle}&token=$token'
             : courseBundle == true
-                ? 'http://dev.stufast.id/certificates?type=course-bundling&id=${idCourse}&bundl=${idBundle}&token=$token'
-                : 'http://dev.stufast.id/certificates?type=course&id=${idCourse}&token=$token';
+                ? '${ApiUrl.url}/certificates?type=course-bundling&id=${idCourse}&bundl=${idBundle}&token=$token'
+                : '${ApiUrl.url}/certificates?type=course&id=${idCourse}&token=$token';
     await Permission.storage.request();
     final baseStorage = await getExternalStorageDirectory();
     try {

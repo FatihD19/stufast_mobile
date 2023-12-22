@@ -52,7 +52,7 @@ class NotifikasiPage extends StatelessWidget {
                   ? Navigator.pushNamed(context, '/order-page')
                   : id == '3'
                       ? Navigator.pushNamed(context, '/edit-profile')
-                      : null;
+                      : Navigator.pushNamed(context, '/hire-page');
             },
             leading: Image.network('$img', width: 40, height: 40),
             title: Text(
@@ -86,18 +86,18 @@ class NotifikasiPage extends StatelessWidget {
             Navigator.pushNamed(context, '/home');
           },
         ),
-        actions: [
-          TextButton(
-              onPressed: () async {
-                String? token = await FirebaseMessaging.instance.getToken();
-                AuthService.sendDeviceToken("${token}");
-                print(token);
-              },
-              child: Text(
-                'sudah dibaca',
-                style: thirdTextStyle,
-              ))
-        ],
+        // actions: [
+        //   TextButton(
+        //       onPressed: () async {
+        //         String? token = await FirebaseMessaging.instance.getToken();
+        //         AuthService.sendDeviceToken("${token}");
+        //         print(token);
+        //       },
+        //       child: Text(
+        //         'sudah dibaca',
+        //         style: thirdTextStyle,
+        //       ))
+        // ],
         backgroundColor: Colors.white,
         centerTitle: false,
       ),

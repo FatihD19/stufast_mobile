@@ -6,11 +6,12 @@ import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stufast_mobile/api/api_url.dart';
 import 'package:stufast_mobile/models/user_model.dart';
 
 class AuthService {
-  static String baseUrl = 'http://dev.stufast.id/api';
-
+  static String baseUrl = '${ApiUrl.api_url}/api';
+  // String api = ApiUrl.api_url;
   Future<UserModel> register(
       {String? email,
       String? nama,
@@ -19,7 +20,7 @@ class AuthService {
       String? phoneNumber,
       String? password,
       String? confirmPassword}) async {
-    var url = Uri.parse('$baseUrl/register');
+    var url = Uri.parse('${ApiUrl.api_url}/register');
     var headers = {'Content-Type': 'application/json'};
     var body = jsonEncode({
       'fullname': nama,
@@ -51,8 +52,8 @@ class AuthService {
     String? password,
   }) async {
     var url = isGoogle == true
-        ? Uri.parse('$baseUrl/login/google')
-        : Uri.parse('$baseUrl/login');
+        ? Uri.parse('${ApiUrl.api_url}/login/google')
+        : Uri.parse('${ApiUrl.api_url}/login');
     var headers = {'Content-Type': 'application/json'};
     var body = isGoogle == true
         ? jsonEncode({"email": email, "fullname": fullname, "id": id})
@@ -79,11 +80,11 @@ class AuthService {
   }
 
   Future<bool> uploadProfilePicture(String id, File imageFile) async {
-    var url = Uri.parse('$baseUrl/users/update/profile-picture/$id');
+    var url = Uri.parse('${ApiUrl.api_url}/users/update/profile-picture/$id');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
-      'Content-Type': 'multipart/form-data',
+      'Content-Type': 'image/png',
       'Authorization': 'Bearer $token',
     };
     var response = await http.post(url,
@@ -104,7 +105,7 @@ class AuthService {
       String? phoneNumber,
       String? job_id,
       XFile? profilePicture}) async {
-    var url = Uri.parse('$baseUrl/users/update/$id');
+    var url = Uri.parse('${ApiUrl.api_url}/users/update/$id');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -177,7 +178,7 @@ class AuthService {
   }
 
   Future<UserModel> getProfile() async {
-    var url = Uri.parse('$baseUrl/profile');
+    var url = Uri.parse('${ApiUrl.api_url}/profile');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -196,7 +197,7 @@ class AuthService {
   }
 
   static Future<bool> sendDeviceToken(String dToken) async {
-    var url = Uri.parse('$baseUrl/device-token');
+    var url = Uri.parse('${ApiUrl.api_url}/device-token');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -214,7 +215,7 @@ class AuthService {
   }
 
   Future<List<DropdownJobModel>> getDropdownJob() async {
-    var url = Uri.parse(AuthService.baseUrl + '/jobs');
+    var url = Uri.parse(ApiUrl.api_url + '/jobs');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {

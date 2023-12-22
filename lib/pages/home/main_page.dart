@@ -111,10 +111,10 @@ class _MainPageState extends State<MainPage> {
           android: AndroidInitializationSettings('@mipmap/ic_launcher'),
         ), onDidReceiveNotificationResponse: (payload) {
       // handle interaction when app is active for android
-      if (notifMessTemp.contains('kabar')) {
+      if (notifMessTemp.contains('Kabar')) {
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => HirePage()));
-      } else if (notifMessTemp.contains('berhasil')) {
+      } else if (notifMessTemp.contains('Berhasil')) {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(

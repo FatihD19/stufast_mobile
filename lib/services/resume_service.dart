@@ -4,10 +4,11 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stufast_mobile/models/resume_model.dart';
 import 'package:stufast_mobile/services/Auth/auth_service.dart';
+import 'package:stufast_mobile/api/api_url.dart';
 
 class ResumeService {
   Future<Resume> getResume(String idResume) async {
-    var url = Uri.parse(AuthService.baseUrl + '/resume/detail/$idResume');
+    var url = Uri.parse(ApiUrl.api_url + '/resume/detail/$idResume');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -29,7 +30,7 @@ class ResumeService {
   }
 
   Future<bool> storeResume(String videoId, String resume, {bool? later}) async {
-    var url = Uri.parse(AuthService.baseUrl + '/resume/create');
+    var url = Uri.parse(ApiUrl.api_url + '/resume/create');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -52,7 +53,7 @@ class ResumeService {
 
   static Future<bool> updateResume(
       String resumeId, String videoId, String resume) async {
-    var url = Uri.parse(AuthService.baseUrl + '/resume/update/$resumeId');
+    var url = Uri.parse(ApiUrl.api_url + '/resume/update/$resumeId');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {

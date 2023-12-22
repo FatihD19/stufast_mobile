@@ -2,14 +2,14 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stufast_mobile/api/api_url.dart';
 import 'package:stufast_mobile/models/invoice_model.dart';
 import 'package:stufast_mobile/models/orderHistoryModel.dart';
 import 'package:stufast_mobile/services/Auth/auth_service.dart';
 
 class OrderService {
   Future<List<OrderHistoryModel>> getOrder(String option) async {
-    var url =
-        Uri.parse(AuthService.baseUrl + '/order/get-order-by-member/$option');
+    var url = Uri.parse(ApiUrl.api_url + '/order/get-order-by-member/$option');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -35,8 +35,7 @@ class OrderService {
   }
 
   Future<InvoiceModel> getInvoice(String orderId) async {
-    var url =
-        Uri.parse(AuthService.baseUrl + '/invoice/get-invoice-by-id/$orderId');
+    var url = Uri.parse(ApiUrl.api_url + '/invoice/get-invoice-by-id/$orderId');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {

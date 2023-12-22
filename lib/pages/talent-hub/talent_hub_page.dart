@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:stufast_mobile/models/talent_hub_model.dart';
 import 'package:stufast_mobile/providers/talentHub_provider.dart';
 import 'package:stufast_mobile/theme.dart';
+import 'package:stufast_mobile/widget/course_card.dart';
 import 'package:stufast_mobile/widget/talent_card.dart';
 
 class TalentHubPage extends StatefulWidget {
@@ -71,6 +72,7 @@ class _TalentHubPageState extends State<TalentHubPage> {
     await Provider.of<TalentHubProvider>(context, listen: false).getTalentHub(
         index: _currentPage,
         searchQuery: _searchQuery,
+        sort: _sortBy,
         status: filterByType,
         method: filterByMethod);
   }
@@ -87,7 +89,7 @@ class _TalentHubPageState extends State<TalentHubPage> {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setState) {
             return Container(
-              height: MediaQuery.of(context).size.height * 0.4,
+              height: MediaQuery.of(context).size.height * 0.42,
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -362,7 +364,6 @@ class _TalentHubPageState extends State<TalentHubPage> {
             SizedBox(height: 10),
             CarouselSlider(
               items: item.map((e) {
-                index++;
                 return Container(
                   width: MediaQuery.of(context).size.width,
                   height: 200,
@@ -411,9 +412,7 @@ class _TalentHubPageState extends State<TalentHubPage> {
                 if (index == talentHubProvider.talentList.length) {
                   return talentHubProvider.isEmpty
                       ? Text('data')
-                      : Center(
-                          child: Text(
-                              '$index, ${talentHubProvider.talentList.length}'));
+                      : CardCourseShimmer();
                 } else if (talentHubProvider.error == true) {
                   Center(child: Text('error'));
                 } else {
@@ -487,8 +486,8 @@ class _TalentHubPageState extends State<TalentHubPage> {
                       children: [
                         promoTalent(),
                         gridTalent(),
-                        Text(
-                            '${talentHubProvider.talentList.length}, ${talentHubProvider.totalItemTalent}'),
+                        // Text(
+                        //     '${talentHubProvider.talentList.length}, ${talentHubProvider.totalItemTalent}'),
 
                         talentHubProvider.totalItemTalent == 0
                             ? SizedBox()

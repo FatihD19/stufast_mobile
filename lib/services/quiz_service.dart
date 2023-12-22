@@ -2,12 +2,13 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stufast_mobile/api/api_url.dart';
 import 'package:stufast_mobile/models/quiz_model.dart';
 import 'package:stufast_mobile/services/Auth/auth_service.dart';
 
 class QuizService {
   Future<List<QuizModel>> getQuiz(String id) async {
-    var url = Uri.parse(AuthService.baseUrl + '/course/video_2/$id');
+    var url = Uri.parse(ApiUrl.api_url + '/course/video_2/$id');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -34,7 +35,7 @@ class QuizService {
 
   Future<Map<String, dynamic>> submitQuiz(
       String id, List selectedQuizId, List selectedAnswer) async {
-    var url = Uri.parse('http://dev.stufast.id/api/course/video_2/$id');
+    var url = Uri.parse('${ApiUrl.api_url}/course/video_2/$id');
 
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');

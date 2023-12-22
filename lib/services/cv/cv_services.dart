@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stufast_mobile/api/api_url.dart';
 import 'package:stufast_mobile/models/cv_model.dart';
 import 'package:stufast_mobile/services/Auth/auth_service.dart';
 import 'package:http/http.dart' as http;
 
 class CVservice {
   Future<CVmodel> getCV() async {
-    var url = Uri.parse(AuthService.baseUrl + '/users/cv');
+    var url = Uri.parse(ApiUrl.api_url + '/users/cv');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -33,7 +34,7 @@ class CVservice {
       String? linkedin,
       String? status,
       String? method}) async {
-    var url = Uri.parse(AuthService.baseUrl + '/users/cv/update-cv');
+    var url = Uri.parse(ApiUrl.api_url + '/users/cv/update-cv');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -59,7 +60,7 @@ class CVservice {
   }
 
   Future<bool> uploadPortofolio(String id, File portoFile) async {
-    var url = Uri.parse(AuthService.baseUrl + '/users/cv/portofolio/$id');
+    var url = Uri.parse(ApiUrl.api_url + '/users/cv/portofolio/$id');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -79,7 +80,7 @@ class CVservice {
 
   // ignore: avoid_types_as_parameter_names
   Future<bool> updateCVEducation(List cvEducation) async {
-    var url = Uri.parse(AuthService.baseUrl + '/users/cv/update-edu');
+    var url = Uri.parse(ApiUrl.api_url + '/users/cv/update-edu');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -99,7 +100,7 @@ class CVservice {
   }
 
   Future<bool> updateExp(List cvExp) async {
-    var url = Uri.parse(AuthService.baseUrl + '/users/cv/update-exp');
+    var url = Uri.parse(ApiUrl.api_url + '/users/cv/update-exp');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -119,7 +120,7 @@ class CVservice {
   }
 
   Future<bool> updateAch(List cvAch) async {
-    var url = Uri.parse(AuthService.baseUrl + '/users/cv/update-ach');
+    var url = Uri.parse(ApiUrl.api_url + '/users/cv/update-ach');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {

@@ -1,15 +1,16 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:stufast_mobile/api/api_url.dart';
 import 'package:stufast_mobile/models/course_model.dart';
 import 'package:stufast_mobile/models/tag_model.dart';
 
 class CourseService {
-  String baseUrl = 'http://dev.stufast.id/api';
+  String baseUrl = '${ApiUrl.api_url}/api';
 
   Future<List<CourseModel>> getCourse([String? typeCourse]) async {
     var url = typeCourse == 'all'
-        ? Uri.parse('$baseUrl/course/all')
-        : Uri.parse('$baseUrl/course/latest/10');
+        ? Uri.parse('${ApiUrl.api_url}/course/all')
+        : Uri.parse('${ApiUrl.api_url}/course/latest/10');
 
     var response = await http.get(url);
 
@@ -34,7 +35,7 @@ class CourseService {
       String? category,
       String? sort,
       String? search}) async {
-    var url = Uri.parse('$baseUrl/course/pagination');
+    var url = Uri.parse('${ApiUrl.api_url}/course/pagination');
     var body = jsonEncode({
       "page": index,
       "tag": tag != null ? [tag] : [],
@@ -59,7 +60,7 @@ class CourseService {
   }
 
   Future<List<CourseModel>> searchCourse(String query) async {
-    var url = Uri.parse('$baseUrl/course/find/$query');
+    var url = Uri.parse('${ApiUrl.api_url}/course/find/$query');
     var response = await http.get(url);
 
     print('SEARCH COURSE ' + response.body);
@@ -80,7 +81,7 @@ class CourseService {
 
   Future<List<CourseModel>> searchCourseByTag(
       {String? query, String? category}) async {
-    var url = Uri.parse('$baseUrl/course/all');
+    var url = Uri.parse('${ApiUrl.api_url}/course/all');
     var response = await http.get(url);
 
     print('SEARCH COURSE ' + response.body);
@@ -108,7 +109,7 @@ class CourseService {
   }
 
   Future<List<TagModel>> getTags(String id) async {
-    var url = Uri.parse('$baseUrl/tag/filter/$id');
+    var url = Uri.parse('${ApiUrl.api_url}/tag/filter/$id');
     var response = await http.get(url);
     print('TAG COURSE ' + response.body);
     if (response.statusCode == 200) {

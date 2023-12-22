@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stufast_mobile/api/api_url.dart';
 import 'package:stufast_mobile/models/bundling_model.dart';
 import 'package:stufast_mobile/models/course_model.dart';
 import 'package:stufast_mobile/models/user_course_model.dart';
@@ -9,10 +10,10 @@ import 'package:stufast_mobile/models/user_model.dart';
 import 'package:stufast_mobile/services/Auth/auth_service.dart';
 
 class UserCourseService {
-  String baseUrl = 'http://dev.stufast.id/api';
+  String baseUrl = '${ApiUrl.api_url}/api';
 
   Future<UserCourseModel> getUserCourse() async {
-    var url = Uri.parse(baseUrl + '/profile/course');
+    var url = Uri.parse(ApiUrl.api_url + '/profile/course');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -31,7 +32,7 @@ class UserCourseService {
   }
 
   // Future<List<CourseModel>> getUserCourse() async {
-  //   var url = Uri.parse(AuthService.baseUrl + '/profile/course');
+  //   var url = Uri.parse(ApiUrl.api_url + '/profile/course');
   //   final prefs = await SharedPreferences.getInstance();
   //   var token = prefs.getString('token');
   //   var headers = {
@@ -54,7 +55,7 @@ class UserCourseService {
   // }
 
   Future<List<BundlingModel>> getUserBundle() async {
-    var url = Uri.parse(AuthService.baseUrl + '/profile/course');
+    var url = Uri.parse(ApiUrl.api_url + '/profile/course');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -77,7 +78,7 @@ class UserCourseService {
   }
 
   Future<CourseModel> getDetailUserCourse(String id) async {
-    var url = Uri.parse(AuthService.baseUrl + '/course/detail/$id');
+    var url = Uri.parse(ApiUrl.api_url + '/course/detail/$id');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -98,7 +99,7 @@ class UserCourseService {
 
   Future<bool> createReview(String courseId, String feedback, int score,
       {bool? isBundling}) async {
-    var url = Uri.parse(AuthService.baseUrl + '/review/create_2');
+    var url = Uri.parse(ApiUrl.api_url + '/review/create_2');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {

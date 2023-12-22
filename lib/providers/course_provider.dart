@@ -77,6 +77,7 @@ class CourseProvider with ChangeNotifier {
       List<CourseModel> courses = await CourseService().getCourse(typeCourse);
       _courses = courses;
       loading = false;
+      notifyListeners();
     } catch (e) {
       print(e);
     }

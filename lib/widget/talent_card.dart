@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stufast_mobile/api/api_url.dart';
 import 'package:stufast_mobile/models/talent_hub_model.dart';
 import 'package:stufast_mobile/pages/talent-hub/detail_talentHub.dart';
 
@@ -35,7 +36,7 @@ class TalentCard extends StatelessWidget {
                     image: FadeInImage.assetNetwork(
                       placeholder: 'assets/placeholder.png',
                       image:
-                          'http://dev.stufast.id/upload/users/${talent.profilePicture}',
+                          '${ApiUrl.url}/upload/users/${talent.profilePicture}',
                     ).image,
                     fit: BoxFit.cover,
                   ),

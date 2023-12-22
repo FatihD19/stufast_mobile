@@ -1,13 +1,14 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stufast_mobile/api/api_url.dart';
 import 'package:stufast_mobile/models/notif_model.dart';
 import 'package:stufast_mobile/services/Auth/auth_service.dart';
 import 'package:http/http.dart' as http;
 
 class NotificationService {
   Future<NotificationModel> getNotification() async {
-    var url = Uri.parse(AuthService.baseUrl + '/notification');
+    var url = Uri.parse(ApiUrl.api_url + '/notification');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {

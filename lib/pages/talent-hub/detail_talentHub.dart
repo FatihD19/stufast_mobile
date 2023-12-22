@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:stufast_mobile/api/api_url.dart';
 import 'package:stufast_mobile/models/talent_hub_model.dart';
 import 'package:stufast_mobile/pages/talent-hub/cv_preview.dart';
 import 'package:stufast_mobile/providers/talentHub_provider.dart';
@@ -78,7 +79,7 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
     Widget headProfile() {
       return Container(
         width: 378,
-        height: 290,
+        height: 310,
         color: Color(0xffF2F4F6),
         child: Column(
           children: [
@@ -98,7 +99,7 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
                       shape: BoxShape.circle,
                       image: DecorationImage(
                         image: NetworkImage(
-                            "http://dev.stufast.id/upload/users/${detailTalent?.user?.profilePicture}"),
+                            "${ApiUrl.url}/upload/users/${detailTalent?.user?.profilePicture}"),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -174,7 +175,7 @@ class _DetailTalentHubPageState extends State<DetailTalentHubPage> {
               children: [
                 actionButton(() {
                   _launchUrl(
-                      'http://dev.stufast.id/talent/detail/${detailTalent?.user?.id}');
+                      '${ApiUrl.url}/talent/detail/${detailTalent?.user?.id}');
                 }, 'assets/ic_hire.png', 'Hire'),
                 actionButton(() {
                   _launchUrl(detailTalent?.user?.portofolio ?? '');

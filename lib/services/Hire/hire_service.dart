@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:stufast_mobile/api/api_url.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stufast_mobile/models/hire_model.dart';
@@ -8,7 +8,7 @@ import 'package:stufast_mobile/services/Auth/auth_service.dart';
 class HireService {
   String? messageNotifConfirm;
   Future<List<HireModel>> getHireOffer() async {
-    var url = Uri.parse(AuthService.baseUrl + '/hire/user');
+    var url = Uri.parse(ApiUrl.api_url + '/hire/user');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -33,7 +33,7 @@ class HireService {
   }
 
   Future<String> confirmHire(String idHire, String confrim) async {
-    var url = Uri.parse(AuthService.baseUrl + '/hire/confirm');
+    var url = Uri.parse(ApiUrl.api_url + '/hire/confirm');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -56,7 +56,7 @@ class HireService {
   }
 
   Future<bool> sendNotifconfirmHire(String message) async {
-    var url = Uri.parse(AuthService.baseUrl + '/hire/confirm-notif');
+    var url = Uri.parse(ApiUrl.api_url + '/hire/confirm-notif');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {

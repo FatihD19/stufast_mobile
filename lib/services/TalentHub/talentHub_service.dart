@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stufast_mobile/api/api_url.dart';
 import 'package:stufast_mobile/models/talent_hub_model.dart';
 import 'package:stufast_mobile/services/Auth/auth_service.dart';
 import 'package:http/http.dart' as http;
@@ -12,8 +13,8 @@ class TalentService {
       String? searchQuery,
       int? index}) async {
     var url = useFilter == true
-        ? Uri.parse(AuthService.baseUrl + '/talent-hub')
-        : Uri.parse(AuthService.baseUrl + '/talent-hub/page/$index');
+        ? Uri.parse(ApiUrl.api_url + '/talent-hub')
+        : Uri.parse(ApiUrl.api_url + '/talent-hub/page/$index');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -45,7 +46,7 @@ class TalentService {
       String? searchQuery,
       String? status,
       String? method}) async {
-    var url = Uri.parse(AuthService.baseUrl + '/talent-hub/pagination');
+    var url = Uri.parse(ApiUrl.api_url + '/talent-hub/pagination');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -80,7 +81,7 @@ class TalentService {
   }
 
   Future<DetailTalentHubModel> getDetailTalent(String id) async {
-    var url = Uri.parse(AuthService.baseUrl + '/talent-hub/detail/$id');
+    var url = Uri.parse(ApiUrl.api_url + '/talent-hub/detail/$id');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {

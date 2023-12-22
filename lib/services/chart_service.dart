@@ -1,4 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stufast_mobile/api/api_url.dart';
 import 'package:stufast_mobile/models/chart_model.dart';
 import 'package:stufast_mobile/services/Auth/auth_service.dart';
 import 'dart:convert';
@@ -7,7 +8,7 @@ import 'package:http/http.dart' as http;
 
 class ChartService {
   Future<ChartModel> getChart() async {
-    var url = Uri.parse(AuthService.baseUrl + '/cart/all');
+    var url = Uri.parse(ApiUrl.api_url + '/cart/all');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -29,7 +30,7 @@ class ChartService {
   }
 
   Future<String> addChart(String type, String id) async {
-    var url = Uri.parse(AuthService.baseUrl + '/cart/create/$type/$id');
+    var url = Uri.parse(ApiUrl.api_url + '/cart/create/$type/$id');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {
@@ -49,7 +50,7 @@ class ChartService {
   }
 
   Future<String> deleteChart(String id) async {
-    var url = Uri.parse(AuthService.baseUrl + '/cart/delete/$id');
+    var url = Uri.parse(ApiUrl.api_url + '/cart/delete/$id');
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var headers = {

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:stufast_mobile/api/api_url.dart';
 import 'package:stufast_mobile/pages/checkout/order_page.dart';
 import 'package:stufast_mobile/pages/succsess_page.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -70,13 +71,13 @@ class _PaymentViewState extends State<PaymentView> {
         body: SafeArea(
           child: WebView(
             initialUrl:
-                'http://dev.stufast.id/api/order/web-view?token=${widget.tokenPay}',
+                '${ApiUrl.url}/api/order/web-view?token=${widget.tokenPay}',
             // onWebViewCreated: (WebViewController webViewController) {
             //   _controller.complete(webViewController);
             // },
             javascriptMode: JavascriptMode.unrestricted,
             navigationDelegate: (NavigationRequest request) {
-              if (request.url.startsWith('http://dev.stufast.id/snap/sukses')) {
+              if (request.url.startsWith('${ApiUrl.url}/snap/sukses')) {
                 // Navigasi ke halaman SuccessPage jika URL sesuai
                 Navigator.pushNamed(context, '/user-course');
                 // Navigator.push(
@@ -89,8 +90,7 @@ class _PaymentViewState extends State<PaymentView> {
                 //           )),
                 // );
                 return NavigationDecision.prevent;
-              } else if (request.url
-                  .startsWith('http://dev.stufast.id/snap/batal')) {
+              } else if (request.url.startsWith('${ApiUrl.url}/snap/batal')) {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return OrderPage();
                 }));

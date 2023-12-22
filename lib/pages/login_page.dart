@@ -302,7 +302,7 @@ class _LoginPageState extends State<LoginPage> {
               icon: Icon(Icons.arrow_back),
               color: Colors.black,
               onPressed: () {
-                Navigator.pushNamed(context, 'landing-page');
+                Navigator.pushNamed(context, '/landing-page');
               },
             ),
             backgroundColor: Colors.white,

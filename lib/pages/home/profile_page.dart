@@ -8,6 +8,7 @@ import 'package:stufast_mobile/pages/login_page.dart';
 import 'package:stufast_mobile/providers/auth_provider.dart';
 import 'package:stufast_mobile/providers/bundle_provider.dart';
 import 'package:stufast_mobile/providers/user_course_provider.dart';
+import 'package:stufast_mobile/services/Auth/auth_service.dart';
 import 'package:stufast_mobile/services/Auth/login_google_service.dart';
 import 'package:stufast_mobile/theme.dart';
 import 'package:stufast_mobile/widget/primary_button.dart';
@@ -25,10 +26,12 @@ class ProfilePage extends StatelessWidget {
 
     logout() async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
+      await AuthService.sendDeviceToken(''); // remove device token
       await prefs.remove('token');
       // context.read<UserCourseProvider>().userCourses = [];
       // context.read<BundleProvider>().userBundle = [];
       context.read<UserCourseProvider>().dispose();
+
       prefs.remove('saveLogin');
       await LoginApi.logout().then((value) => print('suksesLogout'));
       Navigator.pushAndRemoveUntil(

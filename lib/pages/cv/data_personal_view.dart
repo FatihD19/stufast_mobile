@@ -25,6 +25,7 @@ class _DataPersonalViewState extends State<DataPersonalView> {
   File? _selectedFile;
   bool? readyUpload = false;
   String? selectedNameFile;
+  bool? loadingSubmit = false;
 
   void _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -91,6 +92,7 @@ class _DataPersonalViewState extends State<DataPersonalView> {
     }
 
     handleUpdateCv() async {
+      loadingSubmit = true;
       if (await cv.updateCV(
           about: _aboutMeController.text,
           instagram: _instagramController.text,
@@ -98,6 +100,7 @@ class _DataPersonalViewState extends State<DataPersonalView> {
           linkedin: _linkedinController.text,
           status: selectedJobType,
           method: selectedWorkMethod)) {
+        loadingSubmit = false;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Berhasil mengubah data diri'),
@@ -105,6 +108,7 @@ class _DataPersonalViewState extends State<DataPersonalView> {
           ),
         );
         getCv();
+        cv.disposeAll();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -572,10 +576,13 @@ class _DataPersonalViewState extends State<DataPersonalView> {
     Widget submit() {
       return Column(
         children: [
-          Container(
-              width: double.infinity,
-              height: 54,
-              child: PrimaryButton(text: 'Simpan', onPressed: handleUpdateCv)),
+          loadingSubmit == true
+              ? Center(child: CircularProgressIndicator())
+              : Container(
+                  width: double.infinity,
+                  height: 54,
+                  child:
+                      PrimaryButton(text: 'Simpan', onPressed: handleUpdateCv)),
         ],
       );
     }

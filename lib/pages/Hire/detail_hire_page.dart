@@ -170,7 +170,7 @@ class _HireDetailPageState extends State<HireDetailPage> {
               ),
               Text(
                 accept
-                    ? 'Terima Kasih atas responya, Silahkan menunggu konfirmasi dari perusahaan'
+                    ? 'Terima Kasih atas responya. Kami sudah mengirim kontak anda ke Perusahaan, Silahkan menunggu infromasi langsung dari perusahaan.'
                     : 'Terima Kasih atas responya, Silahkan Terima Lowongan Yang lain',
                 textAlign: TextAlign.justify,
                 style: primaryTextStyle.copyWith(fontSize: 15),

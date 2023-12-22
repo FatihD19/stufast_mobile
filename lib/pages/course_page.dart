@@ -554,9 +554,9 @@ class _CoursePageState extends State<CoursePage> {
 
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 13,
-                childAspectRatio: 0.64,
+                crossAxisSpacing: 3,
+                mainAxisSpacing: 6,
+                childAspectRatio: 0.72,
               ),
             );
     }
