@@ -6,6 +6,7 @@ import 'package:stufast_mobile/models/invoice_model.dart';
 import 'package:stufast_mobile/pages/checkout/order_page.dart';
 import 'package:stufast_mobile/pages/checkout/payment_view.dart';
 import 'package:stufast_mobile/providers/order_provider.dart';
+import 'package:stufast_mobile/providers/user_course_provider.dart';
 import 'package:stufast_mobile/widget/price_text_widget.dart';
 import 'package:stufast_mobile/widget/primary_button.dart';
 
@@ -335,9 +336,25 @@ class _InvoicePageState extends State<InvoicePage> {
         actions: [
           Container(
             margin: EdgeInsets.only(right: 25),
-            child: Icon(
-              Icons.download_sharp,
-              color: primaryTextColor,
+            child: IconButton(
+              onPressed: () async {
+                await Provider.of<UserCourseProvider>(context, listen: false)
+                    .downloadSertif(
+                      invoice: true,
+                      idInvoice: invoice?.orderId,
+                    )
+                    .then((value) => ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: Colors.green,
+                            content: Text(
+                              'berhasil unduh sertifikar',
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ));
+              },
+              icon: Icon(Icons.download),
+              color: Colors.black,
             ),
           )
         ],

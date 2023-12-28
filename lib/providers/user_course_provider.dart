@@ -85,23 +85,26 @@ class UserCourseProvider with ChangeNotifier {
     }
   }
 
-  Future downloadSertif({
-    bool? isCv,
-    String? idUser,
-    bool? isBundling,
-    String? idBundle,
-    String? idCourse,
-    bool? courseBundle,
-  }) async {
+  Future downloadSertif(
+      {bool? isCv,
+      String? idUser,
+      bool? isBundling,
+      String? idBundle,
+      String? idCourse,
+      bool? courseBundle,
+      bool? invoice,
+      String? idInvoice}) async {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
-    var urlSertif = isCv == true
-        ? '${ApiUrl.url}/cv/download?user_id=$idUser&token=$token'
-        : isBundling == true
-            ? '${ApiUrl.url}/certificates?type=bundling&id=${idBundle}&token=$token'
-            : courseBundle == true
-                ? '${ApiUrl.url}/certificates?type=course-bundling&id=${idCourse}&bundl=${idBundle}&token=$token'
-                : '${ApiUrl.url}/certificates?type=course&id=${idCourse}&token=$token';
+    var urlSertif = invoice == true
+        ? '${ApiUrl.url}/invoice?order_id=${idInvoice}token=$token'
+        : isCv == true
+            ? '${ApiUrl.url}/cv/download?user_id=$idUser&token=$token'
+            : isBundling == true
+                ? '${ApiUrl.url}/certificates?type=bundling&id=${idBundle}&token=$token'
+                : courseBundle == true
+                    ? '${ApiUrl.url}/certificates?type=course-bundling&id=${idCourse}&bundl=${idBundle}&token=$token'
+                    : '${ApiUrl.url}/certificates?type=course&id=${idCourse}&token=$token';
     await Permission.storage.request();
     final baseStorage = await getExternalStorageDirectory();
     try {
